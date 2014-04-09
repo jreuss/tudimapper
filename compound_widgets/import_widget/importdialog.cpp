@@ -39,7 +39,7 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
     {
         mCurrentIndex = index;
 
-        mCurrentItm = mModel->itemFromIndex (index);
+        mCurrentItm = static_cast<ItemTemplate* >(mModel->itemFromIndex (index));
 
         int type = mCurrentItm->importType ();
         ui->stack_pages->setCurrentIndex(type);

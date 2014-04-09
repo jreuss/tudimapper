@@ -6,10 +6,9 @@ enum Column { NAME, TYPE };
 // fixed value
 const int COLUMN_COUNT = 2;
 
-ImportTreeModel::ImportTreeModel(QObject *parent) :
-    QAbstractItemModel(parent), mRoot(0)
+ImportTreeModel::ImportTreeModel(const int &treeDepth) :
+    AbstractTreeModel(treeDepth)
 {
-    mRoot = new ItemTemplate();
 }
 
 ImportTreeModel::~ImportTreeModel()
@@ -41,7 +40,7 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
     }
 
 
-    if(ItemTemplate *item = itemFromIndex (index)) {
+    if(ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index))) {
 
         // set data
         if(role == Qt::DisplayRole || role == Qt::EditRole) {
@@ -90,7 +89,7 @@ bool ImportTreeModel::setData(const QModelIndex &index, const QVariant &value, i
         return false;
     }
 
-    if(ItemTemplate *item = itemFromIndex (index)) {
+    if(ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index))) {
         if (role == Qt::EditRole) {
             if(index.column () == NAME) {
                 item->setName (value.toString());
@@ -118,126 +117,6 @@ QVariant ImportTreeModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant(); // invalid
 }
 
-int ImportTreeModel::columnCount(const QModelIndex &parent
-                                 __attribute__((unused))) const
-{
-    return COLUMN_COUNT;
-}
-
-int ImportTreeModel::rowCount(const QModelIndex &parent) const
-{
-    // we only allow children in the first coloumn (:0)
-    if (parent.column() > 0 && parent.isValid()) {
-        return 0;
-    }
-
-    ItemTemplate *parentItem = itemFromIndex (parent);
-
-    /* if the item has a parent we return the index of the item
-     * in the parents, children. if there is no parent, then it
-     * must be root */
-    return parentItem ? parentItem->childCount() : 0;
-}
-
-bool ImportTreeModel::insertRows(int row, int count, const QModelIndex &parent)
-{
-    if(!mRoot) {
-        mRoot = new ItemTemplate();
-
-    }
-
-    ItemTemplate *item = parent.isValid () ?
-                itemFromIndex (parent) : mRoot;
-
-    beginInsertRows (parent, row, row+count-1);
-
-    for(int i=0; i < count; ++i) {
-        (void) new ItemTemplate("", ItemTemplate::None, item);
-    }
-
-    endInsertRows ();
-
-    return true;
-}
-
-bool ImportTreeModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-    if(!mRoot) {
-        return false;
-    }
-
-    ItemTemplate *item = parent.isValid () ?
-                itemFromIndex (parent) : mRoot;
-
-    beginRemoveRows (parent, row, row+count-1);
-
-    for(int i=0; i < count; ++i) {
-        delete item->takeChild (row);
-    }
-
-    endRemoveRows ();
-
-    return true;
-}
-
-QModelIndex ImportTreeModel::index(int row, int column, const QModelIndex &parent) const
-{
-    /* if the parents column is not 0, then no child is allowed
-     * and therefore no index is created */
-    if(!mRoot || row < 0 || column < 0 || column >= COLUMN_COUNT
-            || (parent.isValid() && parent.column() != 0)) {
-        return QModelIndex(); // invalid
-    }
-
-    ItemTemplate *parentItem = itemFromIndex(parent);
-
-    Q_ASSERT(parentItem); // must exist
-
-    // retrieve parents row-th child
-    if(ItemTemplate *item = parentItem->childAt (row)) {
-        /* find the item and create QModelIndex with a pointer to
-         * the child (: QModelIndex allows *void) */
-        return createIndex(row, column, item);
-    }
-
-    return QModelIndex(); // invalid
-}
-
-QModelIndex ImportTreeModel::parent(const QModelIndex &child) const
-{
-    if(!child.isValid ()) {
-        return QModelIndex(); // invalid
-    }
-
-    /* we need the index of the childs parent, in it's parent
-     * (:grandparents) child array */
-    if(ItemTemplate *item = itemFromIndex (child)) {
-        if(ItemTemplate *parentItem = item->parent ()) {
-            if(parentItem == mRoot) {
-                return QModelIndex();
-            }
-            if(ItemTemplate *grandParentItem =
-                    parentItem->parent ()) {
-                int row = grandParentItem->rowOfChild (parentItem);
-                return createIndex(row, 0, parentItem);
-            }
-        }
-    }
-
-    return QModelIndex(); // invalid
-}
-
-ItemTemplate *ImportTreeModel::itemFromIndex(const QModelIndex &index) const
-{
-    if (index.isValid()) {
-        if(ItemTemplate *item =
-                static_cast<ItemTemplate *>(index.internalPointer ())) {
-            return item;
-        }
-    }
-
-    return mRoot;
-}
 
 void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
 {
