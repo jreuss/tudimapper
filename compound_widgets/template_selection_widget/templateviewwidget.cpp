@@ -21,8 +21,8 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
     }
 
     folderModel->setRoot(root);
-
     treeView->setModel(folderModel);
+
     model = new QStandardItemModel;
     populateModel(model);
     tiledListView = new ThumbnailGridView();

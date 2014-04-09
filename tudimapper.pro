@@ -104,4 +104,3 @@ LIBS += C:\\opencv248\\build\\lib\\libopencv_core248.dll.a \
 
 RESOURCES += \
     images.qrc \
-    images.qrc

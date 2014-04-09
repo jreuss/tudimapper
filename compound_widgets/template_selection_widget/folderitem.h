@@ -2,6 +2,8 @@
 #define FOLDERITEM_H
 
 #include "items/abstracttreeitem.h"
+#include "items/itemtemplate.h"
+
 #include <QIcon>
 
 class FolderItem : public AbstractTreeItem
@@ -15,6 +17,7 @@ public:
 
 private:
     QString mName;
+
 
 };
 
