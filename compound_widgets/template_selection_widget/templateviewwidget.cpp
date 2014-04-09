@@ -73,7 +73,7 @@ void TemplateViewWidget::populateModel(QStandardItemModel *model)
         QStandardItem *item = new QStandardItem();
         //item->setIcon(ico);
         item->setText(name);
-        item->setIcon(ico);
+        //item->setIcon(ico);
         item->setTextAlignment(Qt::AlignCenter);
 
         model->appendRow(item);
