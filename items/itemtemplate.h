@@ -17,8 +17,9 @@
 #include <compound_widgets/collider_widget/colliderscene.h>
 #include <items/abstracttreegraphicsitem.h>
 #include <compound_widgets/sprite_widget/animation.h>
+#include "abstracttreeitem.h"
 
-class ItemTemplate
+class ItemTemplate : public AbstractTreeItem
 {
 public:
     /* ======================================
@@ -42,25 +43,7 @@ public:
      * region: child utils
      * ====================================*/
 
-    void addChild(ItemTemplate *child);
 
-    void addChildren(const QList<ItemTemplate *> &children);
-
-    ItemTemplate *childAt(int row) const;
-
-    int rowOfChild(ItemTemplate *child) const;
-
-    bool hasChildren() const;
-
-    void removeChild(ItemTemplate *child);
-
-    void deleteChildren();
-
-    void removeAt(int position);
-
-    ItemTemplate *takeChild(int index);
-
-    int childCount() const;
 
     /* ======================================
      * region: getters & setters
@@ -89,10 +72,6 @@ public:
     std::vector<std::vector<int> > matchList() const;
 
     void setMatchList(const std::vector<std::vector<int> >& matchList);
-
-    ItemTemplate *parent() const;
-
-    void setParent(ItemTemplate *parent);
 
     QIcon icon() const;
 
@@ -135,9 +114,6 @@ private:
     std::vector<std::vector<int> > mMatchList;
 
     ImportType mType;
-
-    QList<ItemTemplate *> mChildren;
-    ItemTemplate *mParent;
 };
 
 #endif // ITEMTEMPLATE_H

@@ -89,6 +89,7 @@ private:
     QBrush mBackgroundBrush;
     QGraphicsScene *mScene;
     ColliderTreeGraphicsModel *model;
+    MeshCollider *mNewestMeshCollider;
     bool mContourFixture;
 };
 

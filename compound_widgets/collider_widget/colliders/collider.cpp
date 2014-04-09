@@ -2,7 +2,8 @@
 
 Collider::Collider()
 {
-
+    mUniformScaleEnabled = false;
+    mScaleFeedbackRectsSize = 6;
 }
 
 void Collider::setRotateEnabled(bool enable)

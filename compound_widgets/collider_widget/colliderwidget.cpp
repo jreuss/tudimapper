@@ -9,7 +9,7 @@ ColliderWidget::ColliderWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ColliderWidget)
 {
-
+    mCurrentItem = NULL;
     ui->setupUi(this);
 
     //    // ensure valid input
@@ -81,12 +81,14 @@ void ColliderWidget::setupConnections()
 
 void ColliderWidget::onLoadSelectedItem(ItemTemplate *item)
 {
+    if(mCurrentItem){
+        ui->btn_select->setChecked(true);
+    }
     mCurrentItem = item;
     if(mCurrentItem->scene()) {
+
         toggleToolbarButtons (All, false);
-        //ui->lineEdit->setText (mCurrentItem->name ());
         ui->graphicsView->setScene (mCurrentItem->scene());
-        //Insert the colliders in the list...
         model->setRoot(mCurrentItem->getColliderRoot());
         model->layoutChanged();
         connect(mCurrentItem->scene(), SIGNAL(onItemDeleted()),
@@ -210,7 +212,7 @@ void ColliderWidget::deselectAllItems()
 
 void ColliderWidget::handleImportItemFixtureDetailChanged(int value)
 {
-    MeshCollider *group = static_cast<MeshCollider *>(mCurrentItem->getColliderRoot()->childItems().back());
+    MeshCollider *group = mNewestMeshCollider;
 
     std::vector<cv::Point> fixture;
     group->clearChildren ();
@@ -280,7 +282,7 @@ void ColliderWidget::handleAddContourCollider()
 
 
     deselectAllItems();
-
+    mNewestMeshCollider=group;
     group->setParentItem(mCurrentItem->getColliderRoot());
     mCurrentItem->getColliderRoot()->addChild(group);
     model->layoutChanged();
@@ -310,6 +312,7 @@ void ColliderWidget::handleAddConvexCollider()
 
     deselectAllItems();
 
+    mNewestMeshCollider=group;
     group->setParentItem(mCurrentItem->getColliderRoot());
     mCurrentItem->getColliderRoot()->addChild(group);
     model->layoutChanged();
@@ -350,7 +353,7 @@ void ColliderWidget::handleAddCustomMeshCollider()
     mCurrentItem->scene ()->selectedItems ().clear();
     group->setSelected (true);
 
-
+    mNewestMeshCollider=group;
     group->setParentItem(mCurrentItem->getColliderRoot());
     mCurrentItem->getColliderRoot()->addChild(group);
     model->layoutChanged();
@@ -367,7 +370,7 @@ void ColliderWidget::handleMeshDetailAccepted()
                     this, SLOT(handleCheckColliderOnTimerShot()));
     }
 
-    MeshCollider *group = static_cast<MeshCollider *>(mCurrentItem->getColliderRoot()->childItems().back());
+    MeshCollider *group = mNewestMeshCollider;
 
     group->setConsolidated ();
     group->setCanBeDeleted(true);
@@ -392,7 +395,7 @@ void ColliderWidget::handleMeshDetailRejected()
                     this, SLOT(handleCheckColliderOnTimerShot()));
     }
 
-    delete mCurrentItem->getColliderRoot()->childItems().back();
+    delete mNewestMeshCollider;
 
     // disable mesh detail widget
     ui->group_meshdetail->setEnabled (false);
@@ -481,8 +484,7 @@ void ColliderWidget::handleItemRemoved()
 
 void ColliderWidget::handleCheckColliderOnTimerShot()
 {
-    if(static_cast<MeshCollider*>
-            (mCurrentItem->getColliderRoot()->childItems().back())->childCount () > 2) {
+    if(mNewestMeshCollider->childCount () > 2) {
         ui->btngroup_applymeshdetail->buttons ()[0]->setEnabled (true);
     }
 }

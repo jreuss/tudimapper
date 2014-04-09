@@ -39,7 +39,7 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
     {
         mCurrentIndex = index;
 
-        mCurrentItm = mModel->itemFromIndex (index);
+        mCurrentItm = static_cast<ItemTemplate* >(mModel->itemFromIndex (index));
 
         int type = mCurrentItm->importType ();
         ui->stack_pages->setCurrentIndex(type);
@@ -60,6 +60,14 @@ void ImportDialog::handleApplySplitOption()
     if(ui->radio_split->isChecked())
     {
 
+    }
+    if(ui->radio_spritesheet->isChecked())
+    {
+        mCurrentItm->setItemType(ItemTemplate::SpriteSheet);
+        mModel->layoutChanged();
+        ui->stack_pages->setCurrentIndex(mCurrentItm->importType());
+        ui->spritewidget->onLoadSelectedItem(mCurrentItm);
+        animatePage ();
     }
 
 }

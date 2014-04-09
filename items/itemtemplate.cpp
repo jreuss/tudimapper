@@ -2,7 +2,7 @@
 
 
 ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &type,
-                               ItemTemplate *parent)
+                               ItemTemplate *parent) : AbstractTreeItem(parent)
 {
     if(parent) {
         parent->addChild (this);
@@ -10,73 +10,13 @@ ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &
 
     mAnimation = NULL;
     mName = name;
-    mParent = parent;
     mType = type;
     mScene = new ColliderScene();
 }
 
 ItemTemplate::~ItemTemplate()
 {
-    qDeleteAll(mChildren);
-}
 
-void ItemTemplate::addChild(ItemTemplate *child)
-{
-    child->setParent (this);
-    mChildren << child;
-}
-
-void ItemTemplate::addChildren(const QList<ItemTemplate *> &children)
-{
-    foreach (ItemTemplate *child, children) {
-        child->setParent (this);
-        mChildren << child;
-    }
-}
-
-ItemTemplate *ItemTemplate::childAt(int row) const
-{
-    return mChildren.value(row);
-}
-
-int ItemTemplate::rowOfChild(ItemTemplate *child) const
-{
-    return mChildren.indexOf (child);
-}
-
-bool ItemTemplate::hasChildren() const
-{
-    return mChildren.isEmpty ();
-}
-
-void ItemTemplate::removeChild(ItemTemplate *child)
-{
-    int index = mChildren.indexOf (child);
-
-    if(index>0) {
-        delete mChildren.takeAt (index);
-    }
-}
-
-void ItemTemplate::deleteChildren()
-{
-    qDeleteAll(mChildren);
-    mChildren.clear();
-}
-
-void ItemTemplate::removeAt(int position)
-{
-    delete mChildren.takeAt (position);
-}
-
-ItemTemplate *ItemTemplate::takeChild(int index)
-{
-    return mChildren.takeAt (index);
-}
-
-int ItemTemplate::childCount() const
-{
-    return mChildren.count ();
 }
 
 void ItemTemplate::setName(const QString &name)
@@ -137,16 +77,6 @@ std::vector<std::vector<int> > ItemTemplate::matchList() const
 void ItemTemplate::setMatchList(const std::vector<std::vector<int> > &matchList)
 {
     mMatchList = matchList;
-}
-
-ItemTemplate *ItemTemplate::parent() const
-{
-    return mParent;
-}
-
-void ItemTemplate::setParent(ItemTemplate *parent)
-{
-    mParent = parent;
 }
 
 QIcon ItemTemplate::icon() const
