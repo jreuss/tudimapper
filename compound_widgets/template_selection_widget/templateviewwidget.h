@@ -7,6 +7,7 @@
 #include "thumbnailgridview.h"
 #include <QIcon>
 #include "delegates/templatedelegate.h"
+#include <QListWidget>
 
 namespace Ui {
 class TemplateViewWidget;
@@ -23,6 +24,8 @@ public:
 private:
     Ui::TemplateViewWidget *ui;
     QStandardItemModel *model;
+    QListWidget *listWidget;
+    ThumbnailGridView *tiledListView;
     void populateModel(QStandardItemModel *model);
     QHBoxLayout *layout;
 };

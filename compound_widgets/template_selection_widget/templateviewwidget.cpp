@@ -11,11 +11,14 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
 
     model = new QStandardItemModel;
     populateModel(model);
-    ThumbnailGridView *tiledListView = new ThumbnailGridView;
+    tiledListView = new ThumbnailGridView();
     tiledListView->setModel(model);
-    tiledListView->setItemDelegate(new SpinBoxDelegate());
+    tiledListView->setItemDelegate(new TemplateDelegate());
+
+    listWidget = new QListWidget();
 
     layout = new QHBoxLayout();
+    layout->addWidget(listWidget);
     layout->addWidget(tiledListView);
 
     setLayout(layout);
@@ -75,13 +78,10 @@ void TemplateViewWidget::populateModel(QStandardItemModel *model)
 
         model->appendRow(item);
     }
-
-
 }
 
 TemplateViewWidget::~TemplateViewWidget()
 {
     delete model;
-
     delete ui;
 }

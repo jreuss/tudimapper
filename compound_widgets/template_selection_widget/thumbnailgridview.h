@@ -19,7 +19,7 @@ class ThumbnailGridView : public QAbstractItemView
 
 public:
     explicit ThumbnailGridView(QWidget *parent=0);
-    //~ThumbnailGridView() {}
+    ~ThumbnailGridView() {}
     void setModel(QAbstractItemModel *model);
     QRect visualRect(const QModelIndex &index) const;
     void scrollTo(const QModelIndex &index,
@@ -74,7 +74,6 @@ private:
     mutable int mIdealHeight;
     mutable QHash<int, QRectF> mRectForRow;
     mutable bool mHashIsDirty;
-
 };
 
 

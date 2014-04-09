@@ -5,7 +5,6 @@ namespace {
 const int ExtraHeight = 3;
 }
 
-
 ThumbnailGridView::ThumbnailGridView(QWidget *parent)
     : QAbstractItemView(parent), mIdealWidth(0), mIdealHeight(0),
       mHashIsDirty(false)
