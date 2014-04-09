@@ -6,9 +6,11 @@
 #include <QLayout>
 #include <QIcon>
 #include <QListWidget>
+#include <QTreeView>
 
 #include "thumbnailgridview.h"
 #include "delegates/templatedelegate.h"
+#include "templatefolderviewmodel.h"
 
 namespace Ui {
 class TemplateViewWidget;
@@ -23,6 +25,8 @@ public:
     ~TemplateViewWidget();
 
 private:
+    TemplateFolderViewModel *folderModel;
+    QTreeView *treeView;
     Ui::TemplateViewWidget *ui;
     QStandardItemModel *model;
     QListWidget *listWidget;

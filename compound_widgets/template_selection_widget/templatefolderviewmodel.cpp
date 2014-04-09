@@ -4,18 +4,16 @@ enum SECTIONS {
     ICON, NAME
 };
 
-templatefolderviewmodel::templatefolderviewmodel(const int &treeDepth, QObject *parent) :
+TemplateFolderViewModel::TemplateFolderViewModel(const int &treeDepth, QObject *parent) :
     AbstractTreeModel(treeDepth, parent)
 {
-    mFolderIcon = QIcon(":/icons/fodler");
+    mFolderIcon = QIcon(":/icons/folder");
 }
 
-QVariant templatefolderviewmodel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TemplateFolderViewModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if(orientation == Qt::Horizontal && role == Qt::DisplayRole) {
         switch(section) {
-        case ICON:
-            return mFolderIcon;
         case NAME:
             return tr("Name");
         }
@@ -24,7 +22,7 @@ QVariant templatefolderviewmodel::headerData(int section, Qt::Orientation orient
     return QVariant(); // invalid
 }
 
-Qt::ItemFlags templatefolderviewmodel::flags(const QModelIndex &index) const
+Qt::ItemFlags TemplateFolderViewModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags theFlags = QAbstractItemModel::flags(index);
 
@@ -37,7 +35,7 @@ Qt::ItemFlags templatefolderviewmodel::flags(const QModelIndex &index) const
     return theFlags;
 }
 
-bool templatefolderviewmodel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool TemplateFolderViewModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if(!index.isValid () || index.column() > TREE_DEPTH) {
         return false;
@@ -59,7 +57,7 @@ bool templatefolderviewmodel::setData(const QModelIndex &index, const QVariant &
     return true;
 }
 
-QVariant templatefolderviewmodel::data(const QModelIndex &index, int role) const
+QVariant TemplateFolderViewModel::data(const QModelIndex &index, int role) const
 {
     if(!mRoot || !index.isValid () || index.column () < 0 ||
             index.column () > TREE_DEPTH) {
@@ -76,6 +74,12 @@ QVariant templatefolderviewmodel::data(const QModelIndex &index, int role) const
             }
         }
 
+        // item icon
+        if(role == Qt::DecorationRole &&
+                index.column () == ICON) {
+            return mFolderIcon;
+        }
+
         // left align all
         if(role == Qt::TextAlignmentRole) {
             return static_cast<int>(Qt::AlignVCenter |
@@ -85,12 +89,12 @@ QVariant templatefolderviewmodel::data(const QModelIndex &index, int role) const
     return QVariant(); //invalid
 }
 
-QIcon templatefolderviewmodel::getFolderIcon() const
+QIcon TemplateFolderViewModel::getFolderIcon() const
 {
     return mFolderIcon;
 }
 
-void templatefolderviewmodel::setFolderIcon(const QIcon &value)
+void TemplateFolderViewModel::setFolderIcon(const QIcon &value)
 {
     mFolderIcon = value;
 }

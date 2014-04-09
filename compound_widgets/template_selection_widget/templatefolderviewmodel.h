@@ -1,14 +1,14 @@
-#ifndef TEMPLATEFOLDERVIEWMODEL_H
-#define TEMPLATEFOLDERVIEWMODEL_H
+#ifndef TemplateFolderViewModel_H
+#define TemplateFolderViewModel_H
 
 #include "models/abstracttreemodel.h"
 #include "folderitem.h"
 #include <QIcon>
 
-class templatefolderviewmodel : public AbstractTreeModel
+class TemplateFolderViewModel : public AbstractTreeModel
 {
 public:
-    templatefolderviewmodel(const int &treeDepth, QObject *parent = 0);
+    TemplateFolderViewModel(const int &treeDepth, QObject *parent = 0);
 
     QVariant headerData (int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const ;
@@ -22,4 +22,4 @@ private:
     QIcon mFolderIcon;
 };
 
-#endif // TEMPLATEFOLDERVIEWMODEL_H
+#endif // TemplateFolderViewModel_H

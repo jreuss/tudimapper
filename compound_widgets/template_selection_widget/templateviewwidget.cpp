@@ -9,16 +9,28 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // create folder model
+    folderModel = new TemplateFolderViewModel(2);
+    treeView = new QTreeView();
+
+    FolderItem *root = new FolderItem();
+
+    for(int i=0; i<10; i++) {
+        FolderItem *itm = new FolderItem(QString("Folder %1").arg(QString::number(i)));
+        root->addChild(itm);
+    }
+
+    folderModel->setRoot(root);
+
+    treeView->setModel(folderModel);
     model = new QStandardItemModel;
     populateModel(model);
     tiledListView = new ThumbnailGridView();
     tiledListView->setModel(model);
     tiledListView->setItemDelegate(new TemplateDelegate());
 
-    listWidget = new QListWidget();
-
     layout = new QHBoxLayout();
-    layout->addWidget(listWidget);
+    layout->addWidget(treeView);
     layout->addWidget(tiledListView);
 
     setLayout(layout);
@@ -26,7 +38,6 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
 
 void TemplateViewWidget::populateModel(QStandardItemModel *model)
 {
-    QIcon ico = QIcon("/home/joachim/Pictures/Mario-icon.png");
 
     foreach (const QString &name, QStringList()
              << "Barack Obama" << "George W. Bush" << "Bill Clinton"
