@@ -275,7 +275,7 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
 
         item->setContour(mImgProc.findContours(item->path ()));
         item->setItemType (item->contour ().size() == 1 ?
-                    ItemTemplate::Single : ItemTemplate::SpriteSheet);
+                    ItemTemplate::Single : ItemTemplate::Group);
         item->setConvex(mImgProc.findConvexes(item->path ()));
         item->setIcon (QIcon(QPixmap::fromImage (item->image ())));
         mRoot->addChild (item);

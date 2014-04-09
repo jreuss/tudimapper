@@ -61,6 +61,14 @@ void ImportDialog::handleApplySplitOption()
     {
 
     }
+    if(ui->radio_spritesheet->isChecked())
+    {
+        mCurrentItm->setItemType(ItemTemplate::SpriteSheet);
+        mModel->layoutChanged();
+        ui->stack_pages->setCurrentIndex(mCurrentItm->importType());
+        ui->spritewidget->onLoadSelectedItem(mCurrentItm);
+        animatePage ();
+    }
 
 }
 
