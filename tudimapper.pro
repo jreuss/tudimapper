@@ -38,7 +38,10 @@ SOURCES += main.cpp\
     compound_widgets/ruler_widget/graphicsviewrulerwidget.cpp \
     delegates/spinboxdelegate.cpp \
     compound_widgets/sprite_widget/spritewidget.cpp \
-    items/itemtemplate.cpp
+    items/itemtemplate.cpp \
+    delegates/templatedelegate.cpp \
+    compound_widgets/template_selection_widget/thumbnailgridview.cpp \
+    compound_widgets/template_selection_widget/templateviewwidget.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -66,12 +69,16 @@ HEADERS  += mainwindow.h \
     delegates/spinboxdelegate.h \
     compound_widgets/sprite_widget/spritewidget.h \
     compound_widgets/sprite_widget/animationtreeitemmodel.h \
-    items/itemtemplate.h
+    items/itemtemplate.h \
+    delegates/templatedelegate.h \
+    compound_widgets/template_selection_widget/thumbnailgridview.h \
+    compound_widgets/template_selection_widget/templateviewwidget.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
     compound_widgets/collider_widget/colliderwidget.ui \
-    compound_widgets/sprite_widget/spritewidget.ui
+    compound_widgets/sprite_widget/spritewidget.ui \
+    compound_widgets/template_selection_widget/templateviewwidget.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

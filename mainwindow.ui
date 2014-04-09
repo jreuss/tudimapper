@@ -41,6 +41,12 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="TemplateViewWidget" name="dockWidgetContents"/>
+  </widget>
   <action name="actionImportSpecial">
    <property name="text">
     <string>Import special</string>
@@ -53,6 +59,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TemplateViewWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">compound_widgets/template_selection_widget/templateviewwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

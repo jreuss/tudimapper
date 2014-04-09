@@ -90,7 +90,6 @@ public:
 
     void setMatchList(const std::vector<std::vector<int> >& matchList);
 
-
     ItemTemplate *parent() const;
 
     void setParent(ItemTemplate *parent);
