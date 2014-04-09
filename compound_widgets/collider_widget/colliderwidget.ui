@@ -41,7 +41,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="../../ressources.qrc">
              <normaloff>:/icons/actionmove</normaloff>:/icons/actionmove</iconset>
            </property>
            <property name="iconSize">
@@ -79,7 +79,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="../../ressources.qrc">
              <normaloff>:/icons/actionscale</normaloff>:/icons/actionscale</iconset>
            </property>
            <property name="iconSize">
@@ -329,7 +329,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../assets.qrc"/>
+  <include location="../../ressources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="checkerboard">images/checkerboard</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="actionmove">icons/actions-move-icon.png</file>
+        <file alias="action_rotate">icons/actions-rotate-icon.png</file>
+        <file alias="actionscale">icons/actions-scale-icon.png</file>
+        <file alias="folder">icons/folder-icon.png</file>
+    </qresource>
+</RCC>

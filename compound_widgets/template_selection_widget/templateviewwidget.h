@@ -4,10 +4,11 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QLayout>
-#include "thumbnailgridview.h"
 #include <QIcon>
-#include "delegates/templatedelegate.h"
 #include <QListWidget>
+
+#include "thumbnailgridview.h"
+#include "delegates/templatedelegate.h"
 
 namespace Ui {
 class TemplateViewWidget;
