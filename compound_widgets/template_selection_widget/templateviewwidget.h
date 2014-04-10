@@ -7,6 +7,8 @@
 #include <QIcon>
 #include <QListWidget>
 #include <QTreeView>
+#include <QLayout>
+#include <QSplitter>
 #include <QDebug>
 
 #include "thumbnailgridview.h"
@@ -22,11 +24,13 @@ class TemplateViewWidget;
 class TemplateViewWidget : public QWidget
 {
     Q_OBJECT
-
 public:
+
+
     explicit TemplateViewWidget(QWidget *parent = 0);
     void setupConnections();
     ~TemplateViewWidget();
+    void addTemplates(ItemTemplate *templateRoot);
 
 
 public slots:
@@ -39,6 +43,8 @@ private:
     TemplateThumbModel *mTemplateModel;
     ThumbnailGridView *mTiledListView;
     QHBoxLayout *mLayout;
+    QSplitter *splitter;
+
 };
 
 #endif // TEMPLATEVIEWWIDGET_H

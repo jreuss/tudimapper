@@ -7,7 +7,9 @@
 class AbstractTreeItem
 {
 public:
+    enum itemType { TemplateType, FolderType };
     AbstractTreeItem(AbstractTreeItem* parent = 0);
+
     ~AbstractTreeItem();
     int childCount();
     int rowOfChild(AbstractTreeItem *child) const;
@@ -24,9 +26,16 @@ public:
     QList<AbstractTreeItem *> getChildren() const;
     void setChildren(const QList<AbstractTreeItem *> &value);
 
-private:
+    void addChildren(QList<AbstractTreeItem *> children);
+
+
+    AbstractTreeItem::itemType getItemType() const;
+    void setItemType(const AbstractTreeItem::itemType &value);
+
+protected:
     AbstractTreeItem *mParent;
     QList<AbstractTreeItem *> mChildren;
+    itemType mItemType;
 
 };
 

@@ -8,7 +8,8 @@ AbstractTreeModel::AbstractTreeModel(const int &treeDepth, QObject *parent) :
 
 AbstractTreeModel::~AbstractTreeModel()
 {
-    delete mRoot;
+    //qDebug() << "dtor abstracttreemodel called";
+    //delete mRoot;
 }
 
 int AbstractTreeModel::columnCount(const QModelIndex &parent) const

@@ -20,6 +20,7 @@ void MainWindow::createConnections()
              qApp, SLOT (quit()));
     connect (ui->actionImportSpecial, SIGNAL(triggered()),
              this, SLOT (handleImportSpecial()));
+
 }
 
 void MainWindow::handleImportSpecial()
@@ -28,8 +29,23 @@ void MainWindow::handleImportSpecial()
 
     if (urls.count() != 0)
     {
-        mImportDialog = new ImportDialog(urls, this);
-        mImportDialog->setModal(true);
-        mImportDialog->exec();
+        //mImportDialog
+        ImportDialog *diag = new ImportDialog(urls, this);
+
+        connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
+                this, SLOT(handleImportAccepted(ItemTemplate*)));
+
+        diag->setModal(true);
+        diag->exec();
+
+        disconnect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
+                   this, SLOT(handleImportAccepted(ItemTemplate*)));
+
+        delete diag;
     }
+}
+
+void MainWindow::handleImportAccepted(ItemTemplate *item)
+{
+    ui->dockWidgetContents->addTemplates(item);
 }

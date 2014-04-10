@@ -234,7 +234,6 @@ void ThumbnailGridView::setSelection(const QRect &rect,
 
 }
 
-
 QRegion ThumbnailGridView::visualRegionForSelection(
         const QItemSelection &selection) const
 {
@@ -343,12 +342,11 @@ void ThumbnailGridView::resizeEvent(QResizeEvent*)
     updateGeometries();
 }
 
-
 void ThumbnailGridView::updateGeometries()
 {
     QAbstractItemView::updateGeometries();
     QFontMetrics fm(font());
-    const int RowHeight = fm.height() + ExtraHeight;
+    const int RowHeight = mItemHeight + mPadding;
     horizontalScrollBar()->setSingleStep(fm.width("n"));
     horizontalScrollBar()->setPageStep(viewport()->width());
     horizontalScrollBar()->setRange(0,
@@ -358,7 +356,6 @@ void ThumbnailGridView::updateGeometries()
     verticalScrollBar()->setRange(0,
                                   qMax(0, mIdealHeight - viewport()->height()));
 }
-
 
 void ThumbnailGridView::mousePressEvent(QMouseEvent *event)
 {

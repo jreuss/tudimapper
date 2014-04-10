@@ -21,8 +21,6 @@ class ImportTreeModel : public AbstractTreeModel
 public:
     explicit ImportTreeModel(const int &treeDepth = 2);
 
-    ~ImportTreeModel();
-
     /* =======================================
      * region: virtual overrides
      * =====================================*/

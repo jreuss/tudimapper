@@ -3,12 +3,14 @@
 FolderItem::FolderItem(AbstractTreeItem *parent) : AbstractTreeItem(parent)
 {
     mFolderRoot = new ItemTemplate(QString());
+    mItemType = AbstractTreeItem::FolderType;
 }
 
 FolderItem::FolderItem(const QString &name, AbstractTreeItem *parent) : AbstractTreeItem(parent)
 {
     mName = name;
     mFolderRoot = new ItemTemplate(QString());
+    mItemType = AbstractTreeItem::FolderType;
 }
 
 QString FolderItem::getName() const

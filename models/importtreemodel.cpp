@@ -11,10 +11,6 @@ ImportTreeModel::ImportTreeModel(const int &treeDepth) :
 {
 }
 
-ImportTreeModel::~ImportTreeModel()
-{
-
-}
 
 Qt::ItemFlags ImportTreeModel::flags(const QModelIndex &index) const
 {

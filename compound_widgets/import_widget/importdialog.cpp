@@ -33,7 +33,9 @@ ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
 
 ImportDialog::~ImportDialog()
 {
-    delete mCurrentItm;
+    //delete mCurrentItm;
+    qDebug() << "dtor importdiag called!";
+    delete mScene;
     delete mModel;
     delete ui;
 }
@@ -75,6 +77,7 @@ void ImportDialog::handleApplySplitOption()
     {
 
     }
+
     if(ui->radio_spritesheet->isChecked())
     {
         mCurrentItm->setItemType(ItemTemplate::SpriteSheet);
@@ -109,6 +112,9 @@ void ImportDialog::setupConnections()
 
     connect(ui->btn_apply,SIGNAL(clicked()),
             this,SLOT(handleApplySplitOption()));
+
+    connect(ui->btn_import, SIGNAL(clicked()),
+            this, SLOT(accept()));
 }
 
 void ImportDialog::animatePage()
@@ -127,4 +133,8 @@ void ImportDialog::animatePage()
     anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-
+void ImportDialog::accept()
+{
+    emit onImportAccept(static_cast<ItemTemplate*>(mModel->getRoot()));
+    QDialog::accept();
+}

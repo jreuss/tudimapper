@@ -20,11 +20,13 @@ public:
 
 public slots:
     void handleImportSpecial();
+    void handleImportAccepted(ItemTemplate *);
 
 private:
     FileManager mFileManager;
     ImportDialog *mImportDialog;
     Ui::MainWindow *ui;
+    ItemTemplate* tmp;
 };
 
 #endif // MAINWINDOW_H

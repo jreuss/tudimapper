@@ -38,8 +38,8 @@ void TemplateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         painter->fillRect(option.rect, option.palette.button());
     }
 
-    //QPixmap pixmap("/home/joachim/Pictures/Mario-icon-scaled.png");
-    QPixmap pixmap(":/icons/folder");
+    QPixmap pixmap = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+
     int dx = (option.rect.width()-64) / 2;
 
     QRect iconRect = QRect(option.rect.x()+dx, option.rect.y()+5, 64, 64 );

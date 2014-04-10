@@ -3,6 +3,7 @@
 
 #include "models/abstracttreemodel.h"
 #include "items/itemtemplate.h"
+#include "folderitem.h"
 
 class TemplateThumbModel : public AbstractTreeModel
 {

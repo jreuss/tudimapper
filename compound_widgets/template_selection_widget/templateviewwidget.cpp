@@ -13,35 +13,35 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
     mFolderModel = new TemplateFolderViewModel(1);
     mTreeView = new QTreeView();
 
-    FolderItem *root = new FolderItem();
-
-    for(int i=0; i<10; i++) {
-        FolderItem *itm = new FolderItem(QString("Folder %1").arg(QString::number(i)));
-        for(int j=0; j<100; j++) {
-            ItemTemplate *tmp = new ItemTemplate(QString("Skede %1").arg(QString::number(qrand())));
-            tmp->setPath(":/images/actionscale");
-            itm->getFolderRoot()->addChild(tmp);
-        }
-
-        root->addChild(itm);
-    }
-
-    mFolderModel->setRoot(root);
     mTreeView->setModel(mFolderModel);
 
-    mTemplateModel = new TemplateThumbModel(1);
+    mTemplateModel = new TemplateThumbModel(2);
+
+    splitter = new QSplitter(Qt::Horizontal);
 
     mTiledListView = new ThumbnailGridView();
     mTiledListView->setItemDelegate(new TemplateDelegate());
     mTiledListView->setModel(mTemplateModel);
 
     mLayout = new QHBoxLayout();
-    mLayout->addWidget(mTreeView);
-    mLayout->addWidget(mTiledListView);
+    splitter->addWidget(mTreeView);
+    splitter->addWidget(mTiledListView);
+    mLayout->addWidget(splitter);
 
     setLayout(mLayout);
 
     setupConnections();
+
+//    for(int i=0; i< 10; i++){
+//        int j = qrand() % 20 + 1;
+//        FolderItem* itm = new FolderItem(QString("Folder %1").arg(j));
+//        for(int k = 0; k<j; k++)
+//        {
+//           FolderItem* itm2 = new FolderItem(QString("Folder %1").arg(1+qrand()));
+//           itm->addChild(itm2);
+//        }
+//        mFolderModel->getRoot()->addChild(itm);
+//    }
 }
 
 void TemplateViewWidget::setupConnections()
@@ -60,16 +60,24 @@ TemplateViewWidget::~TemplateViewWidget()
     delete ui;
 }
 
+void TemplateViewWidget::addTemplates(ItemTemplate *templateRoot)
+{
+    FolderItem *itm = new FolderItem("Imported");
+    itm->getFolderRoot()->addChildren(templateRoot->getChildren());
+
+    mFolderModel->getRoot()->addChild(itm);
+    FolderItem *child = new FolderItem("Skede");
+    itm->addChild(child);
+   itm->getFolderRoot()->addChild(child);
+   child->setParent(itm);
+    mFolderModel->layoutChanged();
+
+}
+
 void TemplateViewWidget::handleFolderSelectionChanged(QModelIndex idx)
 {
     FolderItem *tmp = static_cast<FolderItem*>(mFolderModel->itemFromIndex(idx));
-
-
-    mTiledListView->updateGeometry();
-
     mTemplateModel->setRoot(tmp->getFolderRoot());
-
-mTiledListView->updateSomething();
-
-
+    mTiledListView->updateSomething();
 }
+

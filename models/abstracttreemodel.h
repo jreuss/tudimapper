@@ -2,6 +2,7 @@
 #define ABSTRACTTREEMODEL_H
 
 #include <QAbstractItemModel>
+#include <QDebug>
 #include "items/abstracttreeitem.h"
 
 class AbstractTreeModel : public QAbstractItemModel
@@ -9,7 +10,7 @@ class AbstractTreeModel : public QAbstractItemModel
     Q_OBJECT
 public:
     explicit AbstractTreeModel(const int &treeDepth, QObject *parent = 0);
-     ~AbstractTreeModel();
+    virtual ~AbstractTreeModel();
     int columnCount (const QModelIndex &parent) const;
     int rowCount(const QModelIndex &parent) const;
     bool insertRows(int row, int count, const QModelIndex &parent);

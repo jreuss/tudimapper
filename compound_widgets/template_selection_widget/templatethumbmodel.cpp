@@ -38,17 +38,36 @@ bool TemplateThumbModel::setData(const QModelIndex &index, const QVariant &value
         return false;
     }
 
-    if(ItemTemplate *item = static_cast<ItemTemplate *>(itemFromIndex (index))) {
-        if (role == Qt::EditRole) {
-            switch(index.column()) {
-            case NAME:
-                item->setName(value.toString());
-                emit dataChanged(index,index, QVector<int>() << Qt::DisplayRole <<  Qt::EditRole);
-                emit layoutChanged();
-                break;
+    AbstractTreeItem *item = itemFromIndex (index);
+    if(item->getItemType() == AbstractTreeItem::TemplateType){
+
+        if(ItemTemplate *templateItem = static_cast<ItemTemplate *>(item)) {
+            if (role == Qt::EditRole) {
+                switch(index.column()) {
+                case NAME:
+                    templateItem->setName(value.toString());
+                    emit dataChanged(index,index, QVector<int>() << Qt::DisplayRole <<  Qt::EditRole);
+                    emit layoutChanged();
+                    break;
+                }
+            } else {
+                return false;
             }
-        } else {
-            return false;
+        }
+    } else if(item->getItemType() == AbstractTreeItem::FolderType){
+
+        if(FolderItem *folderItem = static_cast<FolderItem *>(item)) {
+            if (role == Qt::EditRole) {
+                switch(index.column()) {
+                case NAME:
+                    folderItem->setName(value.toString());
+                    emit dataChanged(index,index, QVector<int>() << Qt::DisplayRole <<  Qt::EditRole);
+                    emit layoutChanged();
+                    break;
+                }
+            } else {
+                return false;
+            }
         }
     }
     return true;
@@ -61,26 +80,52 @@ QVariant TemplateThumbModel::data(const QModelIndex &index, int role) const
         return QVariant(); // invalid
     }
 
-    if(ItemTemplate *item = static_cast<ItemTemplate *>(itemFromIndex (index))) {
+    AbstractTreeItem *item = itemFromIndex (index);
+    if(item->getItemType() == AbstractTreeItem::TemplateType){
+        if(ItemTemplate *templateItem = static_cast<ItemTemplate *>(item)) {
 
-        // set data
-        if(role == Qt::DisplayRole || role == Qt::EditRole) {
-            switch(index.column()) {
-            case NAME:
-                return item->name();
+            // set data
+            if(role == Qt::DisplayRole || role == Qt::EditRole) {
+                switch(index.column()) {
+                case NAME:
+                    return templateItem->name();
+                }
+            }
+
+            // item icon
+            if(role == Qt::DecorationRole &&
+                    index.column () == NAME) {
+                return QPixmap(templateItem->path());
+            }
+
+            // left align all
+            if(role == Qt::TextAlignmentRole) {
+                return static_cast<int>(Qt::AlignVCenter |
+                                        Qt::AlignLeft);
             }
         }
+    } else if(item->getItemType() == AbstractTreeItem::FolderType){
+        if(FolderItem *folderItem = static_cast<FolderItem *>(item)) {
 
-        // item icon
-        if(role == Qt::DecorationRole &&
-                index.column () == NAME) {
-            return QIcon(item->path());
-        }
+            // set data
+            if(role == Qt::DisplayRole || role == Qt::EditRole) {
+                switch(index.column()) {
+                case NAME:
+                    return folderItem->getName();
+                }
+            }
 
-        // left align all
-        if(role == Qt::TextAlignmentRole) {
-            return static_cast<int>(Qt::AlignVCenter |
-                                    Qt::AlignLeft);
+            // item icon
+            if(role == Qt::DecorationRole &&
+                    index.column () == NAME) {
+                return QPixmap(":/icons/folder");
+            }
+
+            // left align all
+            if(role == Qt::TextAlignmentRole) {
+                return static_cast<int>(Qt::AlignVCenter |
+                                        Qt::AlignLeft);
+            }
         }
     }
     return QVariant(); //invalid

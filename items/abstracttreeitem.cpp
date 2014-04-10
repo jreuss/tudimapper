@@ -1,8 +1,9 @@
 #include "abstracttreeitem.h"
 
-AbstractTreeItem::AbstractTreeItem(AbstractTreeItem* parent)
+AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
 {
-    mParent = parent;
+     mParent = parent;
+     mItemType = AbstractTreeItem::TemplateType;
 }
 
 AbstractTreeItem::~AbstractTreeItem()
@@ -70,6 +71,24 @@ void AbstractTreeItem::setChildren(const QList<AbstractTreeItem *> &value)
 {
     mChildren = value;
 }
+
+void AbstractTreeItem::addChildren(QList<AbstractTreeItem *> children)
+{
+    mChildren.append(children);
+}
+
+AbstractTreeItem::itemType AbstractTreeItem::getItemType() const
+{
+    return mItemType;
+}
+
+void AbstractTreeItem::setItemType(const AbstractTreeItem::itemType &value)
+{
+    mItemType = value;
+}
+
+
+
 
 
 

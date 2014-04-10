@@ -136,6 +136,12 @@ void SpriteWidget::onLoadSelectedItem(ItemTemplate *item)
 
 SpriteWidget::~SpriteWidget()
 {
+    delete mAnimationScene;
+    delete mSheetScene;
+    delete rowDelegate;
+    delete columnDelegate;
+    delete speedDelegate;
+    delete model;
     delete ui;
 }
 

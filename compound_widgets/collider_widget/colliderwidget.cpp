@@ -280,7 +280,6 @@ void ColliderWidget::handleAddContourCollider()
     group->setSize (QSize(mCurrentItem->image ().width (),
                           mCurrentItem->image ().height ()));
 
-
     deselectAllItems();
     mNewestMeshCollider=group;
     group->setParentItem(mCurrentItem->getColliderRoot());
