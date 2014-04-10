@@ -19,6 +19,7 @@ public:
     virtual void setColliderRotation(QPointF pos, QPointF rotationPoint) = 0;
 
     virtual void setScaleEnabled(bool enable) = 0;
+    bool getScaleEnabled();
     void setRotateEnabled(bool enable);
 
     bool getIsTrigger() const;

@@ -51,8 +51,7 @@ private:
     void parseUrls(QList<QUrl> urls);
     void setupConnections();
     void animatePage();
-
-    QGraphicsScene mScene;
+    QGraphicsScene *mScene;
     Ui::ImportDialog *ui;
     ImgProc mImgProc;
     QBrush mCheckerbrush;

@@ -216,6 +216,7 @@ void MeshCollider::setNonUniformScale(QPointF pos, QPointF lastPos)
     {
         m->setPos (m->pos ()*mat);
     }
+    updatePolygon();
 
 }
 

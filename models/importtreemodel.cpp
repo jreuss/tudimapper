@@ -13,7 +13,7 @@ ImportTreeModel::ImportTreeModel(const int &treeDepth) :
 
 ImportTreeModel::~ImportTreeModel()
 {
-    delete mRoot; // recursive
+
 }
 
 Qt::ItemFlags ImportTreeModel::flags(const QModelIndex &index) const

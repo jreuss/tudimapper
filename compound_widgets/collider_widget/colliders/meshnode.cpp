@@ -73,7 +73,9 @@ QVariant MeshNode::itemChange(QGraphicsItem::GraphicsItemChange change, const QV
 {
      if(change == ItemPositionHasChanged) {
          MeshCollider *mc = static_cast<MeshCollider *>(parentItem ());
-         mc->updatePolygon ();
+         if(!mc->getScaleEnabled()){
+            mc->updatePolygon ();
+         }
      } else if (change == ItemSelectedHasChanged) {
          MeshCollider *mc = static_cast<MeshCollider *>(parentItem ());
          if(mc->indexOfChild (this) == 0) {

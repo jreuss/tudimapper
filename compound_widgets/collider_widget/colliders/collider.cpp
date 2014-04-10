@@ -6,6 +6,11 @@ Collider::Collider()
     mScaleFeedbackRectsSize = 6;
 }
 
+bool Collider::getScaleEnabled()
+{
+    return mScaleEnabled;
+}
+
 void Collider::setRotateEnabled(bool enable)
 {
     mRotateEnabled = enable;

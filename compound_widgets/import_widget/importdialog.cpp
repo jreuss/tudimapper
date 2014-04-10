@@ -10,6 +10,8 @@ ImportDialog::ImportDialog(QWidget *parent) :
     mModel = new ImportTreeModel();
     ui->treeView->setModel (mModel);
     setupConnections();
+    mScene = new QGraphicsScene();
+    ui->graphics_groupopt->setScene(mScene);
 }
 
 ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
@@ -24,11 +26,14 @@ ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
     ui->treeView->setModel (mModel);
 
     setupConnections();
+    mScene = new QGraphicsScene();
+    ui->graphics_groupopt->setScene(mScene);
     mModel->addItemsFromUrls (imgFiles);
 }
 
 ImportDialog::~ImportDialog()
 {
+    delete mCurrentItm;
     delete mModel;
     delete ui;
 }
@@ -46,13 +51,22 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
 
         if(type == ItemTemplate::Single){
             ui->colliderwidget->onLoadSelectedItem (mCurrentItm);
+        } else if (type == ItemTemplate::Group){
+            mScene->clear();
+            mScene->setSceneRect(mCurrentItm->image().rect());
+            QGraphicsPixmapItem *pmap = new QGraphicsPixmapItem(QPixmap::fromImage(
+                                                                    mCurrentItm->image()));
+            mScene->addItem(pmap);
+
+
         } else if(type == ItemTemplate::SpriteSheet) {
             ui->spritewidget->onLoadSelectedItem(mCurrentItm);
         }
+
+        // animate the pages when switching
+        animatePage ();
     }
 
-    // animate the pages when switching
-    animatePage ();
 }
 
 void ImportDialog::handleApplySplitOption()
