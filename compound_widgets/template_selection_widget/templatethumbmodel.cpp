@@ -1,28 +1,25 @@
-#include "templatefolderviewmodel.h"
+#include "templatethumbmodel.h"
 
 enum SECTIONS {
     NAME
 };
 
-TemplateFolderViewModel::TemplateFolderViewModel(const int &treeDepth, QObject *parent) :
-    AbstractTreeModel(treeDepth, parent)
+TemplateThumbModel::TemplateThumbModel(const int &treeDepth, QObject *parent) :
+                                       AbstractTreeModel(treeDepth, parent)
 {
-    mFolderIcon = QIcon(":/icons/folder");
+
 }
 
-QVariant TemplateFolderViewModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TemplateThumbModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if(orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-        switch(section) {
-        case NAME:
-            return tr("Assets");
-        }
-    }
+    Q_UNUSED(orientation);
+    Q_UNUSED(role);
+    Q_UNUSED(section);
 
     return QVariant(); // invalid
 }
 
-Qt::ItemFlags TemplateFolderViewModel::flags(const QModelIndex &index) const
+Qt::ItemFlags TemplateThumbModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags theFlags = QAbstractItemModel::flags(index);
 
@@ -35,13 +32,13 @@ Qt::ItemFlags TemplateFolderViewModel::flags(const QModelIndex &index) const
     return theFlags;
 }
 
-bool TemplateFolderViewModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool TemplateThumbModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if(!index.isValid () || index.column() > TREE_DEPTH) {
         return false;
     }
 
-    if(FolderItem *item = static_cast<FolderItem *>(itemFromIndex (index))) {
+    if(ItemTemplate *item = static_cast<ItemTemplate *>(itemFromIndex (index))) {
         if (role == Qt::EditRole) {
             switch(index.column()) {
             case NAME:
@@ -57,27 +54,27 @@ bool TemplateFolderViewModel::setData(const QModelIndex &index, const QVariant &
     return true;
 }
 
-QVariant TemplateFolderViewModel::data(const QModelIndex &index, int role) const
+QVariant TemplateThumbModel::data(const QModelIndex &index, int role) const
 {
     if(!mRoot || !index.isValid () || index.column () < 0 ||
             index.column () > TREE_DEPTH) {
         return QVariant(); // invalid
     }
 
-    if(FolderItem *item = static_cast<FolderItem *>(itemFromIndex (index))) {
+    if(ItemTemplate *item = static_cast<ItemTemplate *>(itemFromIndex (index))) {
 
         // set data
         if(role == Qt::DisplayRole || role == Qt::EditRole) {
             switch(index.column()) {
             case NAME:
-                return item->getName();
+                return item->name();
             }
         }
 
         // item icon
         if(role == Qt::DecorationRole &&
                 index.column () == NAME) {
-            return mFolderIcon;
+            return QIcon(item->path());
         }
 
         // left align all
@@ -88,14 +85,3 @@ QVariant TemplateFolderViewModel::data(const QModelIndex &index, int role) const
     }
     return QVariant(); //invalid
 }
-
-QIcon TemplateFolderViewModel::getFolderIcon() const
-{
-    return mFolderIcon;
-}
-
-void TemplateFolderViewModel::setFolderIcon(const QIcon &value)
-{
-    mFolderIcon = value;
-}
-

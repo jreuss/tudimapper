@@ -7,10 +7,13 @@
 #include <QIcon>
 #include <QListWidget>
 #include <QTreeView>
+#include <QDebug>
 
 #include "thumbnailgridview.h"
 #include "delegates/templatedelegate.h"
 #include "templatefolderviewmodel.h"
+#include "items/itemtemplate.h"
+#include "templatethumbmodel.h"
 
 namespace Ui {
 class TemplateViewWidget;
@@ -22,17 +25,20 @@ class TemplateViewWidget : public QWidget
 
 public:
     explicit TemplateViewWidget(QWidget *parent = 0);
+    void setupConnections();
     ~TemplateViewWidget();
 
+
+public slots:
+    void handleFolderSelectionChanged(QModelIndex);
+
 private:
-    TemplateFolderViewModel *folderModel;
-    QTreeView *treeView;
+    TemplateFolderViewModel *mFolderModel;
+    QTreeView *mTreeView;
     Ui::TemplateViewWidget *ui;
-    QStandardItemModel *model;
-    QListWidget *listWidget;
-    ThumbnailGridView *tiledListView;
-    void populateModel(QStandardItemModel *model);
-    QHBoxLayout *layout;
+    TemplateThumbModel *mTemplateModel;
+    ThumbnailGridView *mTiledListView;
+    QHBoxLayout *mLayout;
 };
 
 #endif // TEMPLATEVIEWWIDGET_H

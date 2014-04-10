@@ -15,10 +15,12 @@ public:
     QString getName() const;
     void setName(const QString &value);
 
+    ItemTemplate *getFolderRoot() const;
+    void setFolderRoot(ItemTemplate *value);
+
 private:
     QString mName;
-
-
+    ItemTemplate *mFolderRoot;
 };
 
 #endif // FOLDERITEM_H

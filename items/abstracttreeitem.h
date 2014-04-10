@@ -21,6 +21,9 @@ public:
     AbstractTreeItem *getParent() const;
     void setParent(AbstractTreeItem *value);
 
+    QList<AbstractTreeItem *> getChildren() const;
+    void setChildren(const QList<AbstractTreeItem *> &value);
+
 private:
     AbstractTreeItem *mParent;
     QList<AbstractTreeItem *> mChildren;

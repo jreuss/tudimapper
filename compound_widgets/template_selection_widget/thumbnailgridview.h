@@ -35,6 +35,8 @@ public:
     int getPadding() const;
     void setPadding(int value);
 
+    void updateSomething();
+
     void setItemDimension(int mItemWidth, int mItemHeight, int itemPadding);
 
 protected slots:
