@@ -61,5 +61,15 @@ void AbstractTreeItem::setParent(AbstractTreeItem *value)
 {
     mParent = value;
 }
+QList<AbstractTreeItem *> AbstractTreeItem::getChildren() const
+{
+    return mChildren;
+}
+
+void AbstractTreeItem::setChildren(const QList<AbstractTreeItem *> &value)
+{
+    mChildren = value;
+}
+
 
 

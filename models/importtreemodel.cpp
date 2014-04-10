@@ -60,8 +60,6 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
                default:
                    return QVariant();
                }
-
-
            default:
                Q_ASSERT(false); // no such column exists
            }

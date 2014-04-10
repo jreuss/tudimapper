@@ -25,6 +25,7 @@ void ThumbnailGridView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
     mHashIsDirty = true;
+
 }
 
 void ThumbnailGridView::calculateRectsIfNecessary() const
@@ -301,6 +302,13 @@ void ThumbnailGridView::setPadding(int value)
     mPadding = value;
 }
 
+void ThumbnailGridView::updateSomething()
+{
+    mHashIsDirty = true;
+    calculateRectsIfNecessary();
+    updateGeometries();
+}
+
 void ThumbnailGridView::setItemDimension(int itemWidth, int itemHeight, int itemPadding)
 {
     mItemHeight = itemHeight;
@@ -338,6 +346,7 @@ void ThumbnailGridView::resizeEvent(QResizeEvent*)
 
 void ThumbnailGridView::updateGeometries()
 {
+    QAbstractItemView::updateGeometries();
     QFontMetrics fm(font());
     const int RowHeight = fm.height() + ExtraHeight;
     horizontalScrollBar()->setSingleStep(fm.width("n"));

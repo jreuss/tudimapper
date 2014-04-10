@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     compound_widgets/template_selection_widget/thumbnailgridview.cpp \
     compound_widgets/template_selection_widget/templateviewwidget.cpp \
     compound_widgets/template_selection_widget/templatefolderviewmodel.cpp \
-    compound_widgets/template_selection_widget/folderitem.cpp
+    compound_widgets/template_selection_widget/folderitem.cpp \
+    compound_widgets/template_selection_widget/templatethumbmodel.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -76,7 +77,8 @@ HEADERS  += mainwindow.h \
     compound_widgets/template_selection_widget/thumbnailgridview.h \
     compound_widgets/template_selection_widget/templateviewwidget.h \
     compound_widgets/template_selection_widget/templatefolderviewmodel.h \
-    compound_widgets/template_selection_widget/folderitem.h
+    compound_widgets/template_selection_widget/folderitem.h \
+    compound_widgets/template_selection_widget/templatethumbmodel.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
@@ -103,4 +105,4 @@ LIBS += C:\\opencv248\\build\\lib\\libopencv_core248.dll.a \
 }
 
 RESOURCES += \
-    ressources.qrc
+    images.qrc \

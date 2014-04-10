@@ -9,79 +9,67 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    model = new QStandardItemModel;
-    populateModel(model);
-    tiledListView = new ThumbnailGridView();
-    tiledListView->setModel(model);
-    tiledListView->setItemDelegate(new TemplateDelegate());
+    // create folder model
+    mFolderModel = new TemplateFolderViewModel(1);
+    mTreeView = new QTreeView();
 
-    listWidget = new QListWidget();
+    FolderItem *root = new FolderItem();
 
-    layout = new QHBoxLayout();
-    layout->addWidget(listWidget);
-    layout->addWidget(tiledListView);
+    for(int i=0; i<10; i++) {
+        FolderItem *itm = new FolderItem(QString("Folder %1").arg(QString::number(i)));
+        for(int j=0; j<100; j++) {
+            ItemTemplate *tmp = new ItemTemplate(QString("Skede %1").arg(QString::number(qrand())));
+            tmp->setPath(":/images/actionscale");
+            itm->getFolderRoot()->addChild(tmp);
+        }
 
-    setLayout(layout);
+        root->addChild(itm);
+    }
+
+    mFolderModel->setRoot(root);
+    mTreeView->setModel(mFolderModel);
+
+    mTemplateModel = new TemplateThumbModel(1);
+
+    mTiledListView = new ThumbnailGridView();
+    mTiledListView->setItemDelegate(new TemplateDelegate());
+    mTiledListView->setModel(mTemplateModel);
+
+    mLayout = new QHBoxLayout();
+    mLayout->addWidget(mTreeView);
+    mLayout->addWidget(mTiledListView);
+
+    setLayout(mLayout);
+
+    setupConnections();
 }
 
-void TemplateViewWidget::populateModel(QStandardItemModel *model)
+void TemplateViewWidget::setupConnections()
 {
-    QIcon ico = QIcon("/home/joachim/Pictures/Mario-icon.png");
-
-    foreach (const QString &name, QStringList()
-             << "Barack Obama" << "George W. Bush" << "Bill Clinton"
-             << "George H. W. Bush" << "Ronald Reagan"
-             << "Jimmy Carter" << "Gerald Ford" << "Richard Nixon"
-             << "Lyndon B. Johnson" << "John F. Kennedy"
-             << "Dwight D. Eisenhower" << "Harry S. Truman"
-             << "Franklin D. Roosevelt" << "Herbert Hoover"
-             << "Calvin Coolidge" << "Warren G. Harding"
-             << "Woodrow Wilson" << "William Howard Taft"
-             << "Theodore Roosevelt" << "William McKinley"
-             << "Grover Cleveland" << "Benjamin Harrison"
-             << "Grover Cleveland" << "Chester A. Arthur"
-             << "James A. Garfield" << "Rutherford B. Hayes"
-             << "Ulysses S. Grant" << "Andrew Johnson"
-             << "Abraham Lincoln" << "James Buchanan"
-             << "Franklin Pierce" << "Millard Fillmore"
-             << "Zachary Taylor" << "James K. Polk" << "John Tyler"
-             << "William Henry Harrison" << "Martin Van Buren"
-             << "Andrew Jackson" << "John Quincy Adams"
-             << "James Monroe" << "James Madison"
-             << "Thomas Jefferson" << "John Adams"
-             << "George Washington" << "Barack Obama" << "George W. Bush" << "Bill Clinton"
-             << "George H. W. Bush" << "Ronald Reagan"
-             << "Jimmy Carter" << "Gerald Ford" << "Richard Nixon"
-             << "Lyndon B. Johnson" << "John F. Kennedy"
-             << "Dwight D. Eisenhower" << "Harry S. Truman"
-             << "Franklin D. Roosevelt" << "Herbert Hoover"
-             << "Calvin Coolidge" << "Warren G. Harding"
-             << "Woodrow Wilson" << "William Howard Taft"
-             << "Theodore Roosevelt" << "William McKinley"
-             << "Grover Cleveland" << "Benjamin Harrison"
-             << "Grover Cleveland" << "Chester A. Arthur"
-             << "James A. Garfield" << "Rutherford B. Hayes"
-             << "Ulysses S. Grant" << "Andrew Johnson"
-             << "Abraham Lincoln" << "James Buchanan"
-             << "Franklin Pierce" << "Millard Fillmore"
-             << "Zachary Taylor" << "James K. Polk" << "John Tyler"
-             << "William Henry Harrison" << "Martin Van Buren"
-             << "Andrew Jackson" << "John Quincy Adams"
-             << "James Monroe" << "James Madison"
-             << "Thomas Jefferson" << "John Adams"
-             << "George Washington") {
-        QStandardItem *item = new QStandardItem();
-        //item->setIcon(ico);
-        item->setText(name);
-        //item->setIcon(ico);
-        item->setTextAlignment(Qt::AlignCenter);
-
-        model->appendRow(item);
-    }
+    connect(mTreeView, SIGNAL(clicked(QModelIndex)),
+            this, SLOT(handleFolderSelectionChanged(QModelIndex)));
 }
 
 TemplateViewWidget::~TemplateViewWidget()
 {
-    delete model;
+    delete mTemplateModel;
+    delete mFolderModel;
+    delete mTiledListView;
+    delete mTreeView;
+    delete mLayout;
     delete ui;
+}
+
+void TemplateViewWidget::handleFolderSelectionChanged(QModelIndex idx)
+{
+    FolderItem *tmp = static_cast<FolderItem*>(mFolderModel->itemFromIndex(idx));
+
+
+    mTiledListView->updateGeometry();
+
+    mTemplateModel->setRoot(tmp->getFolderRoot());
+
+mTiledListView->updateSomething();
+
+
 }
