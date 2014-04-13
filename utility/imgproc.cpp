@@ -83,41 +83,6 @@ QRectF ImgProc::getRect(std::vector<cv::Point>  &contour)
     return QRectF(rect.x, rect.y, rect.width, rect.height);
 }
 
-
-//QList<TreeItem> ImgProc::split(const TreeItem &group, QTreeWidgetItem *parent)
-//{
-//    QList<TreeItem> list;
-//    cv::Mat img = cv::imread(group.path.toStdString(), cv::IMREAD_UNCHANGED);
-//    ElementTemplateManager templateManger;
-
-//    qDebug() << group.matchList.size();
-
-//    for(int i=0; i<group.matchList.size(); i++)
-//    {
-//        int index = group.matchList[i].front();
-
-//        cv::Rect rect = cv::boundingRect(group.contours[index]);
-//        cv::Mat mat = img(rect);
-
-//        QImage qImg = toQImage(mat);
-
-//        TreeItem treeItem;
-//        treeItem.parent = parent;
-//        treeItem.img = QImage(qImg);
-
-//        std::vector<std::vector<cv::Point> > contour;
-//        contour.push_back(group.contours[index]);
-
-//        treeItem.contours = contour;
-//        treeItem.name = "child item";
-//        treeItem.itemType = "Single";
-
-//        list.append(treeItem);
-//    }
-
-//    return list;
-//}
-
 std::vector<cv::Point> ImgProc::decimateVerticies(std::vector<cv::Point> src, int epsilon)
 {
     std::vector<cv::Point> approxCurve;
@@ -133,13 +98,11 @@ QList<QPair<unsigned,QPointF> > ImgProc::getMatchPoints(std::vector<std::vector<
 {
     QList<QPair<unsigned,QPointF> > positions;
 
-    QList<QList<unsigned> > shapeMatches = get_shapeMatches(contours,shape_thress);
-    QList<QList<unsigned> > matches = get_colorMatchesFromShapeMatches(shapeMatches, color_thress,path,contours);
+    QList<QList<unsigned> > matches = get_shapeMatches(contours,shape_thress);
+    //QList<QList<unsigned> > matches = get_colorMatchesFromShapeMatches(shapeMatches, color_thress,path,contours);
     QList<unsigned> list;
     QPointF p;
     for(int i = 0; i< matches.size(); i++){
-
-
         list = matches.at(i);
         foreach(unsigned x, list){
             p = QPointF(cv::boundingRect(contours.at(x)).x,cv::boundingRect(contours.at(x)).y);
@@ -153,6 +116,7 @@ QList<ItemTemplate*> ImgProc::splitImageAndRemoveDuplicates(std::vector<std::vec
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
     QList<QList<unsigned> > matches = get_shapeMatches(contours, shapeTresh);
+
 
     QList<unsigned> keepers;
     unsigned currentKeeper;
@@ -176,11 +140,19 @@ QList<ItemTemplate*> ImgProc::splitImageAndRemoveDuplicates(std::vector<std::vec
     }
     cv::Mat tmpImg;
     cv::Rect ROI;
+    std::vector< std::vector<cv::Point> > currentContour;
     QList <ItemTemplate*> templates;
     ItemTemplate* currentTemplate;
     foreach(unsigned x, keepers){
         ROI = cv::boundingRect(contours.at(x));
-        tmpImg = img(ROI);
+        currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(x));
+
+        // CV_FILLED fills the connected components found
+        cv::Mat crop;
+        cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
+        cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
+        img.copyTo(crop,mask);
+        tmpImg = crop(ROI);
         //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
         currentTemplate = new ItemTemplate("blabla",ItemTemplate::Single);
         currentTemplate->setImage(toQImage(tmpImg));
@@ -209,12 +181,26 @@ QList<ItemTemplate *> ImgProc::splitImage(std::vector<std::vector<cv::Point> > c
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
     cv::Mat tmpImg;
+
+    std::vector< std::vector<cv::Point> > currentContour;
+
+
+    // CV_FILLED fills the connected components found
     cv::Rect ROI;
     QList <ItemTemplate*> templates;
     ItemTemplate* currentTemplate;
+
     for(unsigned i = 0; i< contours.size();i++){
+
         ROI = cv::boundingRect(contours.at(i));
-        tmpImg = img(ROI);
+        currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(i));
+
+        // CV_FILLED fills the connected components found
+        cv::Mat crop;
+        cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
+        cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
+        img.copyTo(crop,mask);
+        tmpImg = crop(ROI);
         //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
         currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
         currentTemplate->setImage(toQImage(tmpImg));
@@ -288,15 +274,9 @@ QList<QList<unsigned> > ImgProc::get_shapeMatches(std::vector<std::vector<cv::Po
                     }
                 } else ignore=false;
             }
-
-
             matched.append(list);
-
-
         }
-
     }
-
     return matched;
 }
 
@@ -360,15 +340,15 @@ QList<QList<unsigned> > ImgProc::get_colorMatchesFromShapeMatches(QList<QList<un
                         }
                     }
                     if(!ignore){
-                    if(cv::compareHist( *histograms.at(j), *histograms.at(i), CV_COMP_CHISQR ) < color_tress){
-                        list.append(i);
+                        if(cv::compareHist( *histograms.at(j), *histograms.at(i), CV_COMP_CHISQR ) < color_tress){
+                            list.append(i);
 
-                        ignored.push_back(j);
-                        ignored.push_back(i);
+                            ignored.push_back(j);
+                            ignored.push_back(i);
 
-                    }
+                        }
                     } else {
-                      ignore =false;
+                        ignore =false;
                     }
                     newMatchList.append(list);
                 }
@@ -469,7 +449,7 @@ std::vector<std::vector<cv::Point> > ImgProc::findConvexesFromQImage(QImage QImg
 QImage ImgProc::toQImage(const cv::Mat &img)
 {
     cv::Mat temp;
-    cv::cvtColor(img, temp,CV_BGRA2RGBA);
+    cv::cvtColor(img, temp, CV_BGRA2RGBA);
 
     QImage dest((uchar*) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGBA8888);
     QImage dest2(dest);
