@@ -126,11 +126,15 @@ std::vector<cv::Point> ImgProc::decimateVerticies(std::vector<cv::Point> src, in
     return approxCurve;
 }
 
-QList<QPair<unsigned,QPointF> > ImgProc::createMatchImage(std::vector<std::vector<cv::Point> > contours,const float &shape_thress)
+QList<QPair<unsigned,QPointF> > ImgProc::getMatchPoints(std::vector<std::vector<cv::Point> > contours,
+                                                        const float &shape_thress,
+                                                        const double &color_thress,
+                                                        const QString &path)
 {
     QList<QPair<unsigned,QPointF> > positions;
 
-    QList<QList<unsigned> > matches = get_matches(contours,shape_thress);
+    QList<QList<unsigned> > shapeMatches = get_shapeMatches(contours,shape_thress);
+    QList<QList<unsigned> > matches = get_colorMatchesFromShapeMatches(shapeMatches, color_thress,path,contours);
     QList<unsigned> list;
     QPointF p;
     for(int i = 0; i< matches.size(); i++){
@@ -148,7 +152,7 @@ QList<QPair<unsigned,QPointF> > ImgProc::createMatchImage(std::vector<std::vecto
 QList<ItemTemplate*> ImgProc::splitImageAndRemoveDuplicates(std::vector<std::vector<cv::Point> > contours, const QString &path, float shapeTresh)
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
-    QList<QList<unsigned> > matches = get_matches(contours, shapeTresh);
+    QList<QList<unsigned> > matches = get_shapeMatches(contours, shapeTresh);
 
     QList<unsigned> keepers;
     unsigned currentKeeper;
@@ -236,8 +240,8 @@ QList<ItemTemplate *> ImgProc::splitImage(std::vector<std::vector<cv::Point> > c
 }
 
 
-QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > contours,
-                                             const float &shape_thress)
+QList<QList<unsigned> > ImgProc::get_shapeMatches(std::vector<std::vector<cv::Point> > contours,
+                                                  const float &shape_thress)
 {
     unsigned max = contours.size();
     std::vector<unsigned> ignored;
@@ -294,6 +298,86 @@ QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> 
     }
 
     return matched;
+}
+
+QList<QList<unsigned> > ImgProc::get_colorMatchesFromShapeMatches(QList<QList<unsigned> > shapeMatches,
+                                                                  const double &color_tress,
+                                                                  const QString &path,
+                                                                  std::vector<std::vector<cv::Point> > contours)
+{
+    cv::Mat img = cv::imread(path.toStdString(), 1);
+    cv::Mat tmpImg;
+    cv::Rect ROI;
+    QList<cv::MatND*> histograms;
+    QList<QList<unsigned> > newMatchList;
+
+    //Using 30 bins for hue and 32 for saturation
+    int h_bins = 50; int s_bins = 60;
+    int histSize[] = { h_bins, s_bins };
+    // hue varies from 0 to 256, saturation from 0 to 180
+    float h_ranges[] = { 0, 256 };
+    float s_ranges[] = { 0, 180 };
+
+    const float* ranges[] = { h_ranges, s_ranges };
+
+    // Use the o-th and 1-st channels
+    int channels[] = { 0, 1 };
+
+    foreach(QList<unsigned> matchList, shapeMatches){
+        histograms.clear();
+        std::vector<unsigned> ignored;
+        bool ignore = false;
+
+        //QList<QList<unsigned> > colorMatches;
+        foreach(unsigned match, matchList){
+            ROI = cv::boundingRect(contours.at(match));
+            tmpImg = img(ROI);
+            cvtColor( tmpImg, tmpImg, CV_BGR2HSV );
+            cv::MatND* curHis = new cv::MatND();
+            calcHist( &tmpImg, 1, channels, cv::Mat(), *curHis, 2, histSize, ranges, true, false );
+            normalize( *curHis, *curHis, 0, 1, cv::NORM_MINMAX, -1, cv::Mat() );
+            histograms.append(curHis);
+        }
+
+        for (int j = 0; j < histograms.size(); j++){
+
+            foreach (unsigned x, ignored)
+            {
+                if(( x == j)){
+                    ignore = true;
+                    break;
+                }
+            }
+            if(!ignore){
+                QList<unsigned> list;
+                list.append(j);
+                for(unsigned i = j+1; i < histograms.size(); i++){
+                    foreach (unsigned x, ignored)
+                    {
+                        if(( x == i)){
+                            ignore = true;
+                            break;
+                        }
+                    }
+                    if(!ignore){
+                    if(cv::compareHist( *histograms.at(j), *histograms.at(i), CV_COMP_CHISQR ) < color_tress){
+                        list.append(i);
+
+                        ignored.push_back(j);
+                        ignored.push_back(i);
+
+                    }
+                    } else {
+                      ignore =false;
+                    }
+                    newMatchList.append(list);
+                }
+            } else {
+                ignore =false;
+            }
+        }
+    }
+    return (newMatchList);
 }
 
 std::vector<std::vector<cv::Point> > ImgProc::findContours(const QString &path) const

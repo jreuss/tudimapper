@@ -36,8 +36,10 @@ public:
 
     std::vector<cv::Point> decimateVerticies(std::vector<cv::Point> src, int epsilon);
 
-    QList<QPair<unsigned,QPointF> > createMatchImage(std::vector<std::vector<cv::Point> > contours,
-                                                     const float &shape_thress);
+    QList<QPair<unsigned,QPointF> > getMatchPoints(std::vector<std::vector<cv::Point> > contours,
+                                                   const float &shape_thress,
+                                                   const double &color_thress,
+                                                   const QString &path);
 
     QList<ItemTemplate*> splitImageAndRemoveDuplicates(
             std::vector<std::vector<cv::Point> > contours,
@@ -48,9 +50,16 @@ public:
             const QString &path);
 
 
-    QList<QList<unsigned> > get_matches(
+    QList<QList<unsigned> > get_shapeMatches(
             std::vector<std::vector<cv::Point> > contours,
             const float& shape_thress);
+
+    QList<QList<unsigned> > get_colorMatchesFromShapeMatches(
+            QList<QList<unsigned> > shapeMatches,
+            const double &color_tress,
+            const QString &path,
+            std::vector<std::vector<cv::Point> > contours);
+
 private:
     void cvtAlphaToBinary(const cv::Mat &src, cv::Mat &out) const;
 };

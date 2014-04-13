@@ -159,7 +159,7 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
 
 void ImportTreeModel::handleSplit(ItemTemplate *itm, bool removeDuplicates, float shapeTresh)
 {
-    ItemTemplate* currentItm;
+    //ItemTemplate* currentItm;
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
         templates = mImgProc.splitImageAndRemoveDuplicates(itm->contour(),itm->path(), shapeTresh);
@@ -174,7 +174,7 @@ void ImportTreeModel::handleSplit(ItemTemplate *itm, bool removeDuplicates, floa
             mRoot->addChild(itm);
         }
     }
-    currentItm = templates.at(1);
+    //currentItm = templates.at(1);
     //IMPLEMENT GET INDEX FROM ITEM AND SET THIS ITEM AS SELECTED AND THEN DELETE THE CURRENTITM...
     //delete itm;
     layoutChanged();

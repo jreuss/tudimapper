@@ -54,7 +54,7 @@ void SplitWidget::handleMatchTressholdChanged(int value)
 {
 
     mShapeTreshVal = float( float(value) / 100 )+0.01;
-    QList<QPair<unsigned,QPointF> >  posList = mImproc.createMatchImage(mCurrentItem->contour(),mShapeTreshVal);
+    QList<QPair<unsigned,QPointF> >  posList = mImproc.getMatchPoints(mCurrentItem->contour(),mShapeTreshVal, 0.8,mCurrentItem->path());
     QPair<unsigned,QPointF> curPos;
     for(unsigned i=0; i < mCurrentItem->contour().size(); i++) {
         curPos = posList.at(i);
