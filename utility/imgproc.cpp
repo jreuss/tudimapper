@@ -1,5 +1,6 @@
 #include "imgproc.h"
 
+
 const int ALPHA_THRESSHOLD = 1;
 
 ImgProc::ImgProc() {}
@@ -34,7 +35,7 @@ void ImgProc::cvtAlphaToBinary(const cv::Mat &src, cv::Mat &out) const
 }
 
 QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
-                           const QString &path, const float& shape_thress)
+                             const QString &path, const float& shape_thress)
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
 
@@ -47,24 +48,24 @@ QImage ImgProc::compare_test(std::vector<std::vector<cv::Point> > &contours,
 
     for(int i=0; i<max; i++)
     {
-       cv::Scalar col = cv::Scalar(rng.uniform(0, 255),
-                                   rng.uniform(0, 255),
-                                   rng.uniform(0, 255),
-                                   255);
+        cv::Scalar col = cv::Scalar(rng.uniform(0, 255),
+                                    rng.uniform(0, 255),
+                                    rng.uniform(0, 255),
+                                    255);
 
-       for(int j=i+1; j<max; j++)
-       {
-           double match = cv::matchShapes(contours[i], contours[j], CV_CONTOURS_MATCH_I1, 0);
-           if(match < shape_thress)
-           {
-               if(colors[j] == default_color)
-               {
+        for(int j=i+1; j<max; j++)
+        {
+            double match = cv::matchShapes(contours[i], contours[j], CV_CONTOURS_MATCH_I1, 0);
+            if(match < shape_thress)
+            {
+                if(colors[j] == default_color)
+                {
                     colors[j] = col;
                     colors[i] = col;
-               }
-           }
-           else continue;
-       }
+                }
+            }
+            else continue;
+        }
     }
 
     for(unsigned i = 0; i< contours.size(); i++ )
@@ -125,7 +126,117 @@ std::vector<cv::Point> ImgProc::decimateVerticies(std::vector<cv::Point> src, in
     return approxCurve;
 }
 
-QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > &contours,
+QList<QPair<unsigned,QPointF> > ImgProc::createMatchImage(std::vector<std::vector<cv::Point> > contours,const float &shape_thress)
+{
+    QList<QPair<unsigned,QPointF> > positions;
+
+    QList<QList<unsigned> > matches = get_matches(contours,shape_thress);
+    QList<unsigned> list;
+    QPointF p;
+    for(int i = 0; i< matches.size(); i++){
+
+
+        list = matches.at(i);
+        foreach(unsigned x, list){
+            p = QPointF(cv::boundingRect(contours.at(x)).x,cv::boundingRect(contours.at(x)).y);
+            positions.append(QPair< unsigned , QPointF>(i,p));
+        }
+    }
+    return(positions);
+}
+
+QList<ItemTemplate*> ImgProc::splitImageAndRemoveDuplicates(std::vector<std::vector<cv::Point> > contours, const QString &path, float shapeTresh)
+{
+    cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
+    QList<QList<unsigned> > matches = get_matches(contours, shapeTresh);
+
+    QList<unsigned> keepers;
+    unsigned currentKeeper;
+    int biggestSize;
+    int tmpSize;
+
+    for(int i=0; i < matches.size(); i++){
+        QList<unsigned> list = matches.at(i);
+        biggestSize = cv::minAreaRect(contours.at(list.at(0))).size.area();
+        currentKeeper=list.at(0);
+        if(list.size() > 1){
+            for(int j = 1; j < list.size();j++){
+                tmpSize = cv::minAreaRect(contours.at(list.at(j))).size.area();
+                if( tmpSize > biggestSize){
+                    biggestSize = tmpSize;
+                    currentKeeper = list.at(j);
+                }
+            }
+        }
+        keepers.append(currentKeeper);
+    }
+    cv::Mat tmpImg;
+    cv::Rect ROI;
+    QList <ItemTemplate*> templates;
+    ItemTemplate* currentTemplate;
+    foreach(unsigned x, keepers){
+        ROI = cv::boundingRect(contours.at(x));
+        tmpImg = img(ROI);
+        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
+        currentTemplate = new ItemTemplate("blabla",ItemTemplate::Single);
+        currentTemplate->setImage(toQImage(tmpImg));
+        currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
+        currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
+        currentTemplate->setPixmap (new QPixmap(
+                                        QPixmap::fromImage(currentTemplate->image ())));
+
+        currentTemplate->setPixmapItem(new QGraphicsPixmapItem(*currentTemplate->pixmap()));
+
+        currentTemplate->calculateSceneRect();
+
+        QBrush brush;
+        brush.setTextureImage(QImage(":/images/checkerboard"));
+
+        currentTemplate->scene ()->setBackgroundBrush(brush);
+        currentTemplate->scene()->addItem( currentTemplate->getPixmapItem());
+        currentTemplate->setIcon (QIcon(*currentTemplate->pixmap()));
+
+        templates.append(currentTemplate);
+    }
+    return templates;
+}
+
+QList<ItemTemplate *> ImgProc::splitImage(std::vector<std::vector<cv::Point> > contours, const QString &path)
+{
+    cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
+    cv::Mat tmpImg;
+    cv::Rect ROI;
+    QList <ItemTemplate*> templates;
+    ItemTemplate* currentTemplate;
+    for(unsigned i = 0; i< contours.size();i++){
+        ROI = cv::boundingRect(contours.at(i));
+        tmpImg = img(ROI);
+        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
+        currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
+        currentTemplate->setImage(toQImage(tmpImg));
+        currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
+        currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
+        currentTemplate->setPixmap (new QPixmap(
+                                        QPixmap::fromImage(currentTemplate->image ())));
+
+        currentTemplate->setPixmapItem(new QGraphicsPixmapItem(*currentTemplate->pixmap()));
+
+        currentTemplate->calculateSceneRect();
+
+        QBrush brush;
+        brush.setTextureImage(QImage(":/images/checkerboard"));
+
+        currentTemplate->scene ()->setBackgroundBrush(brush);
+        currentTemplate->scene()->addItem( currentTemplate->getPixmapItem());
+        currentTemplate->setIcon (QIcon(*currentTemplate->pixmap()));
+
+        templates.append(currentTemplate);
+    }
+    return templates;
+}
+
+
+QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> > contours,
                                              const float &shape_thress)
 {
     unsigned max = contours.size();
@@ -135,10 +246,13 @@ QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> 
     bool ignore = false;
     for(unsigned i=0; i<max; i++)
     {
+        ignore = false;
         foreach (unsigned x, ignored)
         {
-            ignore = (x == i);
-            break;
+            if((x == i)){
+                ignore = true;
+                break;
+            }
         }
 
         if(!ignore)
@@ -148,17 +262,35 @@ QList<QList<unsigned> > ImgProc::get_matches(std::vector<std::vector<cv::Point> 
 
             for(unsigned j=i+1; j<max; j++)
             {
-                double match = cv::matchShapes(contours[i],
-                                               contours[j],
-                                               CV_CONTOURS_MATCH_I1, 0);
-                if(match < shape_thress)
+                foreach (unsigned x, ignored)
                 {
-                    list.append(j);
-                    ignored.push_back(j);
+                    if((x == j)){
+                        ignore = true;
+                        break;
+                    }
                 }
+
+                if(!ignore) {
+                    double match = cv::matchShapes(contours[i],
+                                                   contours[j],
+                                                   CV_CONTOURS_MATCH_I2, 0);
+
+                    if(match < shape_thress)
+                    {
+                        list.append(j);
+
+                        ignored.push_back(j);
+                        ignored.push_back(i);
+                    }
+                } else ignore=false;
             }
+
+
             matched.append(list);
+
+
         }
+
     }
 
     return matched;
@@ -201,8 +333,51 @@ std::vector<std::vector<cv::Point> > ImgProc::findConvexes(const QString &path) 
     cv::findContours(img_out,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     std::vector<std::vector<cv::Point> >hull( contours.size() );
-      for( unsigned int i = 0; i < contours.size(); i++ )
-         {  convexHull( cv::Mat(contours[i]), hull[i], false ); }
+    for( unsigned int i = 0; i < contours.size(); i++ )
+    {  convexHull( cv::Mat(contours[i]), hull[i], false ); }
+
+    return hull;
+}
+
+std::vector<std::vector<cv::Point> > ImgProc::findContoursFromQImage(QImage QImg)
+{
+    cv::Mat img = QImage2Mat(QImg);
+    cv::Mat img_out;
+
+    std::vector<std::vector<cv::Point> > contours;
+
+    if (! img.data )
+    {
+        qDebug() << "No image recieved!";
+        return contours;
+    }
+
+    cvtAlphaToBinary(img, img_out);
+    cv::findContours(img_out,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+
+
+    return contours;
+}
+
+std::vector<std::vector<cv::Point> > ImgProc::findConvexesFromQImage(QImage QImg)
+{
+    cv::Mat img = QImage2Mat(QImg);
+    cv::Mat img_out;
+
+    std::vector<std::vector<cv::Point> > contours;
+
+    if (! img.data )
+    {
+        qDebug() << "No image recieved!";
+        return contours;
+    }
+
+    cvtAlphaToBinary(img, img_out);
+    cv::findContours(img_out,contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+
+    std::vector<std::vector<cv::Point> >hull( contours.size() );
+    for( unsigned int i = 0; i < contours.size(); i++ )
+    {  convexHull( cv::Mat(contours[i]), hull[i], false ); }
 
     return hull;
 }
@@ -218,6 +393,13 @@ QImage ImgProc::toQImage(const cv::Mat &img)
     return dest2;
 }
 
+cv::Mat ImgProc::QImage2Mat(QImage const& src)
+{
+    cv::Mat tmp(src.height(),src.width(),CV_8UC4,(uchar*)src.bits(),src.bytesPerLine());
+    cv::Mat result; // deep copy just in case (my lack of knowledge with open cv)
+    //cvtColor(tmp, result,CV_RGBA2BGRA);
 
+    return tmp;
+}
 
 

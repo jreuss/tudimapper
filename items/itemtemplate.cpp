@@ -12,6 +12,7 @@ ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &
     mName = name;
     mType = type;
     mScene = new ColliderScene();
+    mSplitScene = NULL;
 }
 
 ItemTemplate::~ItemTemplate()
@@ -104,17 +105,23 @@ ColliderScene *ItemTemplate::scene() const
     return mScene;
 }
 
+void ItemTemplate::calculateSceneRect()
+{
+    mScene->setSceneRect(0,0,mPixmap->width()+20,mPixmap->height()+20);
+    mScene->update();
+}
+
 AbstractTreeGraphicsItem *ItemTemplate::getColliderRoot()
 {
     return scene()->getRoot();
 }
 
-void ItemTemplate::setPixmap(QGraphicsPixmapItem *pixmap)
+void ItemTemplate::setPixmap(QPixmap *pixmap)
 {
     mPixmap = pixmap;
 }
 
-QGraphicsPixmapItem *ItemTemplate::pixmap() const
+QPixmap*ItemTemplate::pixmap() const
 {
     return mPixmap;
 }
@@ -128,4 +135,24 @@ void ItemTemplate::setAnimation(Animation *value)
 {
     mAnimation = value;
 }
+QGraphicsPixmapItem *ItemTemplate::getPixmapItem() const
+{
+    return mPixmapItem;
+}
+
+void ItemTemplate::setPixmapItem(QGraphicsPixmapItem *value)
+{
+    mPixmapItem = value;
+}
+QGraphicsScene *ItemTemplate::getSplitScene() const
+{
+    return mSplitScene;
+}
+
+void ItemTemplate::setSplitScene(QGraphicsScene *value)
+{
+    mSplitScene = value;
+}
+
+
 

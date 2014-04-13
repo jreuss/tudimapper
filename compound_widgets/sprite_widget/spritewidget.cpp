@@ -206,8 +206,18 @@ void SpriteWidget::handleSetSpriteProperties()
     if(out.isEmpty()) {
         out = "<font color=\"#01BB29\">Settings applied</font>";
         setAnimationScene();
+        //set the pixmap of the template so it shows a single cell of the spritesheet
+        mCurrentItem->setPixmap(new QPixmap(mCurrentItem->getAnimation()->getSpriteSheet().copy(0,0,ui->width_edit->value(), ui->height_edit->value())));
+        mCurrentItem->setIcon(*mCurrentItem->pixmap());
+
+        mCurrentItem->getPixmapItem()->setPixmap(*mCurrentItem->pixmap());
+        QImage img = mCurrentItem->pixmap()->toImage();
+         mCurrentItem->setContour(mImgProc.findContoursFromQImage(img));
+        mCurrentItem->calculateSceneRect();
     }
     ui->label_info->setText(out);
+
+
 
 }
 

@@ -12,10 +12,6 @@ ColliderWidget::ColliderWidget(QWidget *parent) :
     mCurrentItem = NULL;
     ui->setupUi(this);
 
-    //    // ensure valid input
-    //    QRegExp rx ("[A-Za-z0-9-_]{1,12}");
-    //    ui->lineEdit->setValidator (new QRegExpValidator (rx, this));
-
     ui->graphicsView->setBackgroundRole(QPalette::Dark);
     ui->graphicsView->setRenderHints (QPainter::Antialiasing |
                                       QPainter::HighQualityAntialiasing);
@@ -77,17 +73,34 @@ void ColliderWidget::setupConnections()
 
     connect (ui->treeView_collider_prop, SIGNAL(clicked(QModelIndex)),
              this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
+    connect (ui->checkBox_addToAll, SIGNAL(toggled(bool)),this,SLOT(handleAddToAllCheckbox(bool)));
 }
 
 void ColliderWidget::onLoadSelectedItem(ItemTemplate *item)
 {
     if(mCurrentItem){
+        //DISCONNECT THE PREVIOUS CONNECTIONSS (NOT DONE);
         ui->btn_select->setChecked(true);
     }
+
+
     mCurrentItem = item;
     if(mCurrentItem->scene()) {
 
         toggleToolbarButtons (All, false);
+
+        if(mCurrentItem->contour().size() > 1 && mCurrentItem->importType() == ItemTemplate::Single){
+            mMultipleObject = true;
+            ui->label_addToAll->setEnabled(true);
+            ui->checkBox_addToAll->setEnabled(true);
+            ui->btn_contour->setEnabled(false);
+            ui->btn_convex->setEnabled(false);
+        } else {
+           mMultipleObject = false;
+           ui->label_addToAll->setEnabled(false);
+           ui->checkBox_addToAll->setEnabled(false);
+        }
+
         ui->graphicsView->setScene (mCurrentItem->scene());
         model->setRoot(mCurrentItem->getColliderRoot());
         model->layoutChanged();
@@ -212,86 +225,140 @@ void ColliderWidget::deselectAllItems()
 
 void ColliderWidget::handleImportItemFixtureDetailChanged(int value)
 {
-    MeshCollider *group = mNewestMeshCollider;
-
     std::vector<cv::Point> fixture;
-    group->clearChildren ();
-    if(mContourFixture){
-        fixture = mImgProc.decimateVerticies
-                (mCurrentItem->contour().front(), ui->slider_meshdetail->maximum ()-value);
-    } else {
-        fixture = mImgProc.decimateVerticies
-                (mCurrentItem->convex().front(), ui->slider_meshdetail->maximum ()-value);
-    }
-    foreach(cv::Point p, fixture){
-        MeshNode *node = new MeshNode(group);
-        node->setPos (p.x,p.y);
-        node->setFlag (QGraphicsItem::ItemIsMovable, false);
-        node->setFlag (QGraphicsItem::ItemIsSelectable, false);
-        group->addChildNode (node);
-    }
+    if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
+        for(uint i = 0; i < mCurrentItem->contour().size(); i++){
+            MeshCollider *group = mNewestMeshColliders.at(i);
+            group->clearChildren ();
+            if(mContourFixture){
+                fixture = mImgProc.decimateVerticies
+                        (mCurrentItem->contour().at(i), ui->slider_meshdetail->maximum ()-value);
+            } else {
+                fixture = mImgProc.decimateVerticies
+                        (mCurrentItem->convex().at(i), ui->slider_meshdetail->maximum ()-value);
+            }
+            foreach(cv::Point p, fixture){
+                MeshNode *node = new MeshNode(group);
+                node->setPos (p.x,p.y);
+                node->setFlag (QGraphicsItem::ItemIsMovable, false);
+                node->setFlag (QGraphicsItem::ItemIsSelectable, false);
+                group->addChildNode (node);
+            }
 
-    group->updatePolygon ();
+            group->updatePolygon ();
+        }
+    } else {
+        MeshCollider *group = mNewestMeshColliders.back();
+
+        group->clearChildren ();
+        if(mContourFixture){
+            fixture = mImgProc.decimateVerticies
+                    (mCurrentItem->contour().front(), ui->slider_meshdetail->maximum ()-value);
+        } else {
+            fixture = mImgProc.decimateVerticies
+                    (mCurrentItem->convex().front(), ui->slider_meshdetail->maximum ()-value);
+        }
+        foreach(cv::Point p, fixture){
+            MeshNode *node = new MeshNode(group);
+            node->setPos (p.x,p.y);
+            node->setFlag (QGraphicsItem::ItemIsMovable, false);
+            node->setFlag (QGraphicsItem::ItemIsSelectable, false);
+            group->addChildNode (node);
+        }
+
+        group->updatePolygon ();
+    }
 }
+
 
 void ColliderWidget::handleAddBoxCollider()
 {
-    BoxCollider *box = new BoxCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
-    QRectF rect = mImgProc.getRect (mCurrentItem->contour ().front());
-    box->setRect (rect);
-    deselectAllItems();
-    box->setParentItem(mCurrentItem->getColliderRoot());
-    mCurrentItem->getColliderRoot()->addChild(box);
-    model->layoutChanged();
+    if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
+        for (uint i = 0 ; i< mCurrentItem->contour().size();i++){
+            BoxCollider *box = new BoxCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
+            QRectF rect = mImgProc.getRect ( mCurrentItem->contour().at(i));
+            box->setRect (rect);
+            deselectAllItems();
+            box->setParentItem(mCurrentItem->getColliderRoot());
+            mCurrentItem->getColliderRoot()->addChild(box);
+            model->layoutChanged();
+            box->setSelected (true);
+        }
+    }
 
     //set the box collider to be selected and the transform tool to selection tool
-    box->setSelected (true);
+
     ui->btn_select->setChecked(true);
 }
 
 void ColliderWidget::handleAddCircleCollider()
-{
-    CircleCollider *circle = new CircleCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
-    cv::Point2f center;
-    float radius;
-    cv::minEnclosingCircle( cv::Mat(mCurrentItem->contour().front()), center, radius);
-    circle->setCenter(QPointF(center.x,center.y));
-    circle->setRadius(radius);
-    deselectAllItems();
-    circle->setParentItem(mCurrentItem->getColliderRoot());
-    mCurrentItem->getColliderRoot()->addChild(circle);
-    model->layoutChanged();
+{ if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
+        for (uint i = 0 ; i< mCurrentItem->contour().size();i++){
+            CircleCollider *circle = new CircleCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
+            cv::Point2f center;
+            float radius;
+            cv::minEnclosingCircle( cv::Mat(mCurrentItem->contour().at(i)), center, radius);
+            circle->setCenter(QPointF(center.x,center.y));
+            circle->setRadius(radius);
+            deselectAllItems();
+            circle->setParentItem(mCurrentItem->getColliderRoot());
+            mCurrentItem->getColliderRoot()->addChild(circle);
+            model->layoutChanged();
 
-    circle->setSelected (true);
+            circle->setSelected (true);
+        }
+    }
     ui->btn_select->setChecked(true);
 }
 
 void ColliderWidget::handleAddContourCollider()
 {
-    // enable mesh detail widget
-    ui->group_meshdetail->setEnabled (true);
-    onNonAcceptedMesh = true;
+    {
+        // enable mesh detail widget
+        ui->group_meshdetail->setEnabled (true);
+        onNonAcceptedMesh = true;
+        mNewestMeshColliders.clear();
+        // disable all other ui elements
+        toogleUI (false);
+        if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
+            deselectAllItems();
+            for(uint i = 0; i < mCurrentItem->contour().size(); i++){
+                MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
+                group->setSize (QSize(mCurrentItem->image ().width (),
+                                      mCurrentItem->image ().height ()));
+                group->setParentItem(mCurrentItem->getColliderRoot());
+                mCurrentItem->getColliderRoot()->addChild(group);
+                group->setSelected (true);
+                mNewestMeshColliders.append(group);
 
-    // disable all other ui elements
-    toogleUI (false);
+            }
+            toggleSceneSelection(false);
+            mContourFixture = true;
 
-    MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
+            handleImportItemFixtureDetailChanged(4);
+            model->layoutChanged();
+        } else {
+            MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
 
-    group->setSize (QSize(mCurrentItem->image ().width (),
-                          mCurrentItem->image ().height ()));
+            group->setSize (QSize(mCurrentItem->image ().width (),
+                                  mCurrentItem->image ().height ()));
 
-    deselectAllItems();
-    mNewestMeshCollider=group;
-    group->setParentItem(mCurrentItem->getColliderRoot());
-    mCurrentItem->getColliderRoot()->addChild(group);
-    model->layoutChanged();
 
-    group->setSelected (true);
+            deselectAllItems();
 
-    toggleSceneSelection(false);
-    mContourFixture = true;
+            mNewestMeshColliders.append(group);
+            group->setParentItem(mCurrentItem->getColliderRoot());
+            mCurrentItem->getColliderRoot()->addChild(group);
+            model->layoutChanged();
 
-    handleImportItemFixtureDetailChanged(4);
+            group->setSelected (true);
+
+            toggleSceneSelection(false);
+            mContourFixture = true;
+
+            handleImportItemFixtureDetailChanged(4);
+        }
+    }
 }
 
 void ColliderWidget::handleAddConvexCollider()
@@ -299,29 +366,47 @@ void ColliderWidget::handleAddConvexCollider()
     // enable mesh detail widget
     ui->group_meshdetail->setEnabled (true);
     onNonAcceptedMesh = true;
-
+    mNewestMeshColliders.clear();
     // disable all other ui elements
     toogleUI (false);
+    if(ui->checkBox_addToAll->isChecked()){
+        deselectAllItems();
+        for(uint i = 0; i < mCurrentItem->convex().size(); i++){
+            MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
+            group->setSize (QSize(mCurrentItem->image ().width (),
+                                  mCurrentItem->image ().height ()));
+            group->setParentItem(mCurrentItem->getColliderRoot());
+            mCurrentItem->getColliderRoot()->addChild(group);
+            group->setSelected (true);
+            mNewestMeshColliders.append(group);
 
-    MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
+        }
+        toggleSceneSelection(false);
+        mContourFixture = false;
 
-    group->setSize (QSize(mCurrentItem->image ().width (),
-                          mCurrentItem->image ().height ()));
+        handleImportItemFixtureDetailChanged(4);
+        model->layoutChanged();
+    } else {
+        MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()),true);
+
+        group->setSize (QSize(mCurrentItem->image ().width (),
+                              mCurrentItem->image ().height ()));
 
 
-    deselectAllItems();
+        deselectAllItems();
 
-    mNewestMeshCollider=group;
-    group->setParentItem(mCurrentItem->getColliderRoot());
-    mCurrentItem->getColliderRoot()->addChild(group);
-    model->layoutChanged();
+        mNewestMeshColliders.append(group);
+        group->setParentItem(mCurrentItem->getColliderRoot());
+        mCurrentItem->getColliderRoot()->addChild(group);
+        model->layoutChanged();
 
-    group->setSelected (true);
+        group->setSelected (true);
 
-    toggleSceneSelection(false);
-    mContourFixture = false;
+        toggleSceneSelection(false);
+        mContourFixture = false;
 
-    handleImportItemFixtureDetailChanged(4);
+        handleImportItemFixtureDetailChanged(4);
+    }
 }
 
 void ColliderWidget::handleAddCustomMeshCollider()
@@ -342,6 +427,7 @@ void ColliderWidget::handleAddCustomMeshCollider()
     mTimer.setInterval (500);
     mTimer.start ();
 
+    mNewestMeshColliders.clear();
     MeshCollider *group = new MeshCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()), false);
 
     group->setSize (QSize(mCurrentItem->image ().width (),
@@ -352,7 +438,7 @@ void ColliderWidget::handleAddCustomMeshCollider()
     mCurrentItem->scene ()->selectedItems ().clear();
     group->setSelected (true);
 
-    mNewestMeshCollider=group;
+    mNewestMeshColliders.append(group);
     group->setParentItem(mCurrentItem->getColliderRoot());
     mCurrentItem->getColliderRoot()->addChild(group);
     model->layoutChanged();
@@ -369,12 +455,12 @@ void ColliderWidget::handleMeshDetailAccepted()
                     this, SLOT(handleCheckColliderOnTimerShot()));
     }
 
-    MeshCollider *group = mNewestMeshCollider;
-
-    group->setConsolidated ();
-    group->setCanBeDeleted(true);
-    group->setFlag (QGraphicsItem::ItemIsMovable, true);
-    group->updatePolygon ();
+    foreach(MeshCollider* col, mNewestMeshColliders){
+        col->setConsolidated ();
+        col->setCanBeDeleted(true);
+        col->setFlag (QGraphicsItem::ItemIsMovable, true);
+        col->updatePolygon ();
+    }
 
     ui->group_meshdetail->setEnabled (false);
     //set the transform tool to selection tool
@@ -393,9 +479,9 @@ void ColliderWidget::handleMeshDetailRejected()
         disconnect (&mTimer, SIGNAL(timeout()),
                     this, SLOT(handleCheckColliderOnTimerShot()));
     }
-
-    delete mNewestMeshCollider;
-
+    foreach(MeshCollider* col, mNewestMeshColliders){
+        delete col;
+    }
     // disable mesh detail widget
     ui->group_meshdetail->setEnabled (false);
     model->layoutChanged();
@@ -446,6 +532,19 @@ void ColliderWidget::handleTreeviewSelectionChanged(QModelIndex pressedOn)
     }
 }
 
+void ColliderWidget::handleAddToAllCheckbox(bool enabled)
+{
+    if(enabled){
+        ui->btn_contour->setEnabled(true);
+        ui->btn_convex->setEnabled(true);
+        ui->btn_mesh->setEnabled(false);
+    } else {
+        ui->btn_contour->setEnabled(false);
+        ui->btn_convex->setEnabled(false);
+        ui->btn_mesh->setEnabled(true);
+    }
+}
+
 void ColliderWidget::handleSelectToolSelected(bool selected)
 {
     toggleSelectionTool(selected);
@@ -483,7 +582,7 @@ void ColliderWidget::handleItemRemoved()
 
 void ColliderWidget::handleCheckColliderOnTimerShot()
 {
-    if(mNewestMeshCollider->childCount () > 2) {
+    if(mNewestMeshColliders.back()->childCount () > 2) {
         ui->btngroup_applymeshdetail->buttons ()[0]->setEnabled (true);
     }
 }

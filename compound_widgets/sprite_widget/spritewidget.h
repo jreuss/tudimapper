@@ -19,6 +19,7 @@
 #include "delegates/spinboxdelegate.h"
 #include "items/itemtemplate.h"
 #include "graphicsgriditem.h"
+#include "utility/imgproc.h"
 
 namespace Ui {
 class SpriteWidget;
@@ -60,6 +61,8 @@ private:
     ItemTemplate * mCurrentItem;
     int mWidth, mHeight;
     void onFileSelected();
+    //We need to have one improg maybe in the colliderscene
+    ImgProc mImgProc;
 };
 
 #endif // SPRITEWIDGET_H

@@ -12,6 +12,8 @@
 #include <QList>
 #include <QPointF>
 
+#include "items/itemtemplate.h"
+
 class ImgProc
 {
 public:
@@ -19,8 +21,11 @@ public:
 
     std::vector<std::vector<cv::Point> >  findContours(const QString &path) const;
     std::vector<std::vector<cv::Point> > findConvexes(const QString &path) const;
+    std::vector<std::vector<cv::Point> >  findContoursFromQImage(QImage QImg);
+    std::vector<std::vector<cv::Point> > findConvexesFromQImage(QImage QImg);
 
     QImage toQImage(const cv::Mat &img);
+    cv::Mat QImage2Mat(QImage const& src);
 
     QImage compare_test(std::vector<std::vector<cv::Point> > &contours,
                         const QString &path, const float& shape_thress);
@@ -31,8 +36,20 @@ public:
 
     std::vector<cv::Point> decimateVerticies(std::vector<cv::Point> src, int epsilon);
 
+    QList<QPair<unsigned,QPointF> > createMatchImage(std::vector<std::vector<cv::Point> > contours,
+                                                     const float &shape_thress);
+
+    QList<ItemTemplate*> splitImageAndRemoveDuplicates(
+            std::vector<std::vector<cv::Point> > contours,
+            const QString &path, float shapeTresh);
+
+    QList<ItemTemplate*> splitImage(
+            std::vector<std::vector<cv::Point> > contours,
+            const QString &path);
+
+
     QList<QList<unsigned> > get_matches(
-            std::vector<std::vector<cv::Point> > &contours,
+            std::vector<std::vector<cv::Point> > contours,
             const float& shape_thress);
 private:
     void cvtAlphaToBinary(const cv::Mat &src, cv::Mat &out) const;

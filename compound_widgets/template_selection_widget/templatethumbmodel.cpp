@@ -95,7 +95,7 @@ QVariant TemplateThumbModel::data(const QModelIndex &index, int role) const
             // item icon
             if(role == Qt::DecorationRole &&
                     index.column () == NAME) {
-                return QPixmap(templateItem->path());
+                return QPixmap(*templateItem->pixmap());
             }
 
             // left align all

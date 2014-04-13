@@ -129,12 +129,14 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
         item->setName (tmp);
         item->setImage (QImage(item->path ()));
 
-        item->setPixmap (new QGraphicsPixmapItem(
+        item->setPixmap (new QPixmap(
                     QPixmap::fromImage(item->image ())));
+
+        item->setPixmapItem(new QGraphicsPixmapItem(*item->pixmap()));
 
         QRect rect(item->image().rect ());
 
-        item->scene ()->setSceneRect(rect);
+        item->calculateSceneRect();
 
         // set background
         QBrush brush;
@@ -143,17 +145,41 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
         bg->setBrush (brush);
         bg->setPen (Qt::NoPen);
 
-        item->scene ()->addItem (bg);
-        item->scene()->addItem(item->pixmap ());
+        item->scene ()->setBackgroundBrush(brush);
+        item->scene()->addItem(item->getPixmapItem());
 
         item->setContour(mImgProc.findContours(item->path ()));
         item->setItemType (item->contour ().size() == 1 ?
                     ItemTemplate::Single : ItemTemplate::Group);
         item->setConvex(mImgProc.findConvexes(item->path ()));
-        item->setIcon (QIcon(QPixmap::fromImage (item->image ())));
+        item->setIcon (QIcon(*item->pixmap()));
         mRoot->addChild (item);
     }
 }
+
+void ImportTreeModel::handleSplit(ItemTemplate *itm, bool removeDuplicates, float shapeTresh)
+{
+    ItemTemplate* currentItm;
+    QList<ItemTemplate*> templates;
+    if(removeDuplicates){
+        templates = mImgProc.splitImageAndRemoveDuplicates(itm->contour(),itm->path(), shapeTresh);
+        foreach(ItemTemplate *itm, templates){
+            mRoot->addChild(itm);
+
+
+        }
+    }else {
+        templates = mImgProc.splitImage(itm->contour(),itm->path());
+        foreach(ItemTemplate *itm, templates){
+            mRoot->addChild(itm);
+        }
+    }
+    currentItm = templates.at(1);
+    //IMPLEMENT GET INDEX FROM ITEM AND SET THIS ITEM AS SELECTED AND THEN DELETE THE CURRENTITM...
+    //delete itm;
+    layoutChanged();
+}
+
 
 
 

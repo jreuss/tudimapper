@@ -39,6 +39,7 @@ public:
 signals:
 
 public slots:
+   void handleSplit(ItemTemplate*, bool, float);
 
 private:
 

@@ -13,10 +13,61 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <item row="1" column="0">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="checkBox_dontShowRegular">
+       <property name="text">
+        <string>Don't show for regular files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_cancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_import">
+       <property name="text">
+        <string>Import</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -33,38 +84,86 @@
        <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
       </property>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="toolButton">
-           <property name="text">
-            <string>Collider</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="toolButton_2">
-           <property name="text">
-            <string>Animation</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QWidget" name="OptionButtonWIdget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolBtn_collider">
+              <property name="text">
+               <string>Collider</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="autoExclusive">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolBtn_animation">
+              <property name="text">
+               <string>Animation</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="autoExclusive">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <widget class="QStackedWidget" name="stack_pages">
@@ -75,7 +174,7 @@
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="page_general">
           <layout class="QGridLayout" name="gridLayout">
@@ -173,8 +272,27 @@
          </widget>
          <widget class="QWidget" name="sprite_editor">
           <layout class="QGridLayout" name="gridLayout_5">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item row="0" column="0">
             <widget class="SpriteWidget" name="spritewidget" native="true"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="split_editor">
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="0" column="0">
+            <widget class="SplitWidget" name="splitwidget" native="true"/>
            </item>
           </layout>
          </widget>
@@ -183,51 +301,6 @@
       </layout>
      </widget>
     </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="checkBox_dontShowRegular">
-       <property name="text">
-        <string>Don't show for regular files</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_cancel">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_import">
-       <property name="text">
-        <string>Import</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
@@ -242,6 +315,12 @@
    <class>SpriteWidget</class>
    <extends>QWidget</extends>
    <header location="global">compound_widgets/sprite_widget/spritewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SplitWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">compound_widgets/split_widget/splitwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

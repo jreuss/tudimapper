@@ -44,7 +44,8 @@ SOURCES += main.cpp\
     compound_widgets/template_selection_widget/templateviewwidget.cpp \
     compound_widgets/template_selection_widget/templatefolderviewmodel.cpp \
     compound_widgets/template_selection_widget/folderitem.cpp \
-    compound_widgets/template_selection_widget/templatethumbmodel.cpp
+    compound_widgets/template_selection_widget/templatethumbmodel.cpp \
+    compound_widgets/split_widget/splitwidget.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -78,13 +79,15 @@ HEADERS  += mainwindow.h \
     compound_widgets/template_selection_widget/templateviewwidget.h \
     compound_widgets/template_selection_widget/templatefolderviewmodel.h \
     compound_widgets/template_selection_widget/folderitem.h \
-    compound_widgets/template_selection_widget/templatethumbmodel.h
+    compound_widgets/template_selection_widget/templatethumbmodel.h \
+    compound_widgets/split_widget/splitwidget.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
     compound_widgets/collider_widget/colliderwidget.ui \
     compound_widgets/sprite_widget/spritewidget.ui \
-    compound_widgets/template_selection_widget/templateviewwidget.ui
+    compound_widgets/template_selection_widget/templateviewwidget.ui \
+    compound_widgets/split_widget/splitwidget.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

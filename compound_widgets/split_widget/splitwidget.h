@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+#include "items/itemtemplate.h"
+#include "utility/imgproc.h"
+
 namespace Ui {
 class SplitWidget;
 }
@@ -15,8 +18,24 @@ public:
     explicit SplitWidget(QWidget *parent = 0);
     ~SplitWidget();
 
+    void setupConnections();
+    void onLoadSelectedItem(ItemTemplate *item);
+
+signals:
+    void onSplitAplied(ItemTemplate*,bool,float);
+
+private slots:
+     void handleMatchTressholdChanged(int);
+     void handleSplitAplied();
 private:
     Ui::SplitWidget *ui;
+    ItemTemplate *mCurrentItem;
+    ImgProc mImproc;
+    QFont numFont;
+    QFont numFontOutline;
+    QList<QGraphicsTextItem*> numberList;
+    float mShapeTreshVal;
+    bool mRemoveDuplicates;
 };
 
 #endif // SPLITWIDGET_H

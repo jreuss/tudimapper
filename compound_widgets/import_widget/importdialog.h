@@ -22,6 +22,7 @@
 #include <QGraphicsProxyWidget>
 #include <QGridLayout>
 #include <QLayout>
+#include <QToolBar>
 
 #include "utility/imgproc.h"
 #include "models/importtreemodel.h"
@@ -45,6 +46,8 @@ public slots:
    void handleApplySplitOption();
    void handleImportItemNameChanged(QString);
    void handleToggleTreelistEnabled();
+   void handleToggleColliderButton(bool);
+   void handleToggleAnimationButton(bool);
 
    void accept();
 
@@ -55,6 +58,7 @@ private:
     void parseUrls(QList<QUrl> urls);
     void setupConnections();
     void animatePage();
+    void toogleToolButtons();
 
     QGraphicsScene *mScene;
     Ui::ImportDialog *ui;
@@ -63,6 +67,7 @@ private:
     QModelIndex mCurrentIndex;
     ImportTreeModel *mModel;
     ItemTemplate *mCurrentItm;
+
 };
 
 #endif // IMPORTDIALOG_H

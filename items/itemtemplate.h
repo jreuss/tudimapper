@@ -83,17 +83,25 @@ public:
 
     ColliderScene *scene() const;
 
+    void calculateSceneRect();
+
     AbstractTreeGraphicsItem *getColliderRoot();
 
-    void setPixmap(QGraphicsPixmapItem *pixmap);
+    void setPixmap(QPixmap *pixmap);
 
-    QGraphicsPixmapItem *pixmap() const;
+    QPixmap *pixmap() const;
 
     AbstractTreeGraphicsItem *getGetColliderRoot() const;
     void setGetColliderRoot(AbstractTreeGraphicsItem *value);
 
     Animation *getAnimation() const;
     void setAnimation(Animation *value);
+
+    QGraphicsPixmapItem *getPixmapItem() const;
+    void setPixmapItem(QGraphicsPixmapItem *value);
+
+    QGraphicsScene *getSplitScene() const;
+    void setSplitScene(QGraphicsScene *value);
 
 private:
 
@@ -103,11 +111,15 @@ private:
     QString mName, mPath;
 
     ColliderScene *mScene;
+
+    QGraphicsScene *mSplitScene;
+
     Animation *mAnimation;
 
     QImage mImg;
     QIcon mIco;
-    QGraphicsPixmapItem *mPixmap;
+    QPixmap *mPixmap;
+    QGraphicsPixmapItem *mPixmapItem;
 
     std::vector<std::vector<cv::Point> > mContour;
     std::vector<std::vector<cv::Point> > mConvex;

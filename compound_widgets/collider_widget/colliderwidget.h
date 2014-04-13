@@ -77,6 +77,7 @@ private slots:
     void handleScaleToolSelected(bool);
     void handleItemRemoved();
     void handleTreeviewSelectionChanged(QModelIndex);
+    void handleAddToAllCheckbox(bool);
 
 private:
     bool onNonAcceptedMesh;
@@ -89,8 +90,10 @@ private:
     QBrush mBackgroundBrush;
     QGraphicsScene *mScene;
     ColliderTreeGraphicsModel *model;
-    MeshCollider *mNewestMeshCollider;
+    QList<MeshCollider *> mNewestMeshColliders;
+    MeshCollider * mNewestMeshCollider;
     bool mContourFixture;
+    bool mMultipleObject;
 };
 
 
