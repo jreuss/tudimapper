@@ -157,19 +157,20 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
     }
 }
 
-void ImportTreeModel::handleSplit(ItemTemplate *itm, bool removeDuplicates, float shapeTresh)
+void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, float shapeTresh)
 {
     //ItemTemplate* currentItm;
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
-        templates = mImgProc.splitImageAndRemoveDuplicates(itm->contour(),itm->path(), shapeTresh);
+        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
+        templates = mImgProc.splitImageAndRemoveDuplicates(item->contour(),item->path(),shapeTresh,colorMaches);
         foreach(ItemTemplate *itm, templates){
             mRoot->addChild(itm);
 
 
         }
     }else {
-        templates = mImgProc.splitImage(itm->contour(),itm->path());
+        templates = mImgProc.splitImage(item->contour(),item->path());
         foreach(ItemTemplate *itm, templates){
             mRoot->addChild(itm);
         }
@@ -177,6 +178,22 @@ void ImportTreeModel::handleSplit(ItemTemplate *itm, bool removeDuplicates, floa
     //currentItm = templates.at(1);
     //IMPLEMENT GET INDEX FROM ITEM AND SET THIS ITEM AS SELECTED AND THEN DELETE THE CURRENTITM...
     //delete itm;
+    layoutChanged();
+}
+
+void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDuplicates, float shapeTres)
+{
+    QPair<QList<ItemTemplate*>, QGraphicsScene*> thePair;
+
+
+    thePair = mImgProc.splitAndAddToScene(item->contour(),item->path(),item->getSplitScene());
+    QList<ItemTemplate*> templates = thePair.first;
+    foreach(ItemTemplate *itm, templates){
+        item->addChild(itm);
+    }
+
+    //item->setSplitScene(thePair.second);
+
     layoutChanged();
 }
 

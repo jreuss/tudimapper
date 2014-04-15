@@ -170,7 +170,11 @@ void ImportDialog::setupConnections()
 {
     connect(ui->treeView,SIGNAL(clicked(QModelIndex)),
             this,SLOT(handleImportItemSelectionChanged(QModelIndex)));
-    connect(ui->splitwidget,SIGNAL(onSplitAplied(ItemTemplate*,bool,float)),mModel,SLOT(handleSplit(ItemTemplate*, bool,float)));
+    connect(ui->splitwidget,SIGNAL(onSplitAplied(ItemTemplate*,bool,float))
+            ,mModel,SLOT(handleSplit(ItemTemplate*, bool,float)));
+
+    connect(ui->splitwidget,SIGNAL(onSplitAndAddToSceneAplied(ItemTemplate*,bool,float))
+            ,mModel,SLOT(handleSplitAndAddToScene(ItemTemplate*,bool,float)));
 
     connect(ui->btn_apply,SIGNAL(clicked()),
             this,SLOT(handleApplySplitOption()));

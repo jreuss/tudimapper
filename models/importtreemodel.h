@@ -40,6 +40,7 @@ signals:
 
 public slots:
    void handleSplit(ItemTemplate*, bool, float);
+   void handleSplitAndAddToScene(ItemTemplate*, bool, float);
 
 private:
 

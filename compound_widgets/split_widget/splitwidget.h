@@ -23,10 +23,12 @@ public:
 
 signals:
     void onSplitAplied(ItemTemplate*,bool,float);
+    void onSplitAndAddToSceneAplied(ItemTemplate*,bool,float);
 
 private slots:
      void handleMatchTressholdChanged(int);
      void handleSplitAplied();
+     void handleSplitAndAddToSceneAplied();
 private:
     Ui::SplitWidget *ui;
     ItemTemplate *mCurrentItem;
@@ -36,6 +38,7 @@ private:
     QList<QGraphicsTextItem*> numberList;
     float mShapeTreshVal;
     bool mRemoveDuplicates;
+    QList<QList<unsigned> > mColorMatches;
 };
 
 #endif // SPLITWIDGET_H

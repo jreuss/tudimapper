@@ -11,6 +11,7 @@
 #include <QPair>
 #include <QList>
 #include <QPointF>
+#include <QGraphicsScene>
 
 #include "items/itemtemplate.h"
 
@@ -38,24 +39,42 @@ public:
 
     QList<QPair<unsigned,QPointF> > getMatchPoints(std::vector<std::vector<cv::Point> > contours,
                                                    const float &shape_thress,
-                                                   const double &color_thress,
-                                                   const QString &path);
+                                                   QList<QList<unsigned> > colorMatches);
 
     QList<ItemTemplate*> splitImageAndRemoveDuplicates(
             std::vector<std::vector<cv::Point> > contours,
-            const QString &path, float shapeTresh);
+            const QString &path,
+            float shapeTress,
+            QList<QList<unsigned> > colorMatches);
 
     QList<ItemTemplate*> splitImage(
             std::vector<std::vector<cv::Point> > contours,
             const QString &path);
+
+    QList<ItemTemplate *> getSplitTemplates(QList<unsigned> indexes,
+                                            cv::Mat img,
+                                            std::vector<std::vector<cv::Point> > contours);
+
+    QPair<QList<ItemTemplate *>, QGraphicsScene*>  splitAndAddToScene(
+            std::vector<std::vector<cv::Point> > contours,
+            const QString &path,
+            QGraphicsScene *baseScene);
+
+    QPair<QList<ItemTemplate *>, QGraphicsScene*>  getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
+                                            cv::Mat img,
+                                            std::vector<std::vector<cv::Point> > contours,
+                                            QGraphicsScene *baseScene);
 
 
     QList<QList<unsigned> > get_shapeMatches(
             std::vector<std::vector<cv::Point> > contours,
             const float& shape_thress);
 
-    QList<QList<unsigned> > get_colorMatchesFromShapeMatches(
-            QList<QList<unsigned> > shapeMatches,
+    QList<QList<unsigned> > get_shapeMatchesFromColorMatches(std::vector<std::vector<cv::Point> > contours,
+                                                      const float &shape_thress, QList<QList<unsigned> > colorMatches);
+
+
+    QList<QList<unsigned> > get_colorMatches(
             const double &color_tress,
             const QString &path,
             std::vector<std::vector<cv::Point> > contours);

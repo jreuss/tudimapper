@@ -23,6 +23,7 @@ void SplitWidget::setupConnections()
     connect(ui->slider_match_tresshold,SIGNAL(valueChanged(int)),
             this, SLOT(handleMatchTressholdChanged(int)));
     connect(ui->btn_split,SIGNAL(clicked()),this,SLOT(handleSplitAplied()));
+    connect(ui->btn_splitAndAdd,SIGNAL(clicked()),this,SLOT(handleSplitAndAddToSceneAplied()));
 }
 
 void SplitWidget::onLoadSelectedItem(ItemTemplate *item)
@@ -43,7 +44,7 @@ void SplitWidget::onLoadSelectedItem(ItemTemplate *item)
             numberList.at(i)->setFont(numFont);
         }
 
-
+        mColorMatches = mImproc.get_colorMatches(0.9,mCurrentItem->path(),mCurrentItem->contour());
         handleMatchTressholdChanged(5);
     }
 
@@ -54,7 +55,7 @@ void SplitWidget::handleMatchTressholdChanged(int value)
 {
 
     mShapeTreshVal = float( float(value) / 100 )+0.01;
-    QList<QPair<unsigned,QPointF> >  posList = mImproc.getMatchPoints(mCurrentItem->contour(),mShapeTreshVal, 0.8,mCurrentItem->path());
+    QList<QPair<unsigned,QPointF> >  posList = mImproc.getMatchPoints(mCurrentItem->contour(),mShapeTreshVal,mColorMatches);
     QPair<unsigned,QPointF> curPos;
     for(unsigned i=0; i < mCurrentItem->contour().size(); i++) {
         curPos = posList.at(i);
@@ -68,4 +69,9 @@ void SplitWidget::handleMatchTressholdChanged(int value)
 void SplitWidget::handleSplitAplied()
 {
     emit onSplitAplied(mCurrentItem, ui->gBox_rm_duplicates->isChecked(), mShapeTreshVal);
+}
+
+void SplitWidget::handleSplitAndAddToSceneAplied()
+{
+    emit onSplitAndAddToSceneAplied(mCurrentItem, ui->gBox_rm_duplicates->isChecked(), mShapeTreshVal);
 }

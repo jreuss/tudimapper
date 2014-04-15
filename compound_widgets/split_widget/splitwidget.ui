@@ -79,7 +79,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="btn_splitAndAdd">
        <property name="text">
         <string>Split and at to scene</string>
        </property>
