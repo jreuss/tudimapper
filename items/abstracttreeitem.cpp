@@ -1,6 +1,6 @@
 #include "abstracttreeitem.h"
 
-AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
+AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent) : ID(QUuid::createUuid().toString())
 {
      mParent = parent;
      mItemType = AbstractTreeItem::TemplateType;
@@ -44,6 +44,7 @@ AbstractTreeItem *AbstractTreeItem::parent() const
 void AbstractTreeItem::removeChild(AbstractTreeItem *child)
 {
     int index = rowOfChild(child);
+    qDebug() << index;
     mChildren.removeAt(index);
 }
 
@@ -74,7 +75,10 @@ void AbstractTreeItem::setChildren(const QList<AbstractTreeItem *> &value)
 
 void AbstractTreeItem::addChildren(QList<AbstractTreeItem *> children)
 {
-    mChildren.append(children);
+    foreach(AbstractTreeItem *child, children) {
+        child->setParent(this);
+        mChildren.append(child);
+    }
 }
 
 AbstractTreeItem::itemType AbstractTreeItem::getItemType() const
@@ -86,6 +90,22 @@ void AbstractTreeItem::setItemType(const AbstractTreeItem::itemType &value)
 {
     mItemType = value;
 }
+
+QString AbstractTreeItem::getID() const
+{
+    return ID;
+}
+QString AbstractTreeItem::getFolderID() const
+{
+    return mFolderID;
+}
+
+void AbstractTreeItem::setFolderID(const QString &value)
+{
+    mFolderID = value;
+}
+
+
 
 
 

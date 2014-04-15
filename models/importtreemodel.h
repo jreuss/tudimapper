@@ -1,7 +1,6 @@
 #ifndef IMPORTTREEMODEL_H
 #define IMPORTTREEMODEL_H
 
-#include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 #include <QDebug>

@@ -6,12 +6,38 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    mainScene = new QGraphicsScene();
+    ui->graphicsView->setScene(mainScene);
+    ui->graphicsView->setAcceptDrops(true);
+    ui->graphicsView->viewport()->setAcceptDrops(true);
+
+    setAcceptDrops(true);
     createConnections();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    QByteArray encodedData = event->mimeData()->data("application/vnd.text.list");
+    QDataStream stream(&encodedData, QIODevice::ReadOnly);
+    QString text;
+
+    while(!stream.atEnd()) {
+        QString text;
+        stream >> text;
+    }
+
+    qDebug() << text;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->accept();
 }
 
 void MainWindow::createConnections()

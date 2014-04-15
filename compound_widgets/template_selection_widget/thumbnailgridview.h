@@ -11,7 +11,9 @@
 #include <QHash>
 #include <QRectF>
 #include <QDebug>
-
+#include <QMouseEvent>
+#include <QDrag>
+#include <QMimeData>
 
 class ThumbnailGridView : public QAbstractItemView
 {
@@ -35,7 +37,7 @@ public:
     int getPadding() const;
     void setPadding(int value);
 
-    void updateSomething();
+    void forceUpdate();
 
     void setItemDimension(int mItemWidth, int mItemHeight, int itemPadding);
 

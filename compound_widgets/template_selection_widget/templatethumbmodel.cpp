@@ -1,11 +1,7 @@
 #include "templatethumbmodel.h"
 
-enum SECTIONS {
-    NAME
-};
-
-TemplateThumbModel::TemplateThumbModel(const int &treeDepth, QObject *parent) :
-                                       AbstractTreeModel(treeDepth, parent)
+TemplateThumbModel::TemplateThumbModel(const int &treeDepth) :
+                                       AbstractTreeModel(treeDepth)
 {
 
 }
@@ -24,7 +20,7 @@ Qt::ItemFlags TemplateThumbModel::flags(const QModelIndex &index) const
     Qt::ItemFlags theFlags = QAbstractItemModel::flags(index);
 
     if(index.isValid ()) {
-        theFlags =  Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+        theFlags =  Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
         if(index.column() == NAME) {
             theFlags |= Qt::ItemIsEditable;
         }
@@ -129,4 +125,63 @@ QVariant TemplateThumbModel::data(const QModelIndex &index, int role) const
         }
     }
     return QVariant(); //invalid
+}
+
+Qt::DropActions TemplateThumbModel::supportedDropActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+Qt::DropActions TemplateThumbModel::supportedDragActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+QStringList TemplateThumbModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/vnd.text.list";
+    return types;
+}
+
+QMimeData *TemplateThumbModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach(QModelIndex index, indexes) {
+        if(index.isValid()) {
+            AbstractTreeItem* itm = itemFromIndex(index);
+            stream << itm->getID();
+        }
+    }
+
+    mimeData->setData("application/vnd.text.list", encodedData);
+    return mimeData;
+}
+
+bool TemplateThumbModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    Q_UNUSED(action);
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+
+    AbstractTreeItem *itmParent = itemFromIndex(parent);
+    if(itmParent->getItemType() == AbstractTreeItem::FolderType) {
+        QByteArray encodedData = data->data("application/vnd.text.list");
+        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+        QStringList dragSelection;
+
+        while(!stream.atEnd()) {
+            QString txt;
+            stream >> txt;
+            dragSelection << txt;
+        }
+
+        emit onItemDropped(dragSelection, itmParent);
+    }
+
+    return false;
 }

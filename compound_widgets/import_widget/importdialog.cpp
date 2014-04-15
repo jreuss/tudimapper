@@ -16,16 +16,6 @@ ImportDialog::ImportDialog(QWidget *parent) :
     ui->graphics_groupopt->setScene(mScene);
     toogleToolButtons();
     ui->stack_pages->setCurrentIndex(0);
-//    toolBar = new QActionGroup(this);
-//    setColliderWindow = new QAction(this);
-//    setAnimationWindow = new QAction(this);
-//    ui->toolBtn_collider->setDefaultAction(setColliderWindow);
-//    ui->toolBtn_Animation->setDefaultAction(setAnimationWindow);
-//    toolBar->addAction(setColliderWindow);
-//    toolBar->addAction(setAnimationWindow);
-//    toolBar->setExclusive(true);
-//    setColliderWindow->activate();
-
 }
 
 ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
@@ -50,8 +40,6 @@ ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
 
 ImportDialog::~ImportDialog()
 {
-    //delete mCurrentItm;
-    qDebug() << "dtor importdiag called!";
     delete mScene;
     delete mModel;
     delete ui;
