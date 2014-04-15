@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QDebug>
+#include <QUuid>
 
 class AbstractTreeItem
 {
@@ -28,14 +29,20 @@ public:
 
     void addChildren(QList<AbstractTreeItem *> children);
 
-
     AbstractTreeItem::itemType getItemType() const;
     void setItemType(const AbstractTreeItem::itemType &value);
+
+    QString getID() const;
+
+    QString getFolderID() const;
+    void setFolderID(const QString &value);
 
 protected:
     AbstractTreeItem *mParent;
     QList<AbstractTreeItem *> mChildren;
     itemType mItemType;
+    const QString ID;
+    QString mFolderID;
 
 };
 

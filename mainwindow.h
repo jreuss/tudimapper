@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGraphicsScene>
+#include <QDropEvent>
+
 #include "utility/filemanager.h"
 #include "compound_widgets/import_widget/importdialog.h"
 
@@ -18,6 +21,10 @@ public:
     void createConnections();
     ~MainWindow();
 
+protected:
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+
 public slots:
     void handleImportSpecial();
     void handleImportAccepted(ItemTemplate *);
@@ -25,8 +32,10 @@ public slots:
 private:
     FileManager mFileManager;
     ImportDialog *mImportDialog;
+    QGraphicsScene *mainScene;
     Ui::MainWindow *ui;
     ItemTemplate* tmp;
+
 };
 
 #endif // MAINWINDOW_H

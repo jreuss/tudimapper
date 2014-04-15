@@ -18,6 +18,9 @@ ThumbnailGridView::ThumbnailGridView(QWidget *parent)
     mItemHeight = 100;
     mItemWidth = 80;
     mPadding = 5;
+
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setAcceptDrops(true);
 }
 
 
@@ -213,6 +216,7 @@ void ThumbnailGridView::setSelection(const QRect &rect,
     QHashIterator<int, QRectF> i(mRectForRow);
     int firstRow = model()->rowCount();
     int lastRow = -1;
+
     while (i.hasNext()) {
         i.next();
         if (i.value().intersects(rectangle)) {
@@ -231,7 +235,6 @@ void ThumbnailGridView::setSelection(const QRect &rect,
         QItemSelection selection(invalid, invalid);
         selectionModel()->select(selection, flags);
     }
-
 }
 
 QRegion ThumbnailGridView::visualRegionForSelection(
@@ -301,7 +304,7 @@ void ThumbnailGridView::setPadding(int value)
     mPadding = value;
 }
 
-void ThumbnailGridView::updateSomething()
+void ThumbnailGridView::forceUpdate()
 {
     mHashIsDirty = true;
     calculateRectsIfNecessary();
@@ -360,7 +363,7 @@ void ThumbnailGridView::updateGeometries()
 void ThumbnailGridView::mousePressEvent(QMouseEvent *event)
 {
     QAbstractItemView::mousePressEvent(event);
-    setCurrentIndex(indexAt(event->pos()));
+    // setCurrentIndex(indexAt(event->pos()));
 }
 
 

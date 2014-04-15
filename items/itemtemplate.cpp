@@ -13,6 +13,7 @@ ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &
     mType = type;
     mScene = new ColliderScene();
     mSplitScene = NULL;
+
 }
 
 ItemTemplate::~ItemTemplate()

@@ -89,6 +89,7 @@ QVariant TemplateFolderViewModel::data(const QModelIndex &index, int role) const
     return QVariant(); //invalid
 }
 
+
 QIcon TemplateFolderViewModel::getFolderIcon() const
 {
     return mFolderIcon;
