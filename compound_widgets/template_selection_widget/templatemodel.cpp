@@ -34,9 +34,19 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
 
         if(role == Qt::DecorationRole &&
                 index.column () == 0) {
-            return item->importType() == ItemTemplate::Folder ? folderIcon : folderIcon;
+           if(item->importType() == ItemTemplate::Folder){
+                return folderIcon;
+            } else {
+
+             QPixmap icon = *item->pixmap();
+             icon.scaledToHeight(100);
+             return QPixmap(icon);
+            }
+
         }
+
     }
+    return QVariant();
 //        if(index.isValid() && role == Qt::DisplayRole) {
 
 //            ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index));
@@ -45,7 +55,7 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
 //            }
 
 //        }
-        return QVariant();
+
     //}
 
    // return QVariant();
@@ -75,3 +85,4 @@ QVariant TemplateModel::headerData(int section, Qt::Orientation orientation, int
 
     return QVariant(); // invalid
 }
+

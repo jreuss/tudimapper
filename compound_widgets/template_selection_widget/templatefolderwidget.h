@@ -23,6 +23,7 @@ public:
     ~TemplateFolderWidget();
 
 public slots:
+    void addTemplates(ItemTemplate*);
     void handleAddFolderAction();
     void handleAddTemplateAction();
     void handleRemoveAction();

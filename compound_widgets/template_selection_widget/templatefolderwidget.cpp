@@ -106,3 +106,19 @@ void TemplateFolderWidget::handleFolderSelectionChanged(QModelIndex index)
 {
     emit mapProxySelection(folderProxy->mapToSource(index));
 }
+
+void TemplateFolderWidget::addTemplates(ItemTemplate *templateRoot)
+{
+    // create new top-most folder
+    ItemTemplate *itm = new ItemTemplate("Imported",ItemTemplate::Folder,model->getRoot() );
+
+    model->insertItem(model->getRoot()->getChildren().count(),
+                      model->getRoot(),itm);
+
+    for(int i = 0; i < templateRoot->mChildren.count(); i++) {
+        model->insertItem(itm->getChildren().count(),
+                          itm,
+                          templateRoot->mChildren.at(i));
+    }
+}
+

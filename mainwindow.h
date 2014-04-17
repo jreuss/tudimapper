@@ -23,6 +23,7 @@ public:
 
 public slots:
     void handleImportSpecial();
+    void handleImportAccepted(ItemTemplate *item);
 
 private:
     FileManager mFileManager;
