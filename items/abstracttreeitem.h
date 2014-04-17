@@ -11,7 +11,7 @@ public:
     enum itemType { TemplateType, FolderType };
     AbstractTreeItem(AbstractTreeItem* parent = 0);
 
-    ~AbstractTreeItem();
+    virtual ~AbstractTreeItem();
     int childCount();
     int rowOfChild(AbstractTreeItem *child) const;
     AbstractTreeItem *takeChild(int index);

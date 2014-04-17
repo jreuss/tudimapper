@@ -16,6 +16,8 @@ TemplateViewWidget::TemplateViewWidget(QWidget *parent) :
 
     mTreeView->setModel(mFolderModel);
     mTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    mTreeView->setAcceptDrops(true);
+    mTreeView->setDragEnabled(true);
 
     mTemplateModel = new TemplateThumbModel(2);
 
@@ -46,7 +48,10 @@ void TemplateViewWidget::setupConnections()
             this, SLOT(handleFolderSelectionChanged(QModelIndex)));
 
     connect(mTemplateModel, SIGNAL(onItemDropped(QStringList, AbstractTreeItem*)),
-            this, SLOT(handleOnItemDropped(QStringList, AbstractTreeItem*)));
+            this, SLOT(handleOnTemplateDropped(QStringList, AbstractTreeItem*)));
+
+    connect(mFolderModel, SIGNAL(onItemDropped(QStringList, AbstractTreeItem*)),
+            this, SLOT(handleOnFolderDropped(QStringList, AbstractTreeItem*)));
 
     connect(mTreeView, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(handleCustomContextMenu(const QPoint &)));
@@ -65,6 +70,8 @@ void TemplateViewWidget::createActions()
     QAction *pasteFolderAction = new QAction(tr("Paste"), this);
     connect(pasteFolderAction, SIGNAL(triggered()), this, SLOT(handlePasteFolder()));
     folderContextMenu.addAction(pasteFolderAction);
+
+    folderContextMenu.addSeparator();
 
     QAction *removeFolderAction = new QAction(tr("Remove"), this);
     connect(removeFolderAction, SIGNAL(triggered()), this, SLOT(handleRemoveFolder()));
@@ -100,45 +107,25 @@ void TemplateViewWidget::addTemplates(ItemTemplate *templateRoot)
 
     // add the folder to the model
     mFolderModel->getRoot()->addChild(itm);
-
-    /*==================================================
-     * test remove when done
-     * ===============================================*/
-
-    // create a child folder
-    FolderItem *child = new FolderItem("Sub folder");
-    child->setFolderID(itm->getID());
-    // (stupid..) add the child to the folders contained items,
-    // making it visible in the thumbview
-    itm->getFolderRoot()->addChild(child);
-    // also add the child folder to the top-most folder, for
-    // it to be displayed in the folderview
-    itm->addChild(child);
-
-    // register the child with the folder hash
-    globs::folderHash.insert(child->getID(), child);
-
-    //child->setParent(itm); redundant??
-
-    // update the folder view
+    // update model
     mFolderModel->layoutChanged();
 }
 
-void TemplateViewWidget::dropEvent(QDropEvent *event)
+void TemplateViewWidget::moveFolder(FolderItem *src, FolderItem *dst)
 {
-    QByteArray encodedData = event->mimeData()->data("application/vnd.text.list");
-    QDataStream stream(&encodedData, QIODevice::ReadOnly);
-    QString text;
-
-    while(!stream.atEnd()) {
-        QString text;
-        stream >> text;
+    // check if our folder currently has parent folder
+    if(!src->getFolderID().isEmpty()) {
+        FolderItem *currParent = globs::folderHash.value(src->getFolderID());
+        currParent->getFolderRoot()->removeChild(src);
+        currParent->removeChild(src);
+    } else {
+        mFolderModel->getRoot()->removeChild(src);
     }
-}
 
-void TemplateViewWidget::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->accept();
+    // add a new sub folder
+    src->setFolderID(dst->getID()); // set its parent folder id
+    dst->getFolderRoot()->addChild(src); // add to thumb view
+    dst->addChild(src); // add to folder view
 }
 
 void TemplateViewWidget::handleFolderSelectionChanged(QModelIndex idx)
@@ -148,7 +135,7 @@ void TemplateViewWidget::handleFolderSelectionChanged(QModelIndex idx)
     mTiledListView->forceUpdate();
 }
 
-void TemplateViewWidget::handleOnItemDropped(QStringList itemIDs, AbstractTreeItem* parent)
+void TemplateViewWidget::handleOnTemplateDropped(QStringList itemIDs, AbstractTreeItem* parent)
 {
     FolderItem *targetFolder = static_cast<FolderItem*>(parent);
 
@@ -160,11 +147,26 @@ void TemplateViewWidget::handleOnItemDropped(QStringList itemIDs, AbstractTreeIt
     }
 }
 
+void TemplateViewWidget::handleOnFolderDropped(QStringList folderIDs, AbstractTreeItem *parent)
+{
+    FolderItem *targetFolder = static_cast<FolderItem*>(parent);
+
+    foreach(QString s, folderIDs) {
+        AbstractTreeItem *itm = globs::folderHash.value(s);
+
+        // first off, find out whether we have a folder item dropped
+        if(itm->getItemType() == AbstractTreeItem::FolderType) {
+            moveFolder(static_cast<FolderItem*>(itm), targetFolder);
+        }
+    }
+
+    mFolderModel->layoutChanged();
+}
+
 void TemplateViewWidget::handleCustomContextMenu(const QPoint &pos)
 {
     // get the clicked index
     QModelIndex index = mTreeView->indexAt(pos);
-
     currentFolderIndex = index;
     folderContextMenu.popup(mTreeView->viewport()->mapToGlobal(pos));
 }
@@ -173,9 +175,6 @@ void TemplateViewWidget::handleAddFolder()
 {
     // create a new subfolder
     FolderItem *f = new FolderItem("Folder" + QString::number(globs::folderHash.count()));
-
-    // insert the folder into the folder hash
-    globs::folderHash.insert(f->getID(), f);
 
     // this means we have clicked on top of an
     // existing folder (:new folder added as child)
@@ -192,14 +191,29 @@ void TemplateViewWidget::handleAddFolder()
         mFolderModel->getRoot()->addChild(f);
     }
 
+    // insert the folder into the folder hash
+    globs::folderHash.insert(f->getID(), f);
+
     // update the folder view
     mFolderModel->layoutChanged();
 }
 
 void TemplateViewWidget::handleRemoveFolder()
 {
-    qDebug() << "folder should be removed!";
+    // reset the template view, so that we dont get NULL reference when the childs
+    // are removed
+    if(currentFolderIndex.isValid()) {
+        mTemplateModel->reset();
+
+        // remove the desired row
+        AbstractTreeItem *child = mFolderModel->itemFromIndex(currentFolderIndex);
+        QModelIndex parent = mFolderModel->indexFromItem(child->getParent());
+        mFolderModel->removeRow(currentFolderIndex.row(), parent);
+        // update views
+        mTemplateModel->layoutChanged();
+    }
 }
+
 
 void TemplateViewWidget::handleCopyFolder()
 {
@@ -218,27 +232,32 @@ void TemplateViewWidget::handlePasteFolder()
     // do we have something copied?
     if(currentFolder) {
 
+        // check if our folder currently has parent folder
+        if(!currentFolder->getFolderID().isEmpty()) {
+            FolderItem *currParent = globs::folderHash.value(currentFolder->getFolderID());
+            currParent->getFolderRoot()->removeChild(currentFolder);
+            currParent->removeChild(currentFolder);
+        } else {
+            mFolderModel->getRoot()->removeChild(currentFolder);
+        }
+
         // find out where to paste the folder
         if(currentFolderIndex.isValid()) {
             // first get the new folder parent
             FolderItem *parent =
                     static_cast<FolderItem*>(mFolderModel->itemFromIndex(currentFolderIndex));
 
-            // then check if our folder currently has one
-            if(!currentFolder->getFolderID().isEmpty()) {
-                FolderItem *currParent = globs::folderHash.value(currentFolder->getFolderID());
-                currParent->getFolderRoot()->removeChild(currentFolder);
-                currParent->removeChild(currentFolder);
-            }
-
             // add a new sub folder
             currentFolder->setFolderID(parent->getID()); // set its parent folder id
             parent->getFolderRoot()->addChild(currentFolder); // add to thumb view
             parent->addChild(currentFolder); // add to folder view
+        } else {
+            currentFolder->setFolderID("");
+            mFolderModel->getRoot()->addChild(currentFolder);
         }
-
     }
 
+    currentFolder = NULL;
     // update the folder view
     mFolderModel->layoutChanged();
 }

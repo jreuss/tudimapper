@@ -18,7 +18,11 @@ ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &
 
 ItemTemplate::~ItemTemplate()
 {
-
+    //    delete mScene;
+    //    delete mSplitScene;
+    //    delete mAnimation;
+    //    delete mPixmap;
+    //    delete mPixmapItem;
 }
 
 void ItemTemplate::setName(const QString &name)

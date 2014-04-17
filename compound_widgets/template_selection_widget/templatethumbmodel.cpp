@@ -144,6 +144,13 @@ QStringList TemplateThumbModel::mimeTypes() const
     return types;
 }
 
+void AbstractTreeModel::reset()
+{
+    beginResetModel();
+    mRoot = NULL;
+    endResetModel();
+}
+
 QMimeData *TemplateThumbModel::mimeData(const QModelIndexList &indexes) const
 {
     QMimeData *mimeData = new QMimeData();
@@ -169,7 +176,9 @@ bool TemplateThumbModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
     Q_UNUSED(column);
 
     AbstractTreeItem *itmParent = itemFromIndex(parent);
+
     if(itmParent->getItemType() == AbstractTreeItem::FolderType) {
+
         QByteArray encodedData = data->data("application/vnd.text.list");
         QDataStream stream(&encodedData, QIODevice::ReadOnly);
         QStringList dragSelection;
