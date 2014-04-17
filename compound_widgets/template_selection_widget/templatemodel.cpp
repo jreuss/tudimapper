@@ -38,11 +38,14 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
                 return folderIcon;
             } else {
 
-             QPixmap icon = *item->pixmap();
-             icon.scaledToHeight(100);
-             return QPixmap(icon);
+
+             return QPixmap( *item->pixmap());
             }
 
+        }
+        if(role == Qt::TextAlignmentRole) {
+            return static_cast<int>(Qt::AlignVCenter |
+                                    Qt::AlignLeft);
         }
 
     }
