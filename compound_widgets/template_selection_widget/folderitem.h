@@ -8,9 +8,12 @@
 
 class FolderItem : public AbstractTreeItem
 {
+
 public:
     FolderItem(AbstractTreeItem *parent = 0);
     FolderItem(const QString& name, AbstractTreeItem *parent = 0);
+
+    ~FolderItem();
 
     QString getName() const;
     void setName(const QString &value);

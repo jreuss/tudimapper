@@ -16,6 +16,13 @@ FolderItem::FolderItem(const QString &name, AbstractTreeItem *parent) : Abstract
     mItemType = AbstractTreeItem::FolderType;
 }
 
+FolderItem::~FolderItem()
+{
+    qDebug() << "bip bip, destroying... bip bip: " << mName;
+    //static_cast<FolderItem*>(mParent)->getFolderRoot()->removeChild(this);
+    delete mFolderRoot;
+}
+
 QString FolderItem::getName() const
 {
     return mName;

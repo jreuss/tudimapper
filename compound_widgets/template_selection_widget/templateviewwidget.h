@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QHash>
 #include <QMenu>
+#include <QTimer>
 
 #include "thumbnailgridview.h"
 #include "delegates/templatedelegate.h"
@@ -33,10 +34,12 @@ public:
     void createActions();
     ~TemplateViewWidget();
     void addTemplates(ItemTemplate *templateRoot);
+    void moveFolder(FolderItem* src, FolderItem* dst);
 
 public slots:
     void handleFolderSelectionChanged(QModelIndex);
-    void handleOnItemDropped(QStringList, AbstractTreeItem*);
+    void handleOnTemplateDropped(QStringList, AbstractTreeItem*);
+    void handleOnFolderDropped(QStringList, AbstractTreeItem*);
 
     // folderview contextmenu handlers
     void handleCustomContextMenu(const QPoint &);
@@ -44,9 +47,7 @@ public slots:
     void handleRemoveFolder();
     void handleCopyFolder();
     void handlePasteFolder();
-protected:
-    void dropEvent(QDropEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
+
 private:
     QModelIndex currentFolderIndex;
     FolderItem *currentFolder;
@@ -58,8 +59,6 @@ private:
     ThumbnailGridView *mTiledListView;
     QHBoxLayout *mLayout;
     QSplitter *splitter;
-//    QHash<QString, ItemTemplate *> templateHash;
-//    QHash<QString, FolderItem *> folderHash;
 };
 
 #endif // TEMPLATEVIEWWIDGET_H

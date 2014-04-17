@@ -5,9 +5,11 @@
 #include "folderitem.h"
 #include <QIcon>
 #include <QStringList>
+#include <QMimeData>
 
 class TemplateFolderViewModel : public AbstractTreeModel
 {
+    Q_OBJECT
 public:
     TemplateFolderViewModel(const int &treeDepth, QObject *parent = 0);
 
@@ -19,6 +21,15 @@ public:
     QIcon getFolderIcon() const;
     void setFolderIcon(const QIcon &value);
 
+    Qt::DropActions supportedDropActions() const;
+    Qt::DropActions supportedDragActions() const;
+
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+    QStringList mimeTypes() const;
+
+signals:
+    void onItemDropped(QStringList, AbstractTreeItem*);
 private:
     QIcon mFolderIcon;
 };

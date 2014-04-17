@@ -24,6 +24,9 @@ public:
        { return false;}
 
     AbstractTreeItem *itemFromIndex(const QModelIndex &index) const;
+    QModelIndex indexFromItem(AbstractTreeItem *itm);
+
+    void reset();
 
     AbstractTreeItem *getRoot() const;
     void setRoot(AbstractTreeItem *value);

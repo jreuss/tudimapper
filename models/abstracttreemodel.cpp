@@ -106,12 +106,14 @@ QModelIndex AbstractTreeModel::parent(const QModelIndex &child) const
     /* we need the index of the childs parent, in it's parent
      * (:grandparents) child array */
     if(AbstractTreeItem *item = itemFromIndex (child)) {
-        if(AbstractTreeItem *parentItem = item->parent ()) {
+        if(AbstractTreeItem *parentItem = item->getParent ()) {
+
             if(parentItem == mRoot) {
                 return QModelIndex();
             }
+
             if(AbstractTreeItem *grandParentItem =
-                    parentItem->parent ()) {
+                    parentItem->getParent ()) {
                 int row = grandParentItem->rowOfChild (parentItem);
                 return createIndex(row, 0, parentItem);
             }
@@ -132,6 +134,17 @@ AbstractTreeItem *AbstractTreeModel::itemFromIndex(const QModelIndex &index) con
 
     return mRoot;
 }
+
+QModelIndex AbstractTreeModel::indexFromItem(AbstractTreeItem *itm)
+{
+    if( AbstractTreeItem *parentItem = itm->getParent()){
+        int row = parentItem->rowOfChild (itm);
+        return createIndex(row, 0, itm);
+    }
+
+    return QModelIndex();
+}
+
 AbstractTreeItem *AbstractTreeModel::getRoot() const
 {
     return mRoot;

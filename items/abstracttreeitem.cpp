@@ -8,12 +8,13 @@ AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent) : ID(QUuid::createU
 
 AbstractTreeItem::~AbstractTreeItem()
 {
+    qDebug() << "fisse";
     qDeleteAll(mChildren);
 
-    if(mParent!=NULL) {
-        int index = mParent->rowOfChild(this);
-        (void) mParent->takeChild(index);
-    }
+//    if(mParent!=NULL) {
+//        //int index = mParent->rowOfChild(this);
+//        mParent->removeChild(this);
+//    }
 }
 
 int AbstractTreeItem::childCount()
@@ -43,6 +44,7 @@ AbstractTreeItem *AbstractTreeItem::parent() const
 
 void AbstractTreeItem::removeChild(AbstractTreeItem *child)
 {
+
     int index = rowOfChild(child);
     qDebug() << index;
     mChildren.removeAt(index);
