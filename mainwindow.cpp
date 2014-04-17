@@ -21,24 +21,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::dropEvent(QDropEvent *event)
-{
-    QByteArray encodedData = event->mimeData()->data("application/vnd.text.list");
-    QDataStream stream(&encodedData, QIODevice::ReadOnly);
-    QString text;
-
-    while(!stream.atEnd()) {
-        QString text;
-        stream >> text;
-    }
-
-    qDebug() << text;
-}
-
-void MainWindow::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->accept();
-}
 
 void MainWindow::createConnections()
 {
@@ -58,20 +40,12 @@ void MainWindow::handleImportSpecial()
         //mImportDialog
         ImportDialog *diag = new ImportDialog(urls, this);
 
-        connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
-                this, SLOT(handleImportAccepted(ItemTemplate*)));
 
         diag->setModal(true);
         diag->exec();
 
-        disconnect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
-                   this, SLOT(handleImportAccepted(ItemTemplate*)));
 
         delete diag;
     }
 }
 
-void MainWindow::handleImportAccepted(ItemTemplate *item)
-{
-    ui->dockWidgetContents->addTemplates(item);
-}

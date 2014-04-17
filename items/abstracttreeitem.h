@@ -16,15 +16,14 @@ public:
     int rowOfChild(AbstractTreeItem *child) const;
     AbstractTreeItem *takeChild(int index);
     AbstractTreeItem *childAt(int index) const;
-    AbstractTreeItem *parent() const;
 
     void removeChild(AbstractTreeItem *child);
     void addChild(AbstractTreeItem *child);
 
-    AbstractTreeItem *getParent() const;
+    AbstractTreeItem *getParent();
     void setParent(AbstractTreeItem *value);
 
-    QList<AbstractTreeItem *> getChildren() const;
+    QList<AbstractTreeItem *> getChildren();
     void setChildren(const QList<AbstractTreeItem *> &value);
 
     void addChildren(QList<AbstractTreeItem *> children);

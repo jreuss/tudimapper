@@ -11,9 +11,6 @@
 #include <QHash>
 #include <QRectF>
 #include <QDebug>
-#include <QMouseEvent>
-#include <QDrag>
-#include <QMimeData>
 
 class ThumbnailGridView : public QAbstractItemView
 {
@@ -42,6 +39,8 @@ public:
     void setItemDimension(int mItemWidth, int mItemHeight, int itemPadding);
 
 protected slots:
+    void folderSelectionChanged(const QModelIndex &index);
+
     void dataChanged(const QModelIndex &topLeft,
                      const QModelIndex &bottomRight);
     void rowsInserted(const QModelIndex &parent, int start, int end);
@@ -78,6 +77,8 @@ private:
     mutable int mIdealHeight;
     mutable QHash<int, QRectF> mRectForRow;
     mutable bool mHashIsDirty;
+
+    QModelIndex displayIndex;
 };
 
 

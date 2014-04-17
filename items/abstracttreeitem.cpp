@@ -37,10 +37,6 @@ AbstractTreeItem *AbstractTreeItem::childAt(int index) const
     return mChildren.value(index);
 }
 
-AbstractTreeItem *AbstractTreeItem::parent() const
-{
-    return mParent;
-}
 
 void AbstractTreeItem::removeChild(AbstractTreeItem *child)
 {
@@ -56,7 +52,7 @@ void AbstractTreeItem::addChild(AbstractTreeItem *child)
     mChildren.append(child);
 }
 
-AbstractTreeItem *AbstractTreeItem::getParent() const
+AbstractTreeItem *AbstractTreeItem::getParent()
 {
     return mParent;
 }
@@ -65,7 +61,7 @@ void AbstractTreeItem::setParent(AbstractTreeItem *value)
 {
     mParent = value;
 }
-QList<AbstractTreeItem *> AbstractTreeItem::getChildren() const
+QList<AbstractTreeItem *> AbstractTreeItem::getChildren()
 {
     return mChildren;
 }

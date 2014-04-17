@@ -27,7 +27,7 @@ public:
      * ====================================*/
 
     enum ImportType {
-        None, Single, Group, SpriteSheet, Decorator
+        None, Single, Group, SpriteSheet, Split, Folder
     };
 
     /* ======================================
@@ -35,7 +35,7 @@ public:
      * ====================================*/
 
     ItemTemplate(const QString &name=QString(), const ItemTemplate::ImportType
-                   &type=None, ItemTemplate *parent=0);
+                   &type=None, AbstractTreeItem *parent=0);
 
     ~ItemTemplate();
 

@@ -40,13 +40,11 @@ SOURCES += main.cpp\
     compound_widgets/sprite_widget/spritewidget.cpp \
     items/itemtemplate.cpp \
     delegates/templatedelegate.cpp \
-    compound_widgets/template_selection_widget/thumbnailgridview.cpp \
-    compound_widgets/template_selection_widget/templateviewwidget.cpp \
-    compound_widgets/template_selection_widget/templatefolderviewmodel.cpp \
-    compound_widgets/template_selection_widget/folderitem.cpp \
-    compound_widgets/template_selection_widget/templatethumbmodel.cpp \
     compound_widgets/split_widget/splitwidget.cpp \
-    utility/globals.cpp
+    compound_widgets/template_selection_widget/templatefolderwidget.cpp \
+    compound_widgets/template_selection_widget/folderproxy.cpp \
+    compound_widgets/template_selection_widget/thumbnailgridview.cpp \
+    compound_widgets/template_selection_widget/templatemodel.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -76,20 +74,18 @@ HEADERS  += mainwindow.h \
     compound_widgets/sprite_widget/animationtreeitemmodel.h \
     items/itemtemplate.h \
     delegates/templatedelegate.h \
-    compound_widgets/template_selection_widget/thumbnailgridview.h \
-    compound_widgets/template_selection_widget/templateviewwidget.h \
-    compound_widgets/template_selection_widget/templatefolderviewmodel.h \
-    compound_widgets/template_selection_widget/folderitem.h \
-    compound_widgets/template_selection_widget/templatethumbmodel.h \
     compound_widgets/split_widget/splitwidget.h \
-    utility/globals.h
+    compound_widgets/template_selection_widget/templatefolderwidget.h \
+    compound_widgets/template_selection_widget/folderproxy.h \
+    compound_widgets/template_selection_widget/thumbnailgridview.h \
+    compound_widgets/template_selection_widget/templatemodel.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
     compound_widgets/collider_widget/colliderwidget.ui \
     compound_widgets/sprite_widget/spritewidget.ui \
-    compound_widgets/template_selection_widget/templateviewwidget.ui \
-    compound_widgets/split_widget/splitwidget.ui
+    compound_widgets/split_widget/splitwidget.ui \
+    compound_widgets/template_selection_widget/templatefolderwidget.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

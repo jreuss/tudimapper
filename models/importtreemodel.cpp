@@ -51,8 +51,6 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
                    return tr("Group");
                case ItemTemplate::SpriteSheet:
                    return tr("SpriteSheet");
-               case ItemTemplate::Decorator:
-                   return tr("Decorator");
                default:
                    return QVariant();
                }

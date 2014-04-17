@@ -21,13 +21,8 @@ public:
     void createConnections();
     ~MainWindow();
 
-protected:
-    void dropEvent(QDropEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-
 public slots:
     void handleImportSpecial();
-    void handleImportAccepted(ItemTemplate *);
 
 private:
     FileManager mFileManager;

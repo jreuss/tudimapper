@@ -51,7 +51,7 @@
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="TemplateViewWidget" name="dockWidgetContents"/>
+   <widget class="TemplateFolderWidget" name="dockWidgetContents"/>
   </widget>
   <action name="actionImportSpecial">
    <property name="text">
@@ -67,9 +67,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>TemplateViewWidget</class>
+   <class>TemplateFolderWidget</class>
    <extends>QWidget</extends>
-   <header location="global">compound_widgets/template_selection_widget/templateviewwidget.h</header>
+   <header>compound_widgets/template_selection_widget/templatefolderwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

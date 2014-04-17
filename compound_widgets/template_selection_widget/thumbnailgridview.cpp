@@ -37,7 +37,8 @@ void ThumbnailGridView::calculateRectsIfNecessary() const
         return;
 
     const int MaxWidth = viewport()->width();
-    const int rowCount = model()->rowCount(rootIndex());
+    const int rowCount = model()->rowCount(displayIndex/*rootIndex()*/);
+
     int x = 5;
     int y = 5;
 
@@ -132,7 +133,7 @@ QModelIndex ThumbnailGridView::indexAt(const QPoint &point_) const
     while (i.hasNext()) {
         i.next();
         if (i.value().contains(point))
-            return model()->index(i.key(), 0, rootIndex());
+            return model()->index(i.key(), 0, displayIndex/*rootIndex()*/);
     }
     return QModelIndex();
 }
@@ -151,6 +152,7 @@ void ThumbnailGridView::rowsInserted(const QModelIndex &parent, int start,
 {
     mHashIsDirty = true;
     QAbstractItemView::rowsInserted(parent, start, end);
+    viewport()->update();
 }
 
 
@@ -159,6 +161,7 @@ void ThumbnailGridView::rowsAboutToBeRemoved(const QModelIndex &parent,
 {
     mHashIsDirty = true;
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
+    viewport()->update();
 }
 
 QModelIndex ThumbnailGridView::moveCursor(
@@ -167,7 +170,7 @@ QModelIndex ThumbnailGridView::moveCursor(
 {
     QModelIndex index = currentIndex();
     if (index.isValid()) {
-
+        qDebug() << "got a valid index in my ass!";
         if ((cursorAction == MoveLeft && index.row() > 0) ||
                 (cursorAction == MoveRight &&
                  index.row() + 1 < model()->rowCount())) {
@@ -214,7 +217,7 @@ void ThumbnailGridView::setSelection(const QRect &rect,
     calculateRectsIfNecessary();
 
     QHashIterator<int, QRectF> i(mRectForRow);
-    int firstRow = model()->rowCount();
+    int firstRow = model()->rowCount(displayIndex);
     int lastRow = -1;
 
     while (i.hasNext()) {
@@ -224,10 +227,10 @@ void ThumbnailGridView::setSelection(const QRect &rect,
             lastRow = lastRow > i.key() ? lastRow : i.key();
         }
     }
-    if (firstRow != model()->rowCount() && lastRow != -1) {
+    if (firstRow != model()->rowCount(displayIndex/*rootIndex()*/) && lastRow != -1) {
         QItemSelection selection(
-                    model()->index(firstRow, 0, rootIndex()),
-                    model()->index(lastRow, 0, rootIndex()));
+                    model()->index(firstRow, 0, displayIndex/*rootIndex()*/),
+                    model()->index(lastRow, 0, displayIndex/*rootIndex()*/));
         selectionModel()->select(selection, flags);
     }
     else {
@@ -246,7 +249,7 @@ QRegion ThumbnailGridView::visualRegionForSelection(
             for (int column = range.left(); column < range.right();
                  ++column) {
                 QModelIndex index = model()->index(row, column,
-                                                   rootIndex());
+                                                   displayIndex/*rootIndex()*/);
                 region += visualRect(index);
             }
         }
@@ -261,9 +264,9 @@ void ThumbnailGridView::paintEvent(QPaintEvent*)
     painter.setRenderHints(QPainter::Antialiasing|
                            QPainter::TextAntialiasing);
 
-    for (int row = 0; row < model()->rowCount(rootIndex()); ++row) {
+    for (int row = 0; row < model()->rowCount(displayIndex/*rootIndex()*/); ++row) {
 
-        QModelIndex index = model()->index(row, 0, rootIndex());
+        QModelIndex index = model()->index(row, 0, displayIndex/*rootIndex()*/);
         QRectF rect = viewportRectForRow(row);
 
         if (!rect.isValid() || rect.bottom() < 0 ||
@@ -318,6 +321,14 @@ void ThumbnailGridView::setItemDimension(int itemWidth, int itemHeight, int item
     mPadding = itemPadding;
 }
 
+void ThumbnailGridView::folderSelectionChanged(const QModelIndex &index)
+{
+    displayIndex = index;
+    mHashIsDirty = true;
+    calculateRectsIfNecessary();
+    updateGeometries();
+}
+
 int ThumbnailGridView::getItemWidth() const
 {
     return mItemWidth;
@@ -365,5 +376,4 @@ void ThumbnailGridView::mousePressEvent(QMouseEvent *event)
     QAbstractItemView::mousePressEvent(event);
     // setCurrentIndex(indexAt(event->pos()));
 }
-
 
