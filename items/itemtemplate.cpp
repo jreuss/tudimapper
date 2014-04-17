@@ -3,10 +3,9 @@
 
 ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &type,
                                AbstractTreeItem *parent) : AbstractTreeItem(parent)
-{    if(parent) {
+{    /*if(parent) {
             parent->addChild (this);
-       }
-
+       }*/
 
     mAnimation = NULL;
     mName = name;

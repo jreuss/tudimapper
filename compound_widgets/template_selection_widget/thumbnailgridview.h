@@ -42,7 +42,8 @@ protected slots:
     void folderSelectionChanged(const QModelIndex &index);
 
     void dataChanged(const QModelIndex &topLeft,
-                     const QModelIndex &bottomRight);
+                     const QModelIndex &bottomRight
+                     );
     void rowsInserted(const QModelIndex &parent, int start, int end);
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start,
                               int end);

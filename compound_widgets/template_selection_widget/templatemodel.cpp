@@ -2,7 +2,7 @@
 
 TemplateModel::TemplateModel(int treeDepth) : AbstractTreeModel(treeDepth)
 {
-    folderIcon = QPixmap(":/icons/folder");
+    folderIcon = QIcon(QPixmap(":/icons/folder"));
 }
 
 Qt::ItemFlags TemplateModel::flags(const QModelIndex &index) const
@@ -21,30 +21,30 @@ Qt::ItemFlags TemplateModel::flags(const QModelIndex &index) const
 
 QVariant TemplateModel::data(const QModelIndex &index, int role) const
 {
-    //if(ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index))) {
+    if(ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index))) {
 
-//        // set data
-//        if(role == Qt::DisplayRole || role == Qt::EditRole) {
-//            if(index.column() == 0){
-//                return item->name();
-//            } else if (index.column() == 1) {
-//                return item->importType() == ItemTemplate::Folder ? "" : "template";
-//            }
-//        }
-
-////        if(role == Qt::DecorationRole &&
-////                index.column () == 0) {
-////            return item->importType() == ItemTemplate::Folder ? folderIcon : folderIcon;
-////        }
-//    }
-        if(index.isValid() && role == Qt::DisplayRole) {
-
-            ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index));
+        // set data
+        if(role == Qt::DisplayRole || role == Qt::EditRole) {
             if(index.column() == 0){
                 return item->name();
+            } else if (index.column() == 1) {
+                return item->importType() == ItemTemplate::Folder ? "" : "template";
             }
-
         }
+
+        if(role == Qt::DecorationRole &&
+                index.column () == 0) {
+            return item->importType() == ItemTemplate::Folder ? folderIcon : folderIcon;
+        }
+    }
+//        if(index.isValid() && role == Qt::DisplayRole) {
+
+//            ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index));
+//            if(index.column() == 0){
+//                return item->name();
+//            }
+
+//        }
         return QVariant();
     //}
 

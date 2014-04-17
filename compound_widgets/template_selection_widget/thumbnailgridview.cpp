@@ -140,10 +140,12 @@ QModelIndex ThumbnailGridView::indexAt(const QPoint &point_) const
 
 
 void ThumbnailGridView::dataChanged(const QModelIndex &topLeft,
-                                    const QModelIndex &bottomRight)
+                                    const QModelIndex &bottomRight
+                                    )
 {
     mHashIsDirty = true;
     QAbstractItemView::dataChanged(topLeft, bottomRight);
+    //viewport()->update();
 }
 
 

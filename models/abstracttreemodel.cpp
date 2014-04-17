@@ -16,7 +16,7 @@ QModelIndex AbstractTreeModel::index(int row, int column, const QModelIndex &par
 {
     if(hasIndex(row, column, parent)) {
         AbstractTreeItem *parentItem = itemFromIndex(parent);
-        AbstractTreeItem *childItem = parentItem->getChildren().at(row);
+        AbstractTreeItem *childItem = parentItem->mChildren.at(row);
         return createIndex(row, column, childItem);
     }
     return QModelIndex();
@@ -25,7 +25,7 @@ QModelIndex AbstractTreeModel::index(int row, int column, const QModelIndex &par
 QModelIndex AbstractTreeModel::parent(const QModelIndex &child) const
 {
     AbstractTreeItem *childItem = itemFromIndex(child);
-    AbstractTreeItem *parentItem = childItem->getParent();
+    AbstractTreeItem *parentItem = childItem->mParent;
 
     if(parentItem == mRoot) {
         return QModelIndex();
@@ -39,7 +39,7 @@ QModelIndex AbstractTreeModel::parent(const QModelIndex &child) const
 int AbstractTreeModel::rowCount(const QModelIndex &parent) const
 {
     AbstractTreeItem *parentItem = itemFromIndex(parent);
-    return parentItem ? parentItem->getChildren().count() : 0;
+    return parentItem ? parentItem->mChildren.count() : 0;
 }
 
 int AbstractTreeModel::columnCount(const QModelIndex &parent) const
@@ -58,13 +58,13 @@ AbstractTreeItem *AbstractTreeModel::itemFromIndex(const QModelIndex &index) con
 
 int AbstractTreeModel::rowForItem(AbstractTreeItem *item) const
 {
-    return item->getParent()->getChildren().indexOf(item);
+    return item->mParent->mChildren.indexOf(item);
 }
 
 QModelIndex AbstractTreeModel::indexFromItem(AbstractTreeItem *item) const
 {
-    if(item->getParent()) {
-        int row = item->getParent()->getChildren().indexOf(item);
+    if(item->mParent) {
+        int row = item->mParent->mChildren.indexOf(item);
 
         if(row != -1) {
             return createIndex(row, 0, item);
@@ -92,37 +92,40 @@ void AbstractTreeModel::insertItem(int i, AbstractTreeItem *parentItem, Abstract
     int lastRow = i;
 
     beginInsertRows(parent, firstRow, lastRow);
-    parentItem->getChildren().insert(i, item);
-    item->setParent(parentItem);
+    parentItem->mChildren.insert(i, item);
+    item->mParent = parentItem;
     childCount++;
     endInsertRows();
+    qDebug() << parentItem->mChildren.count();
 }
 
 void AbstractTreeModel::insertItem(QModelIndex parentIndex, AbstractTreeItem *item)
 {
     AbstractTreeItem *parentItem = itemFromIndex(parentIndex);
 
-    int firstRow = parentItem->getChildren().count();
+    int firstRow = parentItem->mChildren.count();
     int lastRow = firstRow;
 
     beginInsertRows(parentIndex, firstRow, lastRow);
-    parentItem->getChildren().append(item);
-    item->setParent(parentItem);
+    parentItem->mChildren.append(item);
+    item->mParent = parentItem;
     childCount++;
     endInsertRows();
 }
 
 void AbstractTreeModel::removeItem(AbstractTreeItem *item)
 {
-    AbstractTreeItem *parentItem = item->getParent();
+    AbstractTreeItem *parentItem = item->mParent;
     const QModelIndex parentIndex = indexFromItem(parentItem);
-
+    foreach(AbstractTreeItem *child, item->mChildren){
+        removeItem(indexFromItem(child));
+    }
     int i = rowForItem(item);
     int firstRow = i;
     int lastRow = i;
 
     beginRemoveRows(parentIndex, firstRow, lastRow);
-    delete parentItem->getChildren().takeAt(i);
+    delete parentItem->mChildren.takeAt(i);
     childCount--;
     endRemoveRows();
 }
@@ -130,39 +133,41 @@ void AbstractTreeModel::removeItem(AbstractTreeItem *item)
 void AbstractTreeModel::removeItem(const QModelIndex &index)
 {
     AbstractTreeItem *itemToRemove = itemFromIndex(index);
+    foreach(AbstractTreeItem *child, itemToRemove->mChildren){
+        removeItem(indexFromItem(child));
+    }
 
-    if(itemToRemove->getParent()) {
-        AbstractTreeItem *parentItem = itemToRemove->getParent();
+    if(itemToRemove->mParent) {
+        AbstractTreeItem *parentItem = itemToRemove->mParent;
         QModelIndex parentIndex = indexFromItem(parentItem);
 
-        int i = parentItem->getChildren().indexOf(itemToRemove);
+        int i = parentItem->mChildren.indexOf(itemToRemove);
         int firstRow = i;
         int lastRow = i;
 
         beginRemoveRows(parentIndex, firstRow, lastRow);
-        delete parentItem->getChildren().takeAt(i);
+        delete parentItem->mChildren.takeAt(i);
         childCount--;
         endRemoveRows();
     } else {
-        int i = mRoot->getChildren().indexOf(itemToRemove);
+        int i = mRoot->mChildren.indexOf(itemToRemove);
 
         if(i != -1) {
             int firstRow = i;
             int lastRow = i;
 
             beginRemoveRows(QModelIndex(), firstRow, lastRow);
-            delete mRoot->getChildren().takeAt(i);
+            mRoot->mChildren.takeAt(i);
             childCount--;
             endRemoveRows();
         }
     }
-
 }
 
 void AbstractTreeModel::removeAllItems()
 {
     beginResetModel();
-    mRoot->getChildren().clear();
+    mRoot->mChildren.clear();
     resetInternalData();
     endResetModel();
 }

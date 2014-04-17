@@ -36,12 +36,17 @@ public:
     QString getFolderID() const;
     void setFolderID(const QString &value);
 
-protected:
+    QString name() const;
+    void setName(const QString &value);
+
     AbstractTreeItem *mParent;
     QList<AbstractTreeItem *> mChildren;
+protected:
+
+
     itemType mItemType;
-    const QString ID;
-    QString mFolderID;
+    //const QString ID;
+    QString mName;
 
 };
 

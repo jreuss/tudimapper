@@ -17,7 +17,7 @@ public:
 
     QVariant headerData (int section, Qt::Orientation orientation, int role) const;
 
-    QPixmap folderIcon;
+    QIcon folderIcon;
 };
 
 #endif // TEMPLATEMODEL_H

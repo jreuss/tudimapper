@@ -23,6 +23,7 @@ public:
 
     AbstractTreeItem *itemFromIndex(const QModelIndex &index) const;
     QModelIndex indexFromItem(AbstractTreeItem *item) const;
+
     void insertItem(int i, AbstractTreeItem *parentItem,
                     AbstractTreeItem *item);
     void insertItem(QModelIndex parentIndex,

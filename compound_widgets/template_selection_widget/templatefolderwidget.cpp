@@ -16,10 +16,11 @@ TemplateFolderWidget::TemplateFolderWidget(QWidget *parent) :
     folderProxy = new FolderProxy();
     folderProxy->setSourceModel(model);
     folderView->setContextMenuPolicy(Qt::CustomContextMenu);
-    folderView->hideColumn(1);
+
 
     thumbView->setModel(model);
     folderView->setModel(folderProxy);
+    folderView->hideColumn(1);
 
     hLayout->addWidget(folderView);
     hLayout->addWidget(thumbView);
@@ -61,13 +62,14 @@ void TemplateFolderWidget::createActions()
 
 void TemplateFolderWidget::handleAddFolderAction()
 {
-    ItemTemplate *item = new ItemTemplate("Name", ItemTemplate::Folder, model->getRoot());
+    ItemTemplate *item = new ItemTemplate("New Folder",ItemTemplate::Folder,model->getRoot());
 
     if(currentModelIndex.isValid()) {
         model->insertItem(currentModelIndex, item);
     } else {
         model->insertItem(model->getRoot()->getChildren().count(), model->getRoot(), item);
     }
+    //qDebug() << item->getParent()->
 
     // bad logic
     thumbView->forceUpdate();
@@ -76,7 +78,7 @@ void TemplateFolderWidget::handleAddFolderAction()
 void TemplateFolderWidget::handleAddTemplateAction()
 {
     if(currentModelIndex.isValid()) {
-        ItemTemplate *item = new ItemTemplate("Name", ItemTemplate::Folder, model->getRoot());
+         ItemTemplate *item = new ItemTemplate("New Folder",ItemTemplate::Single,model->getRoot());
         model->insertItem(currentModelIndex, item);
     }
     thumbView->forceUpdate();
@@ -84,9 +86,12 @@ void TemplateFolderWidget::handleAddTemplateAction()
 
 void TemplateFolderWidget::handleRemoveAction()
 {
+
     if(currentModelIndex.isValid()) {
         model->removeItem(currentModelIndex);
     }
+    thumbView->forceUpdate();
+
 }
 
 void TemplateFolderWidget::handleContextMenuRequested(QPoint position)

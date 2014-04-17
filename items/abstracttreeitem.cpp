@@ -1,20 +1,19 @@
 #include "abstracttreeitem.h"
 
-AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent) : ID(QUuid::createUuid().toString())
+AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
 {
+      qDebug() << "fisse";
      mParent = parent;
+     mName = "test" + QString::number(qrand()%100);
      mItemType = AbstractTreeItem::TemplateType;
 }
 
 AbstractTreeItem::~AbstractTreeItem()
 {
-    qDebug() << "fisse";
-    qDeleteAll(mChildren);
+    qDebug() << "IAM DELETED";
+   //This is now Done in the removeitem in the model
+    //qDeleteAll(mChildren);
 
-//    if(mParent!=NULL) {
-//        //int index = mParent->rowOfChild(this);
-//        mParent->removeChild(this);
-//    }
 }
 
 int AbstractTreeItem::childCount()
@@ -89,19 +88,17 @@ void AbstractTreeItem::setItemType(const AbstractTreeItem::itemType &value)
     mItemType = value;
 }
 
-QString AbstractTreeItem::getID() const
+
+QString AbstractTreeItem::name() const
 {
-    return ID;
-}
-QString AbstractTreeItem::getFolderID() const
-{
-    return mFolderID;
+    return mName;
 }
 
-void AbstractTreeItem::setFolderID(const QString &value)
+void AbstractTreeItem::setName(const QString &value)
 {
-    mFolderID = value;
+    mName = value;
 }
+
 
 
 
