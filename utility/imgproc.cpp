@@ -138,42 +138,6 @@ QList<ItemTemplate*> ImgProc::splitImageAndRemoveDuplicates(std::vector<std::vec
         }
         keepers.append(currentKeeper);
     }
-//    cv::Mat tmpImg;
-//    cv::Rect ROI;
-//    std::vector< std::vector<cv::Point> > currentContour;
-//    QList <ItemTemplate*> templates;
-//    ItemTemplate* currentTemplate;
-//    foreach(unsigned x, keepers){
-//        ROI = cv::boundingRect(contours.at(x));
-//        currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(x));
-
-//        // CV_FILLED fills the connected components found
-//        cv::Mat crop;
-//        cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
-//        cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
-//        img.copyTo(crop,mask);
-//        tmpImg = crop(ROI);
-//        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
-//        currentTemplate = new ItemTemplate("blabla",ItemTemplate::Single);
-//        currentTemplate->setImage(toQImage(tmpImg));
-//        currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
-//        currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
-//        currentTemplate->setPixmap (new QPixmap(
-//                                        QPixmap::fromImage(currentTemplate->image ())));
-
-//        currentTemplate->setPixmapItem(new QGraphicsPixmapItem(*currentTemplate->pixmap()));
-
-//        currentTemplate->calculateSceneRect();
-
-//        QBrush brush;
-//        brush.setTextureImage(QImage(":/images/checkerboard"));
-
-//        currentTemplate->scene ()->setBackgroundBrush(brush);
-//        currentTemplate->scene()->addItem( currentTemplate->getPixmapItem());
-//        currentTemplate->setIcon (QIcon(*currentTemplate->pixmap()));
-
-//        templates.append(currentTemplate);
-//    }
     return (getSplitTemplates(keepers,img,contours));
 }
 
@@ -181,7 +145,7 @@ QList<ItemTemplate *> ImgProc::splitImage(std::vector<std::vector<cv::Point> > c
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
     QList<unsigned> keepers;
-    for(int i = 0; i < contours.size();i++)
+    for(unsigned i = 0; i < contours.size();i++)
     {
         keepers.append(i);
     }
@@ -199,7 +163,7 @@ QList<ItemTemplate *> ImgProc::getSplitTemplates(QList<unsigned> indexes, cv::Ma
     ItemTemplate* currentTemplate;
     cv::Mat tmpImg;
     std::vector< std::vector<cv::Point> > currentContour;
-    for(unsigned i = 0; i< indexes.size();i++){
+    for(int i = 0; i< indexes.size();i++){
 
         ROI = cv::boundingRect(contours.at(indexes.at(i)));
         currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(indexes.at(i)));
@@ -234,13 +198,13 @@ QList<ItemTemplate *> ImgProc::getSplitTemplates(QList<unsigned> indexes, cv::Ma
 }
 
 
-QPair<QList<ItemTemplate *>, QGraphicsScene*>  ImgProc::splitAndAddToScene(
+QList<ItemTemplate *>  ImgProc::splitAndAddToScene(
         std::vector<std::vector<cv::Point> > contours,
         const QString &path, QGraphicsScene *baseScene)
 {
     cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
     QList<unsigned> keepers;
-    for(int i = 0; i < contours.size();i++)
+    for(unsigned i = 0; i < contours.size();i++)
     {
         keepers.append(i);
     }
@@ -251,20 +215,56 @@ QPair<QList<ItemTemplate *>, QGraphicsScene*>  ImgProc::splitAndAddToScene(
 
 }
 
-QPair<QList<ItemTemplate *>, QGraphicsScene*>  ImgProc::getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
-                                        cv::Mat img,
-                                        std::vector<std::vector<cv::Point> > contours,
-                                        QGraphicsScene *baseScene)
+QList<ItemTemplate *> ImgProc::splitImageAndRemoveDuplicatesAddToScene(
+        std::vector<std::vector<cv::Point> > contours,
+        const QString &path,
+        float shapeTresh, QList<QList<unsigned> > colorMatches,
+        QGraphicsScene *baseScene)
+{
+    cv::Mat img = cv::imread(path.toStdString(), cv::IMREAD_UNCHANGED);
+    QList<QList<unsigned> > matches = get_shapeMatchesFromColorMatches(contours,
+                                                                       shapeTresh,
+                                                                       colorMatches);
+
+
+    QList<QPair<unsigned, QList<unsigned> > > biggestAndMatches;
+    unsigned biggest;
+    int biggestSize;
+    int tmpSize;
+
+    for(int i=0; i < matches.size(); i++){
+        QList<unsigned> list = matches.at(i);
+        biggestSize = cv::minAreaRect(contours.at(list.at(0))).size.area();
+        biggest=list.at(0);
+        if(list.size() > 1){
+            for(int j = 1; j < list.size();j++){
+                tmpSize = cv::minAreaRect(contours.at(list.at(j))).size.area();
+                if( tmpSize > biggestSize){
+                    biggestSize = tmpSize;
+                    biggest = list.at(j);
+                }
+            }
+        }
+        biggestAndMatches.append(QPair<unsigned, QList<unsigned> >(biggest,list));
+    }
+    return (getSplitAndRemoveAddToSceneTemplates(biggestAndMatches,img,contours, baseScene));
+}
+
+
+
+QList<ItemTemplate *>  ImgProc::getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
+                                                               cv::Mat img,
+                                                               std::vector<std::vector<cv::Point> > contours,
+                                                              QGraphicsScene *baseScene)
 {
     cv::Rect ROI;
     QList <ItemTemplate*> templates;
     ItemTemplate* currentTemplate;
     cv::Mat tmpImg;
     std::vector< std::vector<cv::Point> > currentContour;
-    QGraphicsScene *parentScene = new QGraphicsScene;
     baseScene->clear();
 
-    for(unsigned i = 0; i< indexes.size();i++){
+    for(int i = 0; i< indexes.size();i++){
 
         ROI = cv::boundingRect(contours.at(indexes.at(i)));
         currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(indexes.at(i)));
@@ -302,7 +302,111 @@ QPair<QList<ItemTemplate *>, QGraphicsScene*>  ImgProc::getSplitAndAddToSceneTem
         imageForParentScene->setFlag(QGraphicsItem::ItemIsMovable);
         imageForParentScene->setPos(ROI.x,ROI.y);
     }
-    return QPair<QList<ItemTemplate *>, QGraphicsScene*>(templates,parentScene);
+    return templates;
+}
+
+QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<unsigned, QList<unsigned> > > biggestAndMatches, cv::Mat img, std::vector<std::vector<cv::Point> > contours, QGraphicsScene *baseScene)
+{
+    cv::Rect ROI;
+    QList <ItemTemplate*> templates;
+    ItemTemplate* currentTemplate;
+    cv::Mat tmpImg;
+    std::vector< std::vector<cv::Point> > currentContour;
+    unsigned currentBiggest;
+    QList <unsigned> currentMatches;
+    float rotation;
+    //float scale;
+
+    baseScene->clear();
+
+    for(int i = 0; i< biggestAndMatches.size();i++){
+        currentBiggest = biggestAndMatches.at(i).first;
+        currentMatches = biggestAndMatches.at(i).second;
+
+        qDebug() << "i " << i;
+        ROI = cv::boundingRect(contours.at(currentBiggest));
+        currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(currentBiggest));
+        qDebug() << "iam afterbiggest " << i;
+        cv::Mat crop;
+        cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
+        cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
+        img.copyTo(crop,mask);
+        tmpImg = crop(ROI);
+        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
+        currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
+        currentTemplate->setImage(toQImage(tmpImg));
+        currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
+        currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
+        currentTemplate->setPixmap (new QPixmap(
+                                        QPixmap::fromImage(currentTemplate->image ())));
+
+        currentTemplate->setPixmapItem(new QGraphicsPixmapItem(*currentTemplate->pixmap()));
+
+        currentTemplate->calculateSceneRect();
+
+        QBrush brush;
+        brush.setTextureImage(QImage(":/images/checkerboard"));
+
+        currentTemplate->scene ()->setBackgroundBrush(brush);
+        currentTemplate->scene()->addItem( currentTemplate->getPixmapItem());
+        currentTemplate->setIcon (QIcon(*currentTemplate->pixmap()));
+
+        templates.append(currentTemplate);
+
+        //float parentScale = float(cv::minAreaRect(currentContour.at(0)).size.area());
+        cv::Moments moment;
+        moment = cv::moments(currentContour.at(0),false);
+        //float parentRotation = 0.5*atan((2*moment.mu11)/(moment.mu20-moment.mu02))*(180/M_PI);
+       // qDebug() << parentRotation << " parentrotation";
+
+        cv::Rect matchROI;
+        cv::Mat matchRoiTmp;
+        for(int j = 0; j < currentMatches.size();j++){
+
+            QGraphicsPixmapItem* imageForParentScene = new QGraphicsPixmapItem(*currentTemplate->pixmap());
+            std::vector<cv::Point> currentMatchContour = contours.at(currentMatches.at(j));
+
+            cv::RotatedRect rect = cv::minAreaRect(currentMatchContour);
+            cv::Size rect_size = rect.size;
+            float angle = rect.angle;
+            if (rotation < -45.) {
+                rotation += 90.0;
+                //int tmpH = rect_size.height;
+                rect_size = cv::Size(rect_size.height,rect_size.width);
+                //swap(rect_size.width, rect_size.height);
+            };
+            cv::Mat M = cv::getRotationMatrix2D(rect.center, angle, 1);
+            cv::warpAffine(img,matchRoiTmp, M, img.size(), cv::INTER_CUBIC);
+            cv::Point pt(rect.center.x-(rect_size.width/2),rect.center.y-(rect_size.height/2));
+            matchROI = cv::Rect(pt, rect_size);
+            matchRoiTmp = matchRoiTmp(matchROI);
+
+           // cv::imshow("WINDOW", matchRoiTmp);
+            //scale =sqrt(float(cv::minAreaRect(currentMatchContour).size.area())/parentScale);
+            //scale = ceilf(scale * 100)/100;
+            // qDebug() << scale << " scale";
+
+
+            // moment = cv::moments(currentMatchContour,false);
+            // rotation = 0.5*atan((2*moment.mu11)/(moment.mu20-moment.mu02))*(180/M_PI);
+
+            if (rotation < -45.) {
+                rotation += 90.0;
+                //cv::swap(rect_size.width, rect_size.height);
+            }
+            //qDebug() << rotation << " rotation";
+            cv::Rect pos = cv::boundingRect(currentMatchContour);
+            baseScene->addItem(imageForParentScene);
+            imageForParentScene->setFlag(QGraphicsItem::ItemIsSelectable);
+            imageForParentScene->setFlag(QGraphicsItem::ItemIsMovable);
+            imageForParentScene->setPos(pos.x,pos.y);
+            imageForParentScene->setTransformOriginPoint(imageForParentScene->boundingRect().x(),
+                                                         imageForParentScene->boundingRect().y());
+            //imageForParentScene->setScale(scale);
+            imageForParentScene->setRotation(qreal(rotation));
+        }
+    }
+    return QList<ItemTemplate *>(templates);
 }
 
 
@@ -401,8 +505,8 @@ QList<QList<unsigned> > ImgProc::get_shapeMatchesFromColorMatches(std::vector<st
 
                     if(!ignore) {
                         double match = cv::matchShapes(contours[currentMatchList.at(i)],
-                                                       contours[currentMatchList.at(j)],
-                                                       CV_CONTOURS_MATCH_I2, 0);
+                                contours[currentMatchList.at(j)],
+                                CV_CONTOURS_MATCH_I2, 0);
 
                         if(match < shape_thress)
                         {
@@ -435,11 +539,11 @@ QList<QList<unsigned> > ImgProc::get_colorMatches(const double &color_tress,
     bool ignore = false;
 
     //Using 30 bins for hue and 32 for saturation
-    int h_bins = 30; int s_bins = 32;
+    int h_bins = 30; //int s_bins = 32;
     int histSize[] = { h_bins, h_bins,h_bins,h_bins };
     // hue varies from 0 to 256, saturation from 0 to 180
     float h_ranges[] = { 0, 256 };
-    float s_ranges[] = { 0, 180 };
+    // float s_ranges[] = { 0, 180 };
 
     const float* ranges[] = { h_ranges, h_ranges,h_ranges,h_ranges };
 

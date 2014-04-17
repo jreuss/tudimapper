@@ -183,13 +183,21 @@ void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, flo
 
 void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDuplicates, float shapeTres)
 {
-    QPair<QList<ItemTemplate*>, QGraphicsScene*> thePair;
+    QList<ItemTemplate*> templates;
+    if(removeDuplicates){
+        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
+        templates = mImgProc.splitImageAndRemoveDuplicatesAddToScene(item->contour(),item->path(),shapeTres,colorMaches,item->getSplitScene());
+        foreach(ItemTemplate *itm, templates){
+            item->addChild(itm);
+        }
+    } else {
 
 
-    thePair = mImgProc.splitAndAddToScene(item->contour(),item->path(),item->getSplitScene());
-    QList<ItemTemplate*> templates = thePair.first;
+    templates = mImgProc.splitAndAddToScene(item->contour(),item->path(),item->getSplitScene());
+
     foreach(ItemTemplate *itm, templates){
         item->addChild(itm);
+    }
     }
 
     //item->setSplitScene(thePair.second);

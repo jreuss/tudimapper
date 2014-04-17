@@ -55,12 +55,23 @@ public:
                                             cv::Mat img,
                                             std::vector<std::vector<cv::Point> > contours);
 
-    QPair<QList<ItemTemplate *>, QGraphicsScene*>  splitAndAddToScene(
+    QList<ItemTemplate *>  splitAndAddToScene(
             std::vector<std::vector<cv::Point> > contours,
             const QString &path,
             QGraphicsScene *baseScene);
 
-    QPair<QList<ItemTemplate *>, QGraphicsScene*>  getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
+    QList<ItemTemplate*> splitImageAndRemoveDuplicatesAddToScene(
+            std::vector<std::vector<cv::Point> > contours,
+            const QString &path,
+            float shapeTresh, QList<QList<unsigned> > colorMatches,
+            QGraphicsScene *baseScene);
+
+    QList<ItemTemplate *>  getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
+                                            cv::Mat img,
+                                            std::vector<std::vector<cv::Point> > contours,
+                                            QGraphicsScene *baseScene);
+
+    QList<ItemTemplate *>  getSplitAndRemoveAddToSceneTemplates(QList<QPair<unsigned, QList<unsigned> > > biggestAndMatches,
                                             cv::Mat img,
                                             std::vector<std::vector<cv::Point> > contours,
                                             QGraphicsScene *baseScene);
