@@ -1,17 +1,7 @@
 #ifndef SPRITEWIDGET_H
 #define SPRITEWIDGET_H
 
-#include <QWidget>
-#include <QDebug>
-#include <QFileDialog>
-#include <QGraphicsScene>
-#include <QTimer>
-#include <QImage>
-#include <QLayout>
-#include <QString>
-#include <QGraphicsDropShadowEffect>
-#include <QTableWidgetItem>
-
+#include "stable_pch.h"
 #include "animatedsprite.h"
 #include "animation.h"
 #include "animationssequence.h"

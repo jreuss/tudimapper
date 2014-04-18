@@ -1,10 +1,7 @@
 #ifndef TEMPLATEFOLDERWIDGET_H
 #define TEMPLATEFOLDERWIDGET_H
 
-#include <QWidget>
-#include <QHBoxLayout>
-#include <QMenu>
-#include <QTreeView>
+#include "stable_pch.h"
 #include "thumbnailgridview.h"
 #include "folderproxy.h"
 #include "templatemodel.h"

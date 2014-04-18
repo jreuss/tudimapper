@@ -1,16 +1,7 @@
 #ifndef MESHNODE_H
 #define MESHNODE_H
 
-#include <QGraphicsItem>
-#include <QColor>
-#include <QRectF>
-#include <QSize>
-#include <QPen>
-#include <QStyleOptionGraphicsItem>
-#include <QPainter>
-#include <QWidget>
-#include <QDebug>
-#include <QKeyEvent>
+#include "stable_pch.h"
 
 class MeshNode : public QGraphicsItem
 {

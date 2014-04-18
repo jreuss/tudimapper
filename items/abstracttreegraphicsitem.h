@@ -1,9 +1,7 @@
 #ifndef ABSTRACTTREEGRAPHICSITEM_H
 #define ABSTRACTTREEGRAPHICSITEM_H
 
-#include <QList>
-#include <QDebug>
-#include <QGraphicsItem>
+#include "stable_pch.h"
 
 class AbstractTreeGraphicsItem : public QGraphicsItem
 {

@@ -1,9 +1,7 @@
 #ifndef GRAPHICSGRIDITEM_H
 #define GRAPHICSGRIDITEM_H
 
-#include <QGraphicsItem>
-#include <QPainter>
-#include <QPen>
+#include "stable_pch.h"
 
 class GraphicsGridItem : public QGraphicsItem
 {

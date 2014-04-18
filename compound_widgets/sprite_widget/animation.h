@@ -1,8 +1,7 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include <QSize>
-#include <QPixmap>
+#include "stable_pch.h"
 #include "animatedsprite.h"
 #include "items/abstracttreeitem.h"
 

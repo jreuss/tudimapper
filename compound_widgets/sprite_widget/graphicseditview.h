@@ -1,10 +1,7 @@
 #ifndef GRAPHICSEDITVIEW_H
 #define GRAPHICSEDITVIEW_H
 
-#include <QGraphicsView>
-#include <QGridLayout>
-#include <QWidget>
-
+#include "stable_pch.h"
 #include "compound_widgets/ruler_widget/graphicsviewrulerwidget.h"
 
 class GraphicsEditView : public QGraphicsView

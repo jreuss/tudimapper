@@ -1,11 +1,7 @@
 #ifndef GRAPHICSVIEWRULERWIDGET_H
 #define GRAPHICSVIEWRULERWIDGET_H
 
-#include <QWidget>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QApplication>
+#include "stable_pch.h"
 
 class GraphicsViewRulerWidget : public QWidget
 {

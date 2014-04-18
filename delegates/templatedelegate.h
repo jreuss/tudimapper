@@ -1,10 +1,7 @@
 #ifndef SPINBOXDELEGATE_H
 #define SPINBOXDELEGATE_H
 
-#include <QStyledItemDelegate>
-#include <QDebug>
-#include <QPainter>
-#include <QLineEdit>
+#include "stable_pch.h"
 
 class TemplateDelegate : public QStyledItemDelegate
 {

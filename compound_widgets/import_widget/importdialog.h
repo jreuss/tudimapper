@@ -1,29 +1,7 @@
 #ifndef IMPORTDIALOG_H
 #define IMPORTDIALOG_H
 
-#include <QDialog>
-#include <QUrl>
-#include <QList>
-#include <QTreeWidgetItem>
-#include <QDebug>
-#include <QString>
-#include <QUuid>
-#include <QHash>
-#include <QGraphicsScene>
-#include <QImage>
-#include <QPixmap>
-#include <opencv2/core/core.hpp>
-#include <QGraphicsPixmapItem>
-#include <QBrush>
-#include <QDir>
-#include <QPropertyAnimation>
-#include <QRegExp>
-#include <QGraphicsItemGroup>
-#include <QGraphicsProxyWidget>
-#include <QGridLayout>
-#include <QLayout>
-#include <QToolBar>
-
+#include "stable_pch.h"
 #include "utility/imgproc.h"
 #include "models/importtreemodel.h"
 #include "items/itemtemplate.h"

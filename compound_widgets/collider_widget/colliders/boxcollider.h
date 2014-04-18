@@ -1,21 +1,7 @@
 #ifndef BOXCOLLIDER_H
 #define BOXCOLLIDER_H
 
-#include <QGraphicsItem>
-#include <QColor>
-#include <QRectF>
-#include <QSize>
-#include <QPen>
-#include <QStyleOptionGraphicsItem>
-#include <QPainter>
-#include <QWidget>
-#include <QDebug>
-#include <QVector2D>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneHoverEvent>
-#include <QtMath>
-#include <QTransform>
-
+#include "stable_pch.h"
 #include "collider.h"
 
 class BoxCollider : public Collider

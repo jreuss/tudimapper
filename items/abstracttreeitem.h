@@ -1,9 +1,7 @@
 #ifndef ABSTRACTTREEITEM_H
 #define ABSTRACTTREEITEM_H
 
-#include <QList>
-#include <QDebug>
-#include <QUuid>
+#include "stable_pch.h"
 
 class AbstractTreeItem
 {

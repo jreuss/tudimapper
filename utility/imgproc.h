@@ -1,18 +1,7 @@
 #ifndef IMGPROC_H
 #define IMGPROC_H
 
-#include <QString>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <QRect>
-#include <QImage>
-#include <QDebug>
-#include <QPair>
-#include <QList>
-#include <QPointF>
-#include <QGraphicsScene>
-
+#include "stable_pch.h"
 #include "items/itemtemplate.h"
 
 class ImgProc

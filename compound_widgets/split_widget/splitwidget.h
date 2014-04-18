@@ -1,8 +1,7 @@
 #ifndef SPLITWIDGET_H
 #define SPLITWIDGET_H
 
-#include <QWidget>
-
+#include "stable_pch.h"
 #include "items/itemtemplate.h"
 #include "utility/imgproc.h"
 

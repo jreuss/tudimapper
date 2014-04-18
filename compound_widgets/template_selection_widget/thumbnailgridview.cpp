@@ -177,7 +177,7 @@ QModelIndex ThumbnailGridView::moveCursor(
 {
     QModelIndex index = currentIndex();
     if (index.isValid()) {
-        qDebug() << "got a valid index in my ass!";
+
         if ((cursorAction == MoveLeft && index.row() > 0) ||
                 (cursorAction == MoveRight &&
                  index.row() + 1 < model()->rowCount())) {

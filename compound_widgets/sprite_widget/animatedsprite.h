@@ -1,13 +1,7 @@
 #ifndef ANIMATEDSPRITE_H
 #define ANIMATEDSPRITE_H
 
-#include <QGraphicsObject>
-#include <QPixmap>
-#include <QPainter>
-#include <QRectF>
-#include <QDebug>
-#include <QPair>
-
+#include "stable_pch.h"
 #include "animationssequence.h"
 
 class AnimatedSprite : public QGraphicsObject

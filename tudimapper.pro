@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = tudimapper
 TEMPLATE = app
 
+CONFIG += precompile_header
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     compound_widgets/collider_widget/colliderscene.cpp \
@@ -78,7 +80,8 @@ HEADERS  += mainwindow.h \
     compound_widgets/template_selection_widget/templatefolderwidget.h \
     compound_widgets/template_selection_widget/folderproxy.h \
     compound_widgets/template_selection_widget/thumbnailgridview.h \
-    compound_widgets/template_selection_widget/templatemodel.h
+    compound_widgets/template_selection_widget/templatemodel.h \
+    stable_pch.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
@@ -104,6 +107,8 @@ LIBS += C:\\opencv248\\build\\lib\\libopencv_core248.dll.a \
     C:\\opencv248\\build\\lib\\libopencv_imgproc248.dll.a \
     C:\\opencv248\\build\\lib\\libopencv_photo248.dll.a
 }
+
+PRECOMPILED_HEADER += stable_pch.h
 
 RESOURCES += \
     images.qrc \

@@ -1,10 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QGraphicsScene>
-#include <QDropEvent>
 
+#include "stable_pch.h"
 #include "utility/filemanager.h"
 #include "compound_widgets/import_widget/importdialog.h"
 

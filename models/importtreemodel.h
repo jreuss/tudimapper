@@ -1,14 +1,7 @@
 #ifndef IMPORTTREEMODEL_H
 #define IMPORTTREEMODEL_H
 
-#include <QModelIndex>
-#include <QVariant>
-#include <QDebug>
-#include <QList>
-#include <QUrl>
-#include <QDir>
-#include <QImage>
-
+#include "stable_pch.h"
 #include "items/itemtemplate.h"
 #include "items/abstracttreeitem.h"
 #include "abstracttreemodel.h"

@@ -1,9 +1,8 @@
 #ifndef ANIMATIONSSEQUENCE_H
 #define ANIMATIONSSEQUENCE_H
 
+#include "stable_pch.h"
 #include "items/abstracttreeitem.h"
-#include <QPair>
-#include <QString>
 
 class AnimationsSequence : public AbstractTreeItem
 {

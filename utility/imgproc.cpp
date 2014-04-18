@@ -323,10 +323,10 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
         currentBiggest = biggestAndMatches.at(i).first;
         currentMatches = biggestAndMatches.at(i).second;
 
-        qDebug() << "i " << i;
+
         ROI = cv::boundingRect(contours.at(currentBiggest));
         currentContour = std::vector< std::vector<cv::Point> > (1,contours.at(currentBiggest));
-        qDebug() << "iam afterbiggest " << i;
+
         cv::Mat crop;
         cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
         cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
@@ -357,7 +357,7 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
         cv::Moments moment;
         moment = cv::moments(currentContour.at(0),false);
         //float parentRotation = 0.5*atan((2*moment.mu11)/(moment.mu20-moment.mu02))*(180/M_PI);
-       // qDebug() << parentRotation << " parentrotation";
+
 
         cv::Rect matchROI;
         cv::Mat matchRoiTmp;
@@ -384,7 +384,7 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
            // cv::imshow("WINDOW", matchRoiTmp);
             //scale =sqrt(float(cv::minAreaRect(currentMatchContour).size.area())/parentScale);
             //scale = ceilf(scale * 100)/100;
-            // qDebug() << scale << " scale";
+
 
 
             // moment = cv::moments(currentMatchContour,false);
@@ -394,7 +394,7 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
                 rotation += 90.0;
                 //cv::swap(rect_size.width, rect_size.height);
             }
-            //qDebug() << rotation << " rotation";
+
             cv::Rect pos = cv::boundingRect(currentMatchContour);
             baseScene->addItem(imageForParentScene);
             imageForParentScene->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -622,7 +622,6 @@ std::vector<std::vector<cv::Point> > ImgProc::findContours(const QString &path) 
 
     if (! img.data )
     {
-        qDebug() << "No image recieved!";
         return contours;
     }
 
@@ -642,7 +641,6 @@ std::vector<std::vector<cv::Point> > ImgProc::findConvexes(const QString &path) 
 
     if (! img.data )
     {
-        qDebug() << "No image recieved!";
         return contours;
     }
 
@@ -665,7 +663,6 @@ std::vector<std::vector<cv::Point> > ImgProc::findContoursFromQImage(QImage QImg
 
     if (! img.data )
     {
-        qDebug() << "No image recieved!";
         return contours;
     }
 
@@ -685,7 +682,6 @@ std::vector<std::vector<cv::Point> > ImgProc::findConvexesFromQImage(QImage QImg
 
     if (! img.data )
     {
-        qDebug() << "No image recieved!";
         return contours;
     }
 

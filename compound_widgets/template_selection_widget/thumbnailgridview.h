@@ -1,16 +1,7 @@
 #ifndef THUMBNAILGRIDVIEW_H
 #define THUMBNAILGRIDVIEW_H
 
-#include <QApplication>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QScrollBar>
-#include <QStyleOptionViewItem>
-#include <QAbstractItemModel>
-#include <QAbstractItemView>
-#include <QHash>
-#include <QRectF>
-#include <QDebug>
+#include "stable_pch.h"
 
 class ThumbnailGridView : public QAbstractItemView
 {

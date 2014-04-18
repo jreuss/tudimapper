@@ -1,13 +1,7 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include <QGraphicsItem>
-#include <QVector2D>
-#include <QPen>
-#include <QPainter>
-#include <QtMath>
-#include <QKeyEvent>
-#include <QCursor>
+#include "stable_pch.h"
 #include "items/abstracttreegraphicsitem.h"
 
 class Collider : public AbstractTreeGraphicsItem

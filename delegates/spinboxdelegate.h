@@ -1,8 +1,7 @@
 #ifndef SPINBOXDELEGATE_H
 #define SPINBOXDELEGATE_H
 
-#include <QStyledItemDelegate>
-#include <QDebug>
+#include "stable_pch.h"
 
 class SpinBoxDelegate : public QStyledItemDelegate
 {

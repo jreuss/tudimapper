@@ -1,10 +1,8 @@
 #ifndef COLLIDERSCENE_H
 #define COLLIDERSCENE_H
 
-#include <QGraphicsScene>
-#include <QGraphicsItem>
-#include <QKeyEvent>
 
+#include "stable_pch.h"
 #include "items/abstracttreegraphicsitem.h"
 
 class ColliderScene : public QGraphicsScene

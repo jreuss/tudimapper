@@ -69,7 +69,7 @@ void TemplateFolderWidget::handleAddFolderAction()
     } else {
         model->insertItem(model->getRoot()->getChildren().count(), model->getRoot(), item);
     }
-    //qDebug() << item->getParent()->
+
 
     // bad logic
    // thumbView->forceUpdate();

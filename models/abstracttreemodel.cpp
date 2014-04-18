@@ -8,8 +8,7 @@ AbstractTreeModel::AbstractTreeModel(const int &treeDepth, QObject *parent) :
 
 AbstractTreeModel::~AbstractTreeModel()
 {
-    //qDebug() << "dtor abstracttreemodel called";
-    //delete mmRoot;
+
 }
 
 QModelIndex AbstractTreeModel::index(int row, int column, const QModelIndex &parent) const
@@ -96,7 +95,7 @@ void AbstractTreeModel::insertItem(int i, AbstractTreeItem *parentItem, Abstract
     item->mParent = parentItem;
     childCount++;
     endInsertRows();
-    qDebug() << parentItem->mChildren.count();
+
 }
 
 void AbstractTreeModel::insertItem(QModelIndex parentIndex, AbstractTreeItem *item)

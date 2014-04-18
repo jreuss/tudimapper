@@ -1,7 +1,7 @@
 #ifndef ABSTRACTTREEGRAPHICSMODEL_H
 #define ABSTRACTTREEGRAPHICSMODEL_H
 
-#include <QAbstractItemModel>
+#include "stable_pch.h"
 #include "items/abstracttreegraphicsitem.h"
 
 class AbstractTreeGraphicsModel : public QAbstractItemModel

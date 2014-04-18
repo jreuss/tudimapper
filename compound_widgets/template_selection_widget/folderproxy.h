@@ -1,6 +1,7 @@
 #ifndef FOLDERPROXY_H
 #define FOLDERPROXY_H
-#include <QSortFilterProxyModel>
+
+#include "stable_pch.h"
 
 class FolderProxy : public QSortFilterProxyModel
 {

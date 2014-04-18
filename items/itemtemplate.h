@@ -1,22 +1,13 @@
 #ifndef ITEMTEMPLATE_H
 #define ITEMTEMPLATE_H
 
-#include <QList>
-#include <QVector>
-#include <QVariant>
-#include <QDebug>
-#include <QString>
-#include <QIcon>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
 #include <opencv2/core/core.hpp>
-#include <QUuid>
 
-#include <compound_widgets/collider_widget/colliders/boxcollider.h>
-#include <compound_widgets/collider_widget/colliders/collider.h>
-#include <compound_widgets/collider_widget/colliderscene.h>
-#include <items/abstracttreegraphicsitem.h>
-#include <compound_widgets/sprite_widget/animation.h>
+#include "compound_widgets/collider_widget/colliders/boxcollider.h"
+#include "compound_widgets/collider_widget/colliders/collider.h"
+#include "compound_widgets/collider_widget/colliderscene.h"
+#include "items/abstracttreegraphicsitem.h"
+#include "compound_widgets/sprite_widget/animation.h"
 #include "abstracttreeitem.h"
 
 class ItemTemplate : public AbstractTreeItem

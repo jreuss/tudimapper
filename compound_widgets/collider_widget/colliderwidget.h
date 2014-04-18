@@ -1,22 +1,7 @@
 #ifndef _H
 #define _H
 
-#include <QWidget>
-#include <QRegExp>
-#include <QDebug>
-#include <QBrush>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QImage>
-#include <QRect>
-#include <QUuid>
-#include <QMapIterator>
-#include <QTimer>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QCheckBox>
-#include <QGraphicsItemGroup>
-
+#include "stable_pch.h"
 #include "colliders/collider.h"
 #include "items/itemtemplate.h"
 #include "colliders/meshcollider.h"

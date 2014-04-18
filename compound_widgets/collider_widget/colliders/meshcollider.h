@@ -1,17 +1,8 @@
 #ifndef MESHCOLLIDER_H
 #define MESHCOLLIDER_H
 
-#include <QGraphicsItem>
-#include <QList>
-#include <QRectF>
-#include <QSizeF>
-#include <QPainterPath>
-#include <QGraphicsSceneMouseEvent>
-#include <QDebug>
-#include <QGraphicsScene>
-#include <QVector2D>
-#include <QtMath>
 
+#include "stable_pch.h"
 #include "meshnode.h"
 #include "collider.h"
 

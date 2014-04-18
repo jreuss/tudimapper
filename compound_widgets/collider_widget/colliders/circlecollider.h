@@ -1,15 +1,7 @@
 #ifndef CIRCLECOLLIDER_H
 #define CIRCLECOLLIDER_H
 
-#include <QGraphicsItem>
-#include <QPainterPath>
-#include <QPointF>
-#include <QRectF>
-#include <QVector2D>
-#include <QStyleOptionGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneHoverEvent>
-
+#include "stable_pch.h"
 #include "collider.h"
 #include "utility/imgproc.h"
 

@@ -113,7 +113,7 @@ void CircleCollider::setNonUniformScale(QPointF pos, QPointF lastPos)
         if(dheight < 0 || dwidth < 0){
             sx =-1;
         }
-        qDebug() << "sx " << sx << " dWidht " << dwidth << " LastDWidth " << lastDwidth;
+
         sy = sx;
 
     } else if(mScaleType == OnlyX){

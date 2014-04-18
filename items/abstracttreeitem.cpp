@@ -2,7 +2,7 @@
 
 AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
 {
-      qDebug() << "fisse";
+
      mParent = parent;
      mName = "test" + QString::number(qrand()%100);
      mItemType = AbstractTreeItem::TemplateType;
@@ -10,7 +10,7 @@ AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
 
 AbstractTreeItem::~AbstractTreeItem()
 {
-    qDebug() << "IAM DELETED";
+
    //This is now Done in the removeitem in the model
     //qDeleteAll(mChildren);
 
@@ -41,7 +41,7 @@ void AbstractTreeItem::removeChild(AbstractTreeItem *child)
 {
 
     int index = rowOfChild(child);
-    qDebug() << index;
+
     mChildren.removeAt(index);
 }
 
