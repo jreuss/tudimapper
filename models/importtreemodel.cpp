@@ -51,6 +51,8 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
                    return tr("Group");
                case ItemTemplate::SpriteSheet:
                    return tr("SpriteSheet");
+               case ItemTemplate::Split:
+                   return tr("Split");
                default:
                    return QVariant();
                }
@@ -151,7 +153,8 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
                     ItemTemplate::Single : ItemTemplate::Group);
         item->setConvex(mImgProc.findConvexes(item->path ()));
         item->setIcon (QIcon(*item->pixmap()));
-        mRoot->addChild (item);
+        //AbstractTreeModel::insertItem(mRoot->mChildren.count());
+        this->insertItem(getRoot()->getChildren().count(), getRoot(), item);
     }
 }
 
@@ -162,16 +165,16 @@ void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, flo
     if(removeDuplicates){
         QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
         templates = mImgProc.splitImageAndRemoveDuplicates(item->contour(),item->path(),shapeTresh,colorMaches);
-        foreach(ItemTemplate *itm, templates){
-            mRoot->addChild(itm);
-
-
-        }
+//        foreach(ItemTemplate *itm, templates){
+//             this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
+//        }
     }else {
         templates = mImgProc.splitImage(item->contour(),item->path());
-        foreach(ItemTemplate *itm, templates){
-            mRoot->addChild(itm);
+//        foreach(ItemTemplate *itm, templates){
+//            this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
         }
+        foreach(ItemTemplate *itm, templates){
+            this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
     }
     //currentItm = templates.at(1);
     //IMPLEMENT GET INDEX FROM ITEM AND SET THIS ITEM AS SELECTED AND THEN DELETE THE CURRENTITM...
@@ -181,12 +184,13 @@ void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, flo
 
 void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDuplicates, float shapeTres)
 {
+    item->setItemType(ItemTemplate::Split);
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
         QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
         templates = mImgProc.splitImageAndRemoveDuplicatesAddToScene(item->contour(),item->path(),shapeTres,colorMaches,item->getSplitScene());
         foreach(ItemTemplate *itm, templates){
-            item->addChild(itm);
+            this->insertItem(item->mChildren.count(),item, itm);
         }
     } else {
 

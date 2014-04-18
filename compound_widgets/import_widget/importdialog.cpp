@@ -47,7 +47,7 @@ ImportDialog::~ImportDialog()
 
 void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
 {
-    if(index.row() != mCurrentIndex.row())
+    if(index != mCurrentIndex)
     {
         mCurrentIndex = index;
 

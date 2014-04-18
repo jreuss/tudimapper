@@ -11,7 +11,7 @@ TemplateFolderWidget::TemplateFolderWidget(QWidget *parent) :
     thumbView = new ThumbnailGridView();
     folderView = new QTreeView();
 
-    model = new TemplateModel(2);
+    model = new TemplateModel(1);
 
     folderProxy = new FolderProxy();
     folderProxy->setSourceModel(model);
@@ -20,7 +20,7 @@ TemplateFolderWidget::TemplateFolderWidget(QWidget *parent) :
 
     thumbView->setModel(model);
     folderView->setModel(folderProxy);
-    folderView->hideColumn(1);
+   // folderView->hideColumn(1);
 
     hLayout->addWidget(folderView);
     hLayout->addWidget(thumbView);
