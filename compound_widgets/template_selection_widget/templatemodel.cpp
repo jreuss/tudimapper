@@ -27,9 +27,9 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
         if(role == Qt::DisplayRole || role == Qt::EditRole) {
             if(index.column() == 0){
                 return item->name();
-            } /*else if (index.column() == 1) {
+            } else if (index.column() == 1) {
                 return item->importType() == ItemTemplate::Folder ? "" : "template";
-            }*/
+            }
         }
 
         if(role == Qt::DecorationRole &&

@@ -157,7 +157,7 @@ void AbstractTreeModel::removeItem(const QModelIndex &index)
             int lastRow = i;
 
             beginRemoveRows(QModelIndex(), firstRow, lastRow);
-            mRoot->mChildren.takeAt(i);
+            delete mRoot->mChildren.takeAt(i);
             childCount--;
             endRemoveRows();
         }
