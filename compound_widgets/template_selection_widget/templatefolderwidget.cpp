@@ -72,7 +72,7 @@ void TemplateFolderWidget::handleAddFolderAction()
     //qDebug() << item->getParent()->
 
     // bad logic
-    thumbView->forceUpdate();
+   // thumbView->forceUpdate();
 }
 
 void TemplateFolderWidget::handleAddTemplateAction()
@@ -81,7 +81,7 @@ void TemplateFolderWidget::handleAddTemplateAction()
          ItemTemplate *item = new ItemTemplate("New Folder",ItemTemplate::Single,model->getRoot());
         model->insertItem(currentModelIndex, item);
     }
-    thumbView->forceUpdate();
+   // thumbView->forceUpdate();
 }
 
 void TemplateFolderWidget::handleRemoveAction()
@@ -90,7 +90,7 @@ void TemplateFolderWidget::handleRemoveAction()
     if(currentModelIndex.isValid()) {
         model->removeItem(currentModelIndex);
     }
-    thumbView->forceUpdate();
+    //thumbView->forceUpdate();
 
 }
 

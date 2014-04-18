@@ -143,7 +143,7 @@ void ThumbnailGridView::dataChanged(const QModelIndex &topLeft,
                                     const QModelIndex &bottomRight
                                     )
 {
-    mHashIsDirty = true;
+    //mHashIsDirty = true;
     QAbstractItemView::dataChanged(topLeft, bottomRight);
     //viewport()->update();
 }
@@ -154,16 +154,21 @@ void ThumbnailGridView::rowsInserted(const QModelIndex &parent, int start,
 {
     mHashIsDirty = true;
     QAbstractItemView::rowsInserted(parent, start, end);
-    viewport()->update();
+   calculateRectsIfNecessary();
+    //updateGeometries();
 }
 
 
 void ThumbnailGridView::rowsAboutToBeRemoved(const QModelIndex &parent,
                                              int start, int end)
 {
+    displayIndex = rootIndex();
+    calculateRectsIfNecessary();
     mHashIsDirty = true;
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
-    viewport()->update();
+
+    //updateGeometries();
+
 }
 
 QModelIndex ThumbnailGridView::moveCursor(
@@ -328,7 +333,7 @@ void ThumbnailGridView::folderSelectionChanged(const QModelIndex &index)
     displayIndex = index;
     mHashIsDirty = true;
     calculateRectsIfNecessary();
-    updateGeometries();
+    //updateGeometries();
 }
 
 int ThumbnailGridView::getItemWidth() const
