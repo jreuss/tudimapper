@@ -149,8 +149,27 @@
             </item>
             <item>
              <widget class="QToolButton" name="toolBtn_animation">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Animation</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="autoExclusive">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolBtn_split">
+              <property name="text">
+               <string>   Split   </string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -174,7 +193,7 @@
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="page_general">
           <layout class="QGridLayout" name="gridLayout">
@@ -221,13 +240,6 @@
               <string>Options for images with multiple objects:</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QRadioButton" name="radio_splitToScene">
-                <property name="text">
-                 <string>Split and add to scene</string>
-                </property>
-               </widget>
-              </item>
               <item>
                <widget class="QRadioButton" name="radio_split">
                 <property name="text">

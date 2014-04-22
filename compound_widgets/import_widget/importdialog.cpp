@@ -59,8 +59,10 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
         toogleToolButtons();
 
         if(type == ItemTemplate::Single){
-            ui->toolBtn_collider->setChecked(false);
+            ui->toolBtn_animation->setChecked(false);
+            ui->toolBtn_split->setChecked(false);
             ui->toolBtn_collider->setChecked(true);
+            handleToggleColliderButton(true);
         } else if (type == ItemTemplate::Group){
             mScene->clear();
             mScene->setSceneRect(mCurrentItm->image().rect());
@@ -74,8 +76,15 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
 
 
         } else if(type == ItemTemplate::SpriteSheet) {
-            ui->toolBtn_animation->setChecked(false);
             ui->toolBtn_animation->setChecked(true);
+            ui->toolBtn_split->setChecked(false);
+            ui->toolBtn_collider->setChecked(true);
+            handleToggleAnimationButton(true);
+        }  else if(type == ItemTemplate::Split) {
+            ui->toolBtn_animation->setChecked(false);
+            ui->toolBtn_split->setChecked(true);
+            ui->toolBtn_collider->setChecked(false);
+            handleToggleSplitButton(true);
         }
 
         // animate the pages when switching
@@ -111,11 +120,13 @@ void ImportDialog::handleApplySplitOption()
         //QImage templates = mImgProc.createMatchImage(mCurrentItm->contour(),mCurrentItm->path(), 0.18);
         //mScene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(templates)));
 
-        ui->splitwidget->onLoadSelectedItem (mCurrentItm);
-        ui->stack_pages->setCurrentIndex(4);
+        mCurrentItm->setItemType(ItemTemplate::Split);
+        mModel->layoutChanged();
+        toogleToolButtons();
+        ui->toolBtn_split->setChecked(true);
 
     }
-  }
+}
 
 
 void ImportDialog::handleImportItemNameChanged(QString text)
@@ -135,12 +146,22 @@ void ImportDialog::handleToggleTreelistEnabled()
 
 void ImportDialog::handleToggleAnimationButton(bool animationEnabled)
 {
-        if(animationEnabled)
-       {
-          ui->stack_pages->setCurrentIndex(3);
-          ui->spritewidget->onLoadSelectedItem (mCurrentItm);
-          animatePage();
-       }
+    if(animationEnabled)
+    {
+        ui->stack_pages->setCurrentIndex(3);
+        ui->spritewidget->onLoadSelectedItem (mCurrentItm);
+        animatePage();
+    }
+}
+
+void ImportDialog::handleToggleSplitButton(bool splitEnabled)
+{
+    if(splitEnabled)
+    {
+        ui->stack_pages->setCurrentIndex(4);
+        ui->splitwidget->onLoadSelectedItem (mCurrentItm);
+        animatePage();
+    }
 }
 
 void ImportDialog::handleToggleColliderButton(bool colliderEnabled)
@@ -174,6 +195,8 @@ void ImportDialog::setupConnections()
 
     connect(ui->toolBtn_animation,SIGNAL(toggled(bool)),
             this,SLOT(handleToggleAnimationButton(bool)));
+    connect(ui->toolBtn_split,SIGNAL(toggled(bool)),
+            this,SLOT(handleToggleSplitButton(bool)));
 }
 
 void ImportDialog::animatePage()
@@ -197,17 +220,27 @@ void ImportDialog::toogleToolButtons()
         if(mCurrentItm->importType() == ItemTemplate::Single){
             ui->toolBtn_animation->setEnabled(false);
             ui->toolBtn_collider->setEnabled(true);
+            ui->toolBtn_split->setEnabled(false);
         } else if(mCurrentItm->importType() == ItemTemplate::SpriteSheet)
         {
             ui->toolBtn_animation->setEnabled(true);
             ui->toolBtn_collider->setEnabled(true);
+            ui->toolBtn_split->setEnabled(false);
+        }else if(mCurrentItm->importType() == ItemTemplate::Split)
+        {
+            ui->toolBtn_animation->setEnabled(false);
+            ui->toolBtn_collider->setEnabled(false);
+            ui->toolBtn_split->setEnabled(true);
+
         } else {
             ui->toolBtn_animation->setEnabled(false);
             ui->toolBtn_collider->setEnabled(false);
+            ui->toolBtn_split->setEnabled(false);
         }
     } else {
         ui->toolBtn_animation->setEnabled(false);
         ui->toolBtn_collider->setEnabled(false);
+        ui->toolBtn_split->setEnabled(false);
     }
 }
 

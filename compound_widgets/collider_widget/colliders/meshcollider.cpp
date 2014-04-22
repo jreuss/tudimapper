@@ -27,16 +27,13 @@ QRectF MeshCollider::boundingRect() const
 {
     if(!mConsolidated){
         return mRect;
-    } else if(mScaleEnabled)
-    {
+    } else {
         QRectF tmpRect = mPoly.boundingRect();
         return QRectF(QPointF(tmpRect.topLeft().x()-mScaleFeedbackRectsSize,
                              tmpRect.topLeft().y()-mScaleFeedbackRectsSize),
                       QPointF(tmpRect.bottomRight().x()+mScaleFeedbackRectsSize,
                                tmpRect.bottomRight().y()+mScaleFeedbackRectsSize));
     }
-
-    return mPoly.boundingRect ();
 }
 
 void MeshCollider::paint(QPainter *painter,

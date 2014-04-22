@@ -4,10 +4,7 @@
 BoxCollider::BoxCollider(const QString &name)
 {
     mRect = QRectF(0,0,10,10);
-    //mRectPoly.append(mRect.topLeft());
-    //mRectPoly.append(mRect.topRight());
-    //mRectPoly.append(mRect.bottomRight());
-    //mRectPoly.append(mRect.bottomLeft());
+
 
     mScaleEnabled = false;
     mRotateEnabled = false;
@@ -23,7 +20,11 @@ BoxCollider::BoxCollider(const QString &name)
 QRectF BoxCollider::boundingRect() const
 {
 
-     return (mRectPoly.boundingRect());
+    QRectF tmpRect = rect();
+    return QRectF(QPointF(tmpRect.topLeft().x()-mScaleFeedbackRectsSize,
+                          tmpRect.topLeft().y()-mScaleFeedbackRectsSize),
+                  QPointF(tmpRect.bottomRight().x()+mScaleFeedbackRectsSize,
+                          tmpRect.bottomRight().y()+mScaleFeedbackRectsSize));
 
 }
 
@@ -31,7 +32,7 @@ QPainterPath BoxCollider::shape() const
 {
     QPainterPath path;
 
-    path.addRect (boundingRect());
+    path.addRect (rect());
 
     return path;
 
@@ -47,7 +48,7 @@ void BoxCollider::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     drawBox(painter, option, pen);
 
     if(mScaleEnabled) {
-        drawScaleOverlay(painter,pen,boundingRect());
+        drawScaleOverlay(painter,pen,rect());
     }
 
     if(mRotateEnabled){
@@ -116,18 +117,18 @@ void BoxCollider::setNonUniformScale(QPointF pos,QPointF lastPos)
         mScaleYDirection = PosYAxis;
     }
     if(mScaleType == BothXY){
-       sx = dwidth/boundingRect ().width ();
-       sy = dheight/boundingRect ().height ();
+        sx = dwidth/rect().width ();
+        sy = dheight/rect().height ();
     } else if(mScaleType == Uniform) {
-              sx = ((dwidth/boundingRect ().width ())) * ((dheight/boundingRect ().height ()));
-              sy = sx;
+        sx = ((dwidth/rect().width ())) * ((dheight/rect().height ()));
+        sy = sx;
     } else if(mScaleType == OnlyX){
-        sx = dwidth/boundingRect ().width ();
+        sx = dwidth/rect().width ();
         sy = 1;
     } else if(mScaleType == OnlyY){
-            sx = 1;
-            sy = dheight/boundingRect ().height ();;
-        }
+        sx = 1;
+        sy = dheight/rect().height ();
+    }
 
     QMatrix mat = matrix().translate (dx,dy)
             .scale(sx,sy)
@@ -143,33 +144,33 @@ void BoxCollider::setNonUniformScale(QPointF pos,QPointF lastPos)
 
 void BoxCollider::setColliderRotation(QPointF pos, QPointF rotationPoint)
 {
-     QVector2D vec(pos-rotationPoint);
-        qreal dx = rotationPoint.x();
-        qreal dy = rotationPoint.y();
+    QVector2D vec(pos-rotationPoint);
+    qreal dx = rotationPoint.x();
+    qreal dy = rotationPoint.y();
 
-        float ang = angleBetweenVectors(vec,mRotationOrigin);
-        mRotation += ang;
-        mRotationSpanAngle -= ang;
+    float ang = angleBetweenVectors(vec,mRotationOrigin);
+    mRotation += ang;
+    mRotationSpanAngle -= ang;
 
-        QMatrix mat = matrix().translate (dx,dy)
-                                .rotate(ang)
-                                .translate(-dx,-dy);;
+    QMatrix mat = matrix().translate (dx,dy)
+            .rotate(ang)
+            .translate(-dx,-dy);;
 
-        mRectPoly = mat.map(mRectPoly);
-        prepareGeometryChange ();
+    mRectPoly = mat.map(mRectPoly);
+    prepareGeometryChange ();
 
-        mRotationOrigin = vec;
+    mRotationOrigin = vec;
 }
 
 void BoxCollider::setFixedRotation(float rot)
 {
-    QMatrix mat = matrix().translate (mRectPoly.boundingRect().center().x(),mRectPoly.boundingRect().center().y())
+    QMatrix mat = matrix().translate (rect().center().x(),rect().center().y())
             .rotate(rot)
-            .translate(-mRectPoly.boundingRect().center().x(), -mRectPoly.boundingRect().center().y());
+            .translate(-rect().center().x(), -rect().center().y());
 
     QPolygonF tmpPoly;
     for(int i=0; i < mRectPoly.count();i++){
-       tmpPoly.append(mRectPoly.at(i) * mat);
+        tmpPoly.append(mRectPoly.at(i) * mat);
     }
     prepareGeometryChange ();
     mRectPoly = tmpPoly;
@@ -218,7 +219,7 @@ void BoxCollider::setRect(const QRectF &rect)
 
 QRectF BoxCollider::rect() const
 {
-    return mRect;
+    return mRectPoly.boundingRect();;
 }
 
 void BoxCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
@@ -228,7 +229,7 @@ void BoxCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     setCursor (Qt::ArrowCursor);
     if(mScaleEnabled){
         QVector2D vec(event->pos());
-        getScaleOrigin (vec, boundingRect());
+        getScaleOrigin (vec, rect());
     }
 }
 
@@ -238,9 +239,9 @@ void BoxCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void BoxCollider::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-     if(mScaleEnabled){
+    if(mScaleEnabled){
 
-        mScaleOrigin = getScaleOrigin (QVector2D(event->pos ()), boundingRect());
+        mScaleOrigin = getScaleOrigin (QVector2D(event->pos ()), rect());
         mItemDragged = mIsValidScaleOriginPoint;
     } else {
         Collider::mousePressEvent (event);
@@ -262,7 +263,7 @@ void BoxCollider::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Collider::mouseReleaseEvent (event);
     if(mScaleEnabled){
         QVector2D vec(event->pos());
-        getScaleOrigin (vec, boundingRect());
+        getScaleOrigin (vec, rect());
     }
     mItemDragged = false;
 }

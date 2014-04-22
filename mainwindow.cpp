@@ -41,14 +41,14 @@ void MainWindow::handleImportSpecial()
         ImportDialog *diag = new ImportDialog(urls, this);
 
 
-//        connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
-//                this, SLOT(handleImportAccepted(ItemTemplate*)));
+        connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
+                this, SLOT(handleImportAccepted(ItemTemplate*)));
 
         diag->setModal(true);
         diag->exec();
 
-//        disconnect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
-//                   this, SLOT(handleImportAccepted(ItemTemplate*)));
+        disconnect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
+                   this, SLOT(handleImportAccepted(ItemTemplate*)));
 
         delete diag;
     }

@@ -5,6 +5,7 @@
 #include "thumbnailgridview.h"
 #include "folderproxy.h"
 #include "templatemodel.h"
+#include "delegates/templatedelegate.h"
 
 
 namespace Ui {

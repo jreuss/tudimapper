@@ -17,6 +17,7 @@ public:
 
     QPainterPath shape () const;
 
+     QRectF rect() const;
      void setNonUniformScale(QPointF pos, QPointF lastPos);
      void setColliderRotation(QPointF pos, QPointF rotationPoint) {
          Q_UNUSED(pos); Q_UNUSED(rotationPoint); };

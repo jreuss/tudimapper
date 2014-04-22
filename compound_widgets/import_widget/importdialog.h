@@ -26,6 +26,7 @@ public slots:
    void handleToggleTreelistEnabled();
    void handleToggleColliderButton(bool);
    void handleToggleAnimationButton(bool);
+   void handleToggleSplitButton(bool);
 
    void accept();
 

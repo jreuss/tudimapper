@@ -68,9 +68,6 @@ void ColliderWidget::setupConnections()
     connect (ui->btn_scale, SIGNAL(toggled(bool)),
              this, SLOT(handleScaleToolSelected(bool)));
 
-    connect (ui->btn_rotate, SIGNAL(toggled(bool)),
-             this, SLOT(handleRotateToolSelected(bool)));
-
     connect (ui->treeView_collider_prop, SIGNAL(clicked(QModelIndex)),
              this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
     connect (ui->checkBox_addToAll, SIGNAL(toggled(bool)),this,SLOT(handleAddToAllCheckbox(bool)));
@@ -96,9 +93,9 @@ void ColliderWidget::onLoadSelectedItem(ItemTemplate *item)
             ui->btn_contour->setEnabled(false);
             ui->btn_convex->setEnabled(false);
         } else {
-           mMultipleObject = false;
-           ui->label_addToAll->setEnabled(false);
-           ui->checkBox_addToAll->setEnabled(false);
+            mMultipleObject = false;
+            ui->label_addToAll->setEnabled(false);
+            ui->checkBox_addToAll->setEnabled(false);
         }
 
         ui->graphicsView->setScene (mCurrentItem->scene());
@@ -126,11 +123,9 @@ void ColliderWidget::toggleToolbarButtons(ColliderWidget::Toolbar btnGroup, bool
     switch(btnGroup){
     case All:
         ui->btn_scale->setEnabled (enable);
-        ui->btn_rotate->setEnabled (enable);
         break;
     case Transformations:
         ui->btn_scale->setEnabled (enable);
-        ui->btn_rotate->setEnabled (enable);
         break;
     default:
         break;
@@ -284,6 +279,15 @@ void ColliderWidget::handleAddBoxCollider()
             model->layoutChanged();
             box->setSelected (true);
         }
+    } else {
+            BoxCollider *box = new BoxCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
+            QRectF rect = mImgProc.getRect ( mCurrentItem->contour().front());
+            box->setRect (rect);
+            deselectAllItems();
+            box->setParentItem(mCurrentItem->getColliderRoot());
+            mCurrentItem->getColliderRoot()->addChild(box);
+            model->layoutChanged();
+            box->setSelected (true);
     }
 
     //set the box collider to be selected and the transform tool to selection tool
@@ -292,7 +296,8 @@ void ColliderWidget::handleAddBoxCollider()
 }
 
 void ColliderWidget::handleAddCircleCollider()
-{ if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
+{
+    if(ui->checkBox_addToAll->isChecked() || !mMultipleObject){
         for (uint i = 0 ; i< mCurrentItem->contour().size();i++){
             CircleCollider *circle = new CircleCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
             cv::Point2f center;
@@ -307,6 +312,18 @@ void ColliderWidget::handleAddCircleCollider()
 
             circle->setSelected (true);
         }
+    } else {
+        CircleCollider *circle = new CircleCollider("Collider " + QString::number(mCurrentItem->getColliderRoot()->childCount()));
+        cv::Point2f center;
+        float radius;
+        cv::minEnclosingCircle( cv::Mat(mCurrentItem->contour().front()), center, radius);
+        circle->setCenter(QPointF(center.x,center.y));
+        circle->setRadius(radius);
+        deselectAllItems();
+        circle->setParentItem(mCurrentItem->getColliderRoot());
+        mCurrentItem->getColliderRoot()->addChild(circle);
+        model->layoutChanged();
+
     }
     ui->btn_select->setChecked(true);
 }

@@ -19,7 +19,12 @@ CircleCollider::CircleCollider(const QString &name)
 
 QRectF CircleCollider::boundingRect() const
 {
-    return (QRect(QPoint(mCenter.x()-mRadius, mCenter.y()-mRadius),QPoint(mCenter.x()+mRadius, mCenter.y()+mRadius)));
+    QRectF tmpRect = rect();
+    return QRectF(QPointF(tmpRect.topLeft().x()-mScaleFeedbackRectsSize,
+                          tmpRect.topLeft().y()-mScaleFeedbackRectsSize),
+                  QPointF(tmpRect.bottomRight().x()+mScaleFeedbackRectsSize,
+                          tmpRect.bottomRight().y()+mScaleFeedbackRectsSize));
+
 }
 
 void CircleCollider::paint(QPainter *painter,
@@ -34,7 +39,7 @@ void CircleCollider::paint(QPainter *painter,
     drawCircle(painter, option, pen);
 
     if(mScaleEnabled) {
-        drawScaleOverlay (painter, pen, boundingRect());
+        drawScaleOverlay (painter, pen, rect());
     }
 
 }
@@ -59,10 +64,17 @@ void CircleCollider::drawCircle(QPainter *painter,
 QPainterPath CircleCollider::shape() const
 {
     QPainterPath path;
-
-    path.addRect (QRect(QPoint(mCenter.x()-mRadius, mCenter.y()-mRadius),QPoint(mCenter.x()+mRadius, mCenter.y()+mRadius)));
-
+    if(mScaleEnabled){
+        path.addRect (rect());
+    } else {
+        path.addEllipse(mCenter,mRadius,mRadius);
+    }
     return path;
+}
+
+QRectF CircleCollider::rect() const
+{
+    return QRect(QPoint(mCenter.x()-mRadius, mCenter.y()-mRadius),QPoint(mCenter.x()+mRadius, mCenter.y()+mRadius));
 }
 
 void CircleCollider::setScaleEnabled(bool enable)
@@ -172,7 +184,7 @@ void CircleCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     setCursor (Qt::ArrowCursor);
     if(mScaleEnabled){
         QVector2D vec(event->pos());
-        getScaleOrigin (vec, boundingRect());
+        getScaleOrigin (vec, rect());
     }
 }
 
@@ -183,7 +195,7 @@ void CircleCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 void CircleCollider::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(mScaleEnabled){
-        mScaleOrigin = getScaleOrigin (QVector2D(event->pos ()), boundingRect());
+        mScaleOrigin = getScaleOrigin (QVector2D(event->pos ()), rect());
         lastDwidth = abs(event->pos().x()-mScaleOrigin.x());
         lastDheight = abs(event->pos().y()-mScaleOrigin.y());
         mItemDragged = mIsValidScaleOriginPoint;
@@ -207,7 +219,7 @@ void CircleCollider::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Collider::mouseReleaseEvent (event);
     if(mScaleEnabled){
         QVector2D vec(event->pos());
-        getScaleOrigin (vec, boundingRect());
+        getScaleOrigin (vec, rect());
     }
     mItemDragged = false;
 }

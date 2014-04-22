@@ -19,6 +19,7 @@ TemplateFolderWidget::TemplateFolderWidget(QWidget *parent) :
 
 
     thumbView->setModel(model);
+    thumbView->setItemDelegate(new TemplateDelegate());
     folderView->setModel(folderProxy);
     folderView->hideColumn(1);
 
