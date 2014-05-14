@@ -19,6 +19,9 @@ public:
 
     QIcon folderIcon;
 
+    QStringList mimeTypes() const;
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
+
 };
 
 #endif // TEMPLATEMODEL_H

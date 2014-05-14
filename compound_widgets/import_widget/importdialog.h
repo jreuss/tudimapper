@@ -6,6 +6,9 @@
 #include "models/importtreemodel.h"
 #include "items/itemtemplate.h"
 
+#include <QDebug>
+#include <QMessageBox>
+
 namespace Ui {
 class ImportDialog;
 }
@@ -17,16 +20,18 @@ class ImportDialog : public QDialog
 public:
     explicit ImportDialog(QWidget *parent = 0);
     ImportDialog(QList<QUrl> imgFiles, QWidget *parent = 0);
+    ImportDialog(QList<ItemTemplate*> tempsToChange, QWidget *parent =0);
     ~ImportDialog();
 
 public slots:
    void handleImportItemSelectionChanged(QModelIndex);
-   void handleApplySplitOption();
+   void handleApplyGroupOption();
    void handleImportItemNameChanged(QString);
-   void handleToggleTreelistEnabled();
+   void handleToggleMainUIEnabled();
    void handleToggleColliderButton(bool);
    void handleToggleAnimationButton(bool);
    void handleToggleSplitButton(bool);
+   void handleRemoveSplitParent();
 
    void accept();
 

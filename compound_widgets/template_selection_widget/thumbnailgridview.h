@@ -1,7 +1,9 @@
 #ifndef THUMBNAILGRIDVIEW_H
 #define THUMBNAILGRIDVIEW_H
 
+
 #include "stable_pch.h"
+#include "items/itemtemplate.h"
 
 class ThumbnailGridView : public QAbstractItemView
 {

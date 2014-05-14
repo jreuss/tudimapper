@@ -9,6 +9,7 @@ ColliderWidget::ColliderWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ColliderWidget)
 {
+    import=true;
     mCurrentItem = NULL;
     ui->setupUi(this);
 
@@ -53,9 +54,10 @@ void ColliderWidget::setupConnections()
     connect(ui->btn_convex, SIGNAL(clicked()),
             this, SLOT(handleAddConvexCollider()));
 
-    connect(this,SIGNAL(onToggleTreelistEnabled()),
-            QWidget::window (),SLOT(handleToggleTreelistEnabled()));
-
+    if(import){
+    connect(this,SIGNAL(onToggleMainUIEnabled()),
+            QWidget::window (),SLOT(handleToggleMainUIEnabled()));
+    }
     connect (ui->btngroup_applymeshdetail, SIGNAL(accepted()),
              this,SLOT(handleMeshDetailAccepted()));
 
@@ -80,22 +82,23 @@ void ColliderWidget::onLoadSelectedItem(ItemTemplate *item)
         ui->btn_select->setChecked(true);
     }
 
-
     mCurrentItem = item;
     if(mCurrentItem->scene()) {
-
         toggleToolbarButtons (All, false);
 
-        if(mCurrentItem->contour().size() > 1 && mCurrentItem->importType() == ItemTemplate::Single){
+        if(mCurrentItem->contour().size() > 1){
             mMultipleObject = true;
             ui->label_addToAll->setEnabled(true);
             ui->checkBox_addToAll->setEnabled(true);
-            ui->btn_contour->setEnabled(false);
-            ui->btn_convex->setEnabled(false);
+            handleAddToAllCheckbox(ui->checkBox_addToAll->isChecked());
         } else {
             mMultipleObject = false;
             ui->label_addToAll->setEnabled(false);
             ui->checkBox_addToAll->setEnabled(false);
+            ui->btn_contour->setEnabled(true);
+            ui->btn_convex->setEnabled(true);
+            ui->btn_mesh->setEnabled(true);
+
         }
 
         ui->graphicsView->setScene (mCurrentItem->scene());
@@ -190,9 +193,9 @@ void ColliderWidget::toggleAddColliderWidget()
     ui->groupBox->setEnabled (!ui->groupBox->isEnabled ());
 }
 
-void ColliderWidget::toggleTreelist()
+void ColliderWidget::toggleMainUI()
 {
-    emit onToggleTreelistEnabled ();
+    emit onToggleMainUIEnabled ();
 }
 
 void ColliderWidget::toogleUI(bool enable)
@@ -200,7 +203,7 @@ void ColliderWidget::toogleUI(bool enable)
     toggleAddColliderWidget ();
     toggleSceneSelection (enable);
     toggleToolbarButtons (All, enable);
-    toggleTreelist ();
+    toggleMainUI ();
 
     ui->slider_meshdetail->setEnabled (true);
     ui->btngroup_applymeshdetail->buttons ()[0]->setEnabled (true);
@@ -211,6 +214,13 @@ void ColliderWidget::deselectAllItems()
     // deselect all items in scene
     foreach(QGraphicsItem *itm, mCurrentItem->scene ()->selectedItems ()){
         itm->setSelected (false);
+    }
+}
+
+void ColliderWidget::closeWithOutFinishMesh()
+{
+    if(ui->btngroup_applymeshdetail->isEnabled()){
+        handleMeshDetailRejected();
     }
 }
 
@@ -332,6 +342,7 @@ void ColliderWidget::handleAddContourCollider()
 {
     {
         // enable mesh detail widget
+         ui->treeView_collider_prop->setEnabled(false);
         ui->group_meshdetail->setEnabled (true);
         onNonAcceptedMesh = true;
         mNewestMeshColliders.clear();
@@ -381,6 +392,7 @@ void ColliderWidget::handleAddContourCollider()
 void ColliderWidget::handleAddConvexCollider()
 {
     // enable mesh detail widget
+    ui->treeView_collider_prop->setEnabled(false);
     ui->group_meshdetail->setEnabled (true);
     onNonAcceptedMesh = true;
     mNewestMeshColliders.clear();
@@ -430,7 +442,9 @@ void ColliderWidget::handleAddCustomMeshCollider()
 {
     // enable mesh detail widget
     toogleUI (false);
+     ui->treeView_collider_prop->setEnabled(false);
     onNonAcceptedMesh = true;
+
     ui->group_meshdetail->setEnabled (true);
     /* the slider is not used when drawing
      * custom meshes */
@@ -465,6 +479,7 @@ void ColliderWidget::handleMeshDetailAccepted()
 {
     // enable all other ui elements
     toogleUI (true);
+     ui->treeView_collider_prop->setEnabled(true);
     onNonAcceptedMesh = false;
     if(mTimer.isActive ()) {
         mTimer.stop ();
@@ -489,6 +504,7 @@ void ColliderWidget::handleMeshDetailRejected()
 {
     // enable all other ui elements
     toogleUI (true);
+     ui->treeView_collider_prop->setEnabled(true);
     onNonAcceptedMesh = false;
 
     if(mTimer.isActive ()) {

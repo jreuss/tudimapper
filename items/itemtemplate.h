@@ -94,6 +94,9 @@ public:
     QGraphicsScene *getSplitScene() const;
     void setSplitScene(QGraphicsScene *value);
 
+    bool getIsSplit() const;
+    void setIsSplit(bool value);
+
 private:
 
     /* =======================================
@@ -104,6 +107,8 @@ private:
     ColliderScene *mScene;
 
     QGraphicsScene *mSplitScene;
+
+    bool mIsSplit;
 
     Animation *mAnimation;
 

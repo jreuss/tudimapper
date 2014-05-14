@@ -12,6 +12,7 @@ ItemTemplate::ItemTemplate(const QString &name, const ItemTemplate::ImportType &
     mType = type;
     mScene = new ColliderScene();
     mSplitScene = NULL;
+    mIsSplit = false;
 
 }
 
@@ -157,6 +158,16 @@ void ItemTemplate::setSplitScene(QGraphicsScene *value)
 {
     mSplitScene = value;
 }
+bool ItemTemplate::getIsSplit() const
+{
+    return mIsSplit;
+}
+
+void ItemTemplate::setIsSplit(bool value)
+{
+    mIsSplit = value;
+}
+
 
 
 

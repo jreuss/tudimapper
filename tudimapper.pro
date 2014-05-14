@@ -46,7 +46,16 @@ SOURCES += main.cpp\
     compound_widgets/template_selection_widget/templatefolderwidget.cpp \
     compound_widgets/template_selection_widget/folderproxy.cpp \
     compound_widgets/template_selection_widget/thumbnailgridview.cpp \
-    compound_widgets/template_selection_widget/templatemodel.cpp
+    compound_widgets/template_selection_widget/templatemodel.cpp \
+    items/abstracttreepixmapitem.cpp \
+    models/abstracttreepixmapmodel.cpp \
+    items/itemelement.cpp \
+    mainscene.cpp \
+    elementtreemodel.cpp \
+    compound_widgets/collider_widget/colliderdialog.cpp \
+    items/abstractsceneitem.cpp \
+    models/abstracttreescenemodel.cpp \
+    leveltreemodel.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -81,14 +90,24 @@ HEADERS  += mainwindow.h \
     compound_widgets/template_selection_widget/folderproxy.h \
     compound_widgets/template_selection_widget/thumbnailgridview.h \
     compound_widgets/template_selection_widget/templatemodel.h \
-    stable_pch.h
+    stable_pch.h \
+    items/abstracttreepixmapitem.h \
+    models/abstracttreepixmapmodel.h \
+    items/itemelement.h \
+    mainscene.h \
+    elementtreemodel.h \
+    compound_widgets/collider_widget/colliderdialog.h \
+    items/abstractsceneitem.h \
+    models/abstracttreescenemodel.h \
+    leveltreemodel.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
     compound_widgets/collider_widget/colliderwidget.ui \
     compound_widgets/sprite_widget/spritewidget.ui \
     compound_widgets/split_widget/splitwidget.ui \
-    compound_widgets/template_selection_widget/templatefolderwidget.ui
+    compound_widgets/template_selection_widget/templatefolderwidget.ui \
+    compound_widgets/collider_widget/colliderdialog.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

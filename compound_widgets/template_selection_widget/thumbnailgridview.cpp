@@ -1,6 +1,8 @@
 
 #include "thumbnailgridview.h"
 
+
+
 namespace {
 const int ExtraHeight = 3;
 }
@@ -21,6 +23,7 @@ ThumbnailGridView::ThumbnailGridView(QWidget *parent)
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setAcceptDrops(true);
+    setDragEnabled(true);
 }
 
 
@@ -328,12 +331,13 @@ void ThumbnailGridView::setItemDimension(int itemWidth, int itemHeight, int item
     mPadding = itemPadding;
 }
 
+
 void ThumbnailGridView::folderSelectionChanged(const QModelIndex &index)
 {
     displayIndex = index;
     mHashIsDirty = true;
     calculateRectsIfNecessary();
-    //updateGeometries();
+    updateGeometries();
 }
 
 int ThumbnailGridView::getItemWidth() const
@@ -383,4 +387,6 @@ void ThumbnailGridView::mousePressEvent(QMouseEvent *event)
     QAbstractItemView::mousePressEvent(event);
     // setCurrentIndex(indexAt(event->pos()));
 }
+
+
 

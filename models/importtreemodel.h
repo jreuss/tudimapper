@@ -29,6 +29,7 @@ public:
 
 
 signals:
+    void onRemoveSplitParent();
 
 public slots:
    void handleSplit(ItemTemplate*, bool, float);

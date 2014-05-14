@@ -3,6 +3,8 @@
 
 #include "stable_pch.h"
 #include "items/itemtemplate.h"
+#include <QDebug>
+#include "items/itemelement.h"
 
 class ImgProc
 {

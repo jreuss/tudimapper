@@ -173,8 +173,11 @@ QList<ItemTemplate *> ImgProc::getSplitTemplates(QList<unsigned> indexes, cv::Ma
         cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
         img.copyTo(crop,mask);
         tmpImg = crop(ROI);
-        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
-        currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
+
+        QString name;
+        //GET THE NAME FROM TEMPLATE
+        QTextStream(&name) << "NewTemplate" << i;
+        currentTemplate = new ItemTemplate(name, ItemTemplate::Single);
         currentTemplate->setImage(toQImage(tmpImg));
         currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
         currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
@@ -255,7 +258,7 @@ QList<ItemTemplate *> ImgProc::splitImageAndRemoveDuplicatesAddToScene(
 QList<ItemTemplate *>  ImgProc::getSplitAndAddToSceneTemplates(QList<unsigned> indexes,
                                                                cv::Mat img,
                                                                std::vector<std::vector<cv::Point> > contours,
-                                                              QGraphicsScene *baseScene)
+                                                               QGraphicsScene *baseScene)
 {
     cv::Rect ROI;
     QList <ItemTemplate*> templates;
@@ -274,8 +277,10 @@ QList<ItemTemplate *>  ImgProc::getSplitAndAddToSceneTemplates(QList<unsigned> i
         cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
         img.copyTo(crop,mask);
         tmpImg = crop(ROI);
-        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
-        currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
+        QString name;
+        //GET THE NAME FROM TEMPLATE
+        QTextStream(&name) << "NewTemplate" << i;
+        currentTemplate = new ItemTemplate(name, ItemTemplate::Single);
         currentTemplate->setImage(toQImage(tmpImg));
         currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
         currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
@@ -295,7 +300,7 @@ QList<ItemTemplate *>  ImgProc::getSplitAndAddToSceneTemplates(QList<unsigned> i
 
         templates.append(currentTemplate);
 
-        QGraphicsPixmapItem* imageForParentScene = new QGraphicsPixmapItem(*currentTemplate->pixmap());
+        ItemElement* imageForParentScene = new ItemElement(currentTemplate);
 
         baseScene->addItem(imageForParentScene);
         imageForParentScene->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -314,7 +319,7 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
     std::vector< std::vector<cv::Point> > currentContour;
     unsigned currentBiggest;
     QList <unsigned> currentMatches;
-    float rotation;
+    //float rotation;
     //float scale;
 
     baseScene->clear();
@@ -322,6 +327,7 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
     for(int i = 0; i< biggestAndMatches.size();i++){
         currentBiggest = biggestAndMatches.at(i).first;
         currentMatches = biggestAndMatches.at(i).second;
+        float biggestArea = float(cv::minAreaRect(contours.at(currentBiggest)).size.area());;
 
 
         ROI = cv::boundingRect(contours.at(currentBiggest));
@@ -332,8 +338,11 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
         cv::drawContours(mask, currentContour, -1, cv::Scalar(255), CV_FILLED);
         img.copyTo(crop,mask);
         tmpImg = crop(ROI);
-        //GET THE NAME MAYBE MAKE A FOR LOOP RATHER THAN FOR EACH to get an int
-        currentTemplate = new ItemTemplate("blabla", ItemTemplate::Single);
+
+        QString name;
+        //GET THE NAME FROM TEMPLATE
+        QTextStream(&name) << "NewTemplate" << i;
+        currentTemplate = new ItemTemplate(name, ItemTemplate::Single);
         currentTemplate->setImage(toQImage(tmpImg));
         currentTemplate->setContour(findContoursFromQImage(currentTemplate->image()));
         currentTemplate->setConvex(findConvexesFromQImage(currentTemplate->image()));
@@ -353,47 +362,34 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
 
         templates.append(currentTemplate);
 
-        //float parentScale = float(cv::minAreaRect(currentContour.at(0)).size.area());
-        cv::Moments moment;
-        moment = cv::moments(currentContour.at(0),false);
-        //float parentRotation = 0.5*atan((2*moment.mu11)/(moment.mu20-moment.mu02))*(180/M_PI);
 
-
-        cv::Rect matchROI;
-        cv::Mat matchRoiTmp;
+//        cv::Rect matchROI;
+//        cv::Mat matchRoiTmp;
         for(int j = 0; j < currentMatches.size();j++){
 
-            QGraphicsPixmapItem* imageForParentScene = new QGraphicsPixmapItem(*currentTemplate->pixmap());
+            ItemElement* imageForParentScene = new ItemElement(currentTemplate);
             std::vector<cv::Point> currentMatchContour = contours.at(currentMatches.at(j));
 
-            cv::RotatedRect rect = cv::minAreaRect(currentMatchContour);
-            cv::Size rect_size = rect.size;
-            float angle = rect.angle;
-            if (rotation < -45.) {
-                rotation += 90.0;
-                //int tmpH = rect_size.height;
-                rect_size = cv::Size(rect_size.height,rect_size.width);
-                //swap(rect_size.width, rect_size.height);
-            };
-            cv::Mat M = cv::getRotationMatrix2D(rect.center, angle, 1);
-            cv::warpAffine(img,matchRoiTmp, M, img.size(), cv::INTER_CUBIC);
-            cv::Point pt(rect.center.x-(rect_size.width/2),rect.center.y-(rect_size.height/2));
-            matchROI = cv::Rect(pt, rect_size);
-            matchRoiTmp = matchRoiTmp(matchROI);
-
-           // cv::imshow("WINDOW", matchRoiTmp);
-            //scale =sqrt(float(cv::minAreaRect(currentMatchContour).size.area())/parentScale);
-            //scale = ceilf(scale * 100)/100;
+            //cv::RotatedRect rect = cv::minAreaRect(currentMatchContour);
+           // cv::Size rect_size = rect.size;
+            //NEED TO IMPLEMENT ROTATION
+//            float angle = rect.angle;
+//            if (rotation < -45.) {
+//                rotation += 90.0;
+//                //int tmpH = rect_size.height;
+//                rect_size = cv::Size(rect_size.height,rect_size.width);
+//                //swap(rect_size.width, rect_size.height);
+//            };
+//            cv::Mat M = cv::getRotationMatrix2D(rect.center, angle, 1);
+//            cv::warpAffine(img,matchRoiTmp, M, img.size(), cv::INTER_CUBIC);
+//            cv::Point pt(rect.center.x-(rect_size.width/2),rect.center.y-(rect_size.height/2));
+//            matchROI = cv::Rect(pt, rect_size);
+//            matchRoiTmp = matchRoiTmp(matchROI);
 
 
+            float scale =sqrt(float(cv::minAreaRect(currentMatchContour).size.area())/biggestArea);
+            scale = ceilf(scale * 100)/100;
 
-            // moment = cv::moments(currentMatchContour,false);
-            // rotation = 0.5*atan((2*moment.mu11)/(moment.mu20-moment.mu02))*(180/M_PI);
-
-            if (rotation < -45.) {
-                rotation += 90.0;
-                //cv::swap(rect_size.width, rect_size.height);
-            }
 
             cv::Rect pos = cv::boundingRect(currentMatchContour);
             baseScene->addItem(imageForParentScene);
@@ -402,8 +398,8 @@ QList<ItemTemplate *> ImgProc::getSplitAndRemoveAddToSceneTemplates(QList<QPair<
             imageForParentScene->setPos(pos.x,pos.y);
             imageForParentScene->setTransformOriginPoint(imageForParentScene->boundingRect().x(),
                                                          imageForParentScene->boundingRect().y());
-            //imageForParentScene->setScale(scale);
-            imageForParentScene->setRotation(qreal(rotation));
+            imageForParentScene->setScale(scale);
+            //imageForParentScene->setRotation(qreal(rotation));
         }
     }
     return QList<ItemTemplate *>(templates);
@@ -515,7 +511,10 @@ QList<QList<unsigned> > ImgProc::get_shapeMatchesFromColorMatches(std::vector<st
                             ignored.push_back(currentMatchList.at(j));
                             ignored.push_back(currentMatchList.at(i));
                         }
-                    } else ignore=false;
+
+                    } else {
+                        ignore=false;
+                    }
                 }
                 matched.append(list);
             }
@@ -594,15 +593,43 @@ QList<QList<unsigned> > ImgProc::get_colorMatches(const double &color_tress,
                 }
 
                 if(!ignore) {
-                    double match = cv::compareHist(*histograms.at(i),
-                                                   *histograms.at(j),
-                                                   CV_COMP_CORREL);
-                    if(match > color_tress)
-                    {
-                        list.append(j);
+                    //THIS IS THE SIMPLE CHECK WHERE IT CHECKS THE RATIO BETWEEN THE HEIGHT OF
+                    //THE minarearect AND THE RADIUS OF MINENCLOSING CIRCLE. THIS IS DONE BEFORE THE COLOR CHECK
+                    float height1;
+                    float height2;
+                    float radius1;
+                    float radius2;
+                    cv::Point2f center;
 
-                        ignored.push_back(j);
-                        ignored.push_back(i);
+                    //The following check is done get the heightest side of the minarea rect is this changes depending on rotation
+                    if((cv::minAreaRect(contours.at(i)).size.height < cv::minAreaRect(contours.at(i)).size.width)){
+                        height1 = cv::minAreaRect(contours.at(i)).size.height;
+                    } else {
+                        height1 = cv::minAreaRect(contours.at(i)).size.width;
+                    }
+
+                    if(cv::minAreaRect(contours.at(j)).size.height < cv::minAreaRect(contours.at(j)).size.width){
+                        height2 = cv::minAreaRect(contours.at(j)).size.height;
+                    } else {
+                        height2 = cv::minAreaRect(contours.at(j)).size.width;
+                    }
+
+                    cv::minEnclosingCircle(contours.at(i),center,radius1);
+                    cv::minEnclosingCircle(contours.at(j),center,radius2);
+
+                    float test1 = height1/radius1;
+                    float test2 = height2/radius2;
+                    if(test1-test2 < 0.1 && test1-test2 > -0.1){
+                        double match = cv::compareHist(*histograms.at(i),
+                                                       *histograms.at(j),
+                                                       CV_COMP_CORREL);
+                        if(match > color_tress)
+                        {
+                            list.append(j);
+
+                            ignored.push_back(j);
+                            ignored.push_back(i);
+                        }
                     }
                 } else ignore=false;
             }
@@ -649,7 +676,9 @@ std::vector<std::vector<cv::Point> > ImgProc::findConvexes(const QString &path) 
 
     std::vector<std::vector<cv::Point> >hull( contours.size() );
     for( unsigned int i = 0; i < contours.size(); i++ )
-    {  convexHull( cv::Mat(contours[i]), hull[i], false ); }
+    {
+        convexHull( cv::Mat(contours[i]), hull[i], false );
+    }
 
     return hull;
 }

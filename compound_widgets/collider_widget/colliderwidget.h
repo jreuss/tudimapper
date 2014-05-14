@@ -35,14 +35,17 @@ public:
     void toggleToolbarButtons(Toolbar btnGroup, bool enable);
     void toggleSceneSelection(bool enable);
     void toggleAdd();
-    void toggleTreelist();
+    void toggleMainUI();
     void toogleUI(bool enable);
     void toggleSelectionTool(bool enable);
     void togglePointSelectionTool(bool enable);
     void deselectAllItems();
+    void closeWithOutFinishMesh();
+
+    bool import;
 
 signals:
-    void onToggleTreelistEnabled();
+    void onToggleMainUIEnabled();
 
 public slots:
     void handleCheckColliderOnTimerShot();
@@ -64,21 +67,21 @@ private slots:
     void handleTreeviewSelectionChanged(QModelIndex);
     void handleAddToAllCheckbox(bool);
 
+
 private:
     bool onNonAcceptedMesh;
     QTimer mTimer;
     QUuid mSelectedColliderID;
     Ui::ColliderWidget *ui;
     ItemTemplate *mCurrentItem;
-    QGraphicsRectItem *bg;
     ImgProc mImgProc;
-    QBrush mBackgroundBrush;
     QGraphicsScene *mScene;
     ColliderTreeGraphicsModel *model;
     QList<MeshCollider *> mNewestMeshColliders;
     MeshCollider * mNewestMeshCollider;
     bool mContourFixture;
     bool mMultipleObject;
+
 };
 
 

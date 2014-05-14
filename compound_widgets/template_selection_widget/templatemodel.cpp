@@ -1,4 +1,8 @@
 #include "templatemodel.h"
+#include <QStringList>
+#include <QMimeData>
+#include <QMimeType>
+#include <QDebug>
 
 TemplateModel::TemplateModel(int treeDepth) : AbstractTreeModel(treeDepth)
 {
@@ -10,14 +14,18 @@ Qt::ItemFlags TemplateModel::flags(const QModelIndex &index) const
     Qt::ItemFlags theFlags = QAbstractItemModel::flags(index);
 
     if(index.isValid ()) {
-        // users can change the name and toggle import
+        ItemTemplate* item = static_cast<ItemTemplate*>(itemFromIndex (index));
         if(index.column () == 0) {
             theFlags |= Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            if(item->importType() != ItemTemplate::Folder){
+                theFlags |= Qt::ItemIsDragEnabled;
+            }
         }
     }
 
     return theFlags;
 }
+
 
 QVariant TemplateModel::data(const QModelIndex &index, int role) const
 {
@@ -34,10 +42,10 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
 
         if(role == Qt::DecorationRole &&
                 index.column () == 0) {
-           if(item->importType() == ItemTemplate::Folder){
+            if(item->importType() == ItemTemplate::Folder){
                 return folderIcon;
             } else {
-             return QPixmap( *item->pixmap());
+                return QPixmap( *item->pixmap());
             }
 
         }
@@ -48,18 +56,18 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
 
     }
     return QVariant();
-//        if(index.isValid() && role == Qt::DisplayRole) {
+    //        if(index.isValid() && role == Qt::DisplayRole) {
 
-//            ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index));
-//            if(index.column() == 0){
-//                return item->name();
-//            }
+    //            ItemTemplate *item = static_cast<ItemTemplate*>(itemFromIndex (index));
+    //            if(index.column() == 0){
+    //                return item->name();
+    //            }
 
-//        }
+    //        }
 
     //}
 
-   // return QVariant();
+    // return QVariant();
 }
 
 bool TemplateModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -80,10 +88,27 @@ QVariant TemplateModel::headerData(int section, Qt::Orientation orientation, int
 {
     if(orientation == Qt::Horizontal && role == Qt::DisplayRole) {
         if(section ==0) {
-            return tr("Name");
+            return tr("Folders");
         }
     }
 
     return QVariant(); // invalid
+}
+
+QStringList TemplateModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/vnd.text.list";
+    return types;
+}
+
+QMimeData *TemplateModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+    mimeData->setData("application/vnd.text.list", encodedData);
+    return mimeData;
 }
 

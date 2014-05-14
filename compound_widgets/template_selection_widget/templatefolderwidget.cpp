@@ -23,8 +23,17 @@ TemplateFolderWidget::TemplateFolderWidget(QWidget *parent) :
     folderView->setModel(folderProxy);
     folderView->hideColumn(1);
 
-    hLayout->addWidget(folderView);
-    hLayout->addWidget(thumbView);
+    thumbView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    folderView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    folderView->setMaximumWidth(260);
+
+    splitter = new QSplitter();
+
+    splitter->addWidget(folderView);
+    splitter->addWidget(thumbView);
+
+    hLayout->addWidget(splitter);
+
 
     setLayout(hLayout);
 
@@ -73,16 +82,16 @@ void TemplateFolderWidget::handleAddFolderAction()
 
 
     // bad logic
-   // thumbView->forceUpdate();
+    // thumbView->forceUpdate();
 }
 
 void TemplateFolderWidget::handleAddTemplateAction()
 {
     if(currentModelIndex.isValid()) {
-         ItemTemplate *item = new ItemTemplate("New Folder",ItemTemplate::Single,model->getRoot());
+        ItemTemplate *item = new ItemTemplate("New Folder",ItemTemplate::Single,model->getRoot());
         model->insertItem(currentModelIndex, item);
     }
-   // thumbView->forceUpdate();
+    // thumbView->forceUpdate();
 }
 
 void TemplateFolderWidget::handleRemoveAction()
@@ -117,9 +126,35 @@ void TemplateFolderWidget::addTemplates(ItemTemplate *templateRoot)
                       model->getRoot(),itm);
 
     for(int i = 0; i < templateRoot->mChildren.count(); i++) {
+        ItemTemplate* currentItem = static_cast<ItemTemplate*>(templateRoot->mChildren.at(i));
         model->insertItem(itm->getChildren().count(),
                           itm,
-                          templateRoot->mChildren.at(i));
+                          currentItem);
+
+        if(currentItem->importType() == ItemTemplate::Split){
+            for(int j = 0; j < currentItem->mChildren.count(); j++){
+                model->insertItem(itm->getChildren().count(),
+                                  itm,
+                                  currentItem->mChildren.at(j));
+            }
+
+        }
     }
+}
+
+void TemplateFolderWidget::handleRequestedTemplates(QPointF pos)
+{
+    QList<ItemTemplate*> templatesToSend;
+
+    foreach(QModelIndex index, thumbView->selectionModel()->selectedIndexes() )
+    {
+        if (index.isValid()) {
+            ItemTemplate *item = static_cast<ItemTemplate*>(model->itemFromIndex (index));
+            if(item->importType() != ItemTemplate::Folder){
+                templatesToSend.append(item);
+            }
+        }
+    }
+    emit onSendRequestedTemplates(pos,templatesToSend);
 }
 

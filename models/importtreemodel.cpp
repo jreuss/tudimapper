@@ -40,25 +40,25 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
 
         // set data
         if(role == Qt::DisplayRole || role == Qt::EditRole) {
-           switch(index.column ()) {
-           case NAME:
-               return item->name ();
-           case TYPE:
-               switch(item->importType ()) {
-               case ItemTemplate::Single:
-                   return tr("Single");
-               case ItemTemplate::Group:
-                   return tr("Group");
-               case ItemTemplate::SpriteSheet:
-                   return tr("SpriteSheet");
-               case ItemTemplate::Split:
-                   return tr("Split");
-               default:
-                   return QVariant();
-               }
-           default:
-               Q_ASSERT(false); // no such column exists
-           }
+            switch(index.column ()) {
+            case NAME:
+                return item->name ();
+            case TYPE:
+                switch(item->importType ()) {
+                case ItemTemplate::Single:
+                    return tr("Single");
+                case ItemTemplate::Group:
+                    return tr("Group");
+                case ItemTemplate::SpriteSheet:
+                    return tr("SpriteSheet");
+                case ItemTemplate::Split:
+                    return tr("Split");
+                default:
+                    return QVariant();
+                }
+            default:
+                Q_ASSERT(false); // no such column exists
+            }
         }
 
         // left align all
@@ -72,6 +72,15 @@ QVariant ImportTreeModel::data(const QModelIndex &index, int role) const
                 index.column () == NAME) {
             return item->icon ();
         }
+
+        if ( index.isValid() && role == Qt::ForegroundRole )
+            {
+                if ( item->importType() == ItemTemplate::Group)
+                {
+                    return QVariant( QColor( Qt::red ) );
+                }
+                return QVariant( QColor( Qt::black ) );
+            }
     }
 
     return QVariant(); //invalid
@@ -130,27 +139,19 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
         item->setImage (QImage(item->path ()));
 
         item->setPixmap (new QPixmap(
-                    QPixmap::fromImage(item->image ())));
+                             QPixmap::fromImage(item->image ())));
 
         item->setPixmapItem(new QGraphicsPixmapItem(*item->pixmap()));
 
-        QRect rect(item->image().rect ());
 
         item->calculateSceneRect();
 
-        // set background
-        QBrush brush;
-        brush.setTextureImage(QImage(":/images/checkerboard"));
-        QGraphicsRectItem *bg = new QGraphicsRectItem(rect);
-        bg->setBrush (brush);
-        bg->setPen (Qt::NoPen);
 
-        item->scene ()->setBackgroundBrush(brush);
         item->scene()->addItem(item->getPixmapItem());
 
         item->setContour(mImgProc.findContours(item->path ()));
         item->setItemType (item->contour ().size() == 1 ?
-                    ItemTemplate::Single : ItemTemplate::Group);
+                               ItemTemplate::Single : ItemTemplate::Group);
         item->setConvex(mImgProc.findConvexes(item->path ()));
         item->setIcon (QIcon(*item->pixmap()));
         //AbstractTreeModel::insertItem(mRoot->mChildren.count());
@@ -160,26 +161,17 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
 
 void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, float shapeTresh)
 {
-    //ItemTemplate* currentItm;
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
         QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
         templates = mImgProc.splitImageAndRemoveDuplicates(item->contour(),item->path(),shapeTresh,colorMaches);
-//        foreach(ItemTemplate *itm, templates){
-//             this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
-//        }
     }else {
         templates = mImgProc.splitImage(item->contour(),item->path());
-//        foreach(ItemTemplate *itm, templates){
-//            this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
-        }
-        foreach(ItemTemplate *itm, templates){
-            this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
     }
-    //currentItm = templates.at(1);
-    //IMPLEMENT GET INDEX FROM ITEM AND SET THIS ITEM AS SELECTED AND THEN DELETE THE CURRENTITM...
-    //delete itm;
-    layoutChanged();
+    foreach(ItemTemplate *itm, templates){
+        this->insertItem(getRoot()->getChildren().count(),getRoot(), itm);
+    }
+    emit onRemoveSplitParent();
 }
 
 void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDuplicates, float shapeTres)
@@ -195,11 +187,11 @@ void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDu
     } else {
 
 
-    templates = mImgProc.splitAndAddToScene(item->contour(),item->path(),item->getSplitScene());
+        templates = mImgProc.splitAndAddToScene(item->contour(),item->path(),item->getSplitScene());
 
-    foreach(ItemTemplate *itm, templates){
-        item->addChild(itm);
-    }
+        foreach(ItemTemplate *itm, templates){
+            item->addChild(itm);
+        }
     }
 
     //item->setSplitScene(thePair.second);

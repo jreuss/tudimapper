@@ -1,6 +1,8 @@
 #ifndef TEMPLATEFOLDERWIDGET_H
 #define TEMPLATEFOLDERWIDGET_H
 
+#include <QSplitter>
+
 #include "stable_pch.h"
 #include "thumbnailgridview.h"
 #include "folderproxy.h"
@@ -27,9 +29,11 @@ public slots:
     void handleRemoveAction();
     void handleContextMenuRequested(QPoint);
     void handleFolderSelectionChanged(QModelIndex);
+    void handleRequestedTemplates(QPointF);
 
 signals:
     void mapProxySelection(QModelIndex);
+    void onSendRequestedTemplates(QPointF, QList<ItemTemplate*>);
 
 private:
     Ui::TemplateFolderWidget *ui;
@@ -37,6 +41,7 @@ private:
     FolderProxy *folderProxy;
     QTreeView *folderView;
     ThumbnailGridView *thumbView;
+    QSplitter *splitter;
     QHBoxLayout *hLayout;
     QMenu modelContextMenu;
     QModelIndex currentModelIndex;

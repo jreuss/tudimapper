@@ -17,12 +17,14 @@ public:
     explicit SplitWidget(QWidget *parent = 0);
     ~SplitWidget();
 
+    void toogleUI(bool enable);
     void setupConnections();
     void onLoadSelectedItem(ItemTemplate *item);
 
 signals:
     void onSplitAplied(ItemTemplate*,bool,float);
     void onSplitAndAddToSceneAplied(ItemTemplate*,bool,float);
+    void onToggleMainUIEnabled();
 
 private slots:
      void handleMatchTressholdChanged(int);

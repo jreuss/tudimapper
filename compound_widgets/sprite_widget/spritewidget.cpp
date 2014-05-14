@@ -109,8 +109,8 @@ void SpriteWidget::onLoadSelectedItem(ItemTemplate *item)
     mGrid = new GraphicsGridItem(QRectF(0,0,mImage.width(), mImage.height()));
     mGrid->setGrid(mCurrentItem->getAnimation()->getRows(),
                    mCurrentItem->getAnimation()->getColumns(),
-                   mCurrentItem->getAnimation()->getHeight(),
-                   mCurrentItem->getAnimation()->getWidth());
+                   mCurrentItem->getAnimation()->getWidth(),
+                   mCurrentItem->getAnimation()->getHeight());
 
     ui->row_edit->setValue(mCurrentItem->getAnimation()->getRows());
     ui->column_edit->setValue(mCurrentItem->getAnimation()->getColumns());
@@ -213,7 +213,8 @@ void SpriteWidget::handleSetSpriteProperties()
         mCurrentItem->getPixmapItem()->setPixmap(*mCurrentItem->pixmap());
         QImage img = mCurrentItem->pixmap()->toImage();
          mCurrentItem->setContour(mImgProc.findContoursFromQImage(img));
-        mCurrentItem->calculateSceneRect();
+         mCurrentItem->calculateSceneRect();
+
     }
     ui->label_info->setText(out);
 
@@ -244,13 +245,13 @@ void SpriteWidget::handleColumnCountChanged(int value)
 
 void SpriteWidget::handleSpriteWidthChanged(int value)
 {
-    mGrid->setHSpacing(value);
+    mGrid->setVSpacing(value);
     mCurrentItem->getAnimation()->setWidth(value);
 }
 
 void SpriteWidget::handleSpriteHeightChanged(int value)
 {
-    mGrid->setVSpacing(value);
+    mGrid->setHSpacing(value);
     mCurrentItem->getAnimation()->setHeight(value);
 }
 

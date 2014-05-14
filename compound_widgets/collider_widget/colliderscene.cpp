@@ -9,6 +9,13 @@ ColliderScene::ColliderScene(QObject *parent) :
     mRoot = new AbstractTreeGraphicsItem();
     mRoot->setZValue(2);
     this->addItem(mRoot);
+    // set background brush
+    QBrush brush;
+    brush.setTextureImage(QImage(":/images/checkerboard"));
+    QGraphicsRectItem *bg = new QGraphicsRectItem();
+    bg->setBrush (brush);
+    bg->setPen (Qt::NoPen);
+    setBackgroundBrush(brush);
 }
 
 void ColliderScene::keyPressEvent(QKeyEvent *event)
