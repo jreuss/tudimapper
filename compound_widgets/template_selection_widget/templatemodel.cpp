@@ -45,7 +45,7 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
             if(item->importType() == ItemTemplate::Folder){
                 return folderIcon;
             } else {
-                return QPixmap( *item->pixmap());
+                return QIcon( *item->pixmap());
             }
 
         }
