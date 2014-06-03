@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     compound_widgets/collider_widget/colliderdialog.cpp \
     items/abstractsceneitem.cpp \
     models/abstracttreescenemodel.cpp \
-    leveltreemodel.cpp
+    leveltreemodel.cpp \
+    compound_widgets/split_widget/splitscene.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -99,7 +100,8 @@ HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderdialog.h \
     items/abstractsceneitem.h \
     models/abstracttreescenemodel.h \
-    leveltreemodel.h
+    leveltreemodel.h \
+    compound_widgets/split_widget/splitscene.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \

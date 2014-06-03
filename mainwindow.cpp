@@ -81,6 +81,7 @@ void MainWindow::handleImportSpecial()
                 this, SLOT(handleImportAccepted(ItemTemplate*)));
 
         diag->setModal(true);
+        diag->setWindowFlags(Qt::Window);
         diag->exec();
 
         disconnect(diag, SIGNAL(onImportAccept(ItemTemplate*)),

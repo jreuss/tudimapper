@@ -1,6 +1,7 @@
 #include "itemelement.h"
 
 
+
 ItemElement::ItemElement(ItemTemplate* tmp)
 {
     mTemplate = tmp;

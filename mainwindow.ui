@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
+    <width>926</width>
     <height>524</height>
    </rect>
   </property>
@@ -48,7 +48,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>657</width>
+     <width>926</width>
      <height>21</height>
     </rect>
    </property>
@@ -314,7 +314,7 @@
   </widget>
   <action name="actionImportSpecial">
    <property name="text">
-    <string>Import special</string>
+    <string>Import</string>
    </property>
   </action>
   <action name="actionQuit">

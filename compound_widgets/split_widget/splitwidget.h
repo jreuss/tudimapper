@@ -25,11 +25,13 @@ signals:
     void onSplitAplied(ItemTemplate*,bool,float);
     void onSplitAndAddToSceneAplied(ItemTemplate*,bool,float);
     void onToggleMainUIEnabled();
+    void onDoubleClick(ItemTemplate*);
 
-private slots:
+    private slots:
      void handleMatchTressholdChanged(int);
      void handleSplitAplied();
      void handleSplitAndAddToSceneAplied();
+     void handleDoubleClick(ItemTemplate*);
 private:
     Ui::SplitWidget *ui;
     ItemTemplate *mCurrentItem;

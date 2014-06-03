@@ -20,9 +20,15 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Import</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetDefaultConstraint</enum>
+   </property>
    <item row="1" column="0">
     <widget class="Line" name="line">
      <property name="orientation">
@@ -249,14 +255,14 @@
               <item>
                <widget class="QRadioButton" name="radio_keepAsOne">
                 <property name="text">
-                 <string>Keep as one</string>
+                 <string>Keep as single image</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QRadioButton" name="radio_spritesheet">
                 <property name="text">
-                 <string>Treat as spritesheet</string>
+                 <string>Create Animation</string>
                 </property>
                </widget>
               </item>

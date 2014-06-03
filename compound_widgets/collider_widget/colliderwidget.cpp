@@ -90,6 +90,7 @@ void ColliderWidget::onLoadSelectedItem(ItemTemplate *item)
             mMultipleObject = true;
             ui->label_addToAll->setEnabled(true);
             ui->checkBox_addToAll->setEnabled(true);
+            ui->checkBox_addToAll->setChecked(true);
             handleAddToAllCheckbox(ui->checkBox_addToAll->isChecked());
         } else {
             mMultipleObject = false;

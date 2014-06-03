@@ -3,7 +3,7 @@
 
 
 #include "stable_pch.h"
-#include "items/itemtemplate.h"
+
 
 class ThumbnailGridView : public QAbstractItemView
 {

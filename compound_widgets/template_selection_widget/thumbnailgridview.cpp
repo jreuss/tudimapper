@@ -1,5 +1,6 @@
 
 #include "thumbnailgridview.h"
+#include "items/itemtemplate.h"
 
 
 

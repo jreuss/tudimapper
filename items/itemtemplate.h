@@ -9,6 +9,7 @@
 #include "items/abstracttreegraphicsitem.h"
 #include "compound_widgets/sprite_widget/animation.h"
 #include "abstracttreeitem.h"
+#include "compound_widgets/split_widget/splitscene.h"
 
 class ItemTemplate : public AbstractTreeItem
 {

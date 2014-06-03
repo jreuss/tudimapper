@@ -21,8 +21,11 @@ SplitWidget::~SplitWidget()
 void SplitWidget::toogleUI(bool enable)
 {
     ui->btn_split->setEnabled(enable);
+    //FOR THE TEST
+    ui->btn_split->setHidden(true);
     ui->btn_splitAndAdd->setEnabled(enable);
     ui->gBox_rm_duplicates->setEnabled(enable);
+
 }
 
 void SplitWidget::setupConnections()
@@ -39,7 +42,7 @@ void SplitWidget::onLoadSelectedItem(ItemTemplate *item)
 {
     mCurrentItem = item;
     if(!mCurrentItem->getSplitScene()){
-        mCurrentItem->setSplitScene(new QGraphicsScene());
+        mCurrentItem->setSplitScene(new SplitScene());
         QBrush brush;
         brush.setTextureImage(QImage(":/images/checkerboard"));
         mCurrentItem->getSplitScene()->setBackgroundBrush(brush);
@@ -55,6 +58,8 @@ void SplitWidget::onLoadSelectedItem(ItemTemplate *item)
 
         mColorMatches = mImproc.get_colorMatches(0.9,mCurrentItem->path(),mCurrentItem->contour());
         handleMatchTressholdChanged(5);
+        connect(mCurrentItem->getSplitScene(),SIGNAL(onDoubleClick(ItemTemplate*)),
+                this, SLOT(handleDoubleClick(ItemTemplate*)));
 
     }
     if(!mCurrentItem->getIsSplit()){
@@ -96,4 +101,9 @@ void SplitWidget::handleSplitAndAddToSceneAplied()
     mCurrentItem->setIsSplit(true);
     toogleUI(false);
     emit onToggleMainUIEnabled();
+}
+
+void SplitWidget::handleDoubleClick(ItemTemplate *item)
+{
+    emit onDoubleClick(item);
 }

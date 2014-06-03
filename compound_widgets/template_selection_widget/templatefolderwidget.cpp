@@ -140,6 +140,10 @@ void TemplateFolderWidget::addTemplates(ItemTemplate *templateRoot)
 
         }
     }
+    QModelIndex idx = model->indexFromItem(itm);
+    folderView->selectionModel()->clearSelection();
+    folderView->selectionModel()->setCurrentIndex(idx,QItemSelectionModel::Select);
+    handleFolderSelectionChanged(folderProxy->mapFromSource(idx));
 }
 
 void TemplateFolderWidget::handleRequestedTemplates(QPointF pos)

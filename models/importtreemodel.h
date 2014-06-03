@@ -30,6 +30,8 @@ public:
 
 signals:
     void onRemoveSplitParent();
+    void onExpandSplit(ItemTemplate*);
+    void onSelectFirstUrl(ItemTemplate*);
 
 public slots:
    void handleSplit(ItemTemplate*, bool, float);

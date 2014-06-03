@@ -1,7 +1,7 @@
 #ifndef ITEMELEMENT_H
 #define ITEMELEMENT_H
-#include <items/abstracttreepixmapitem.h>
-#include <items/itemtemplate.h>
+#include "items/abstracttreepixmapitem.h"
+#include "items/itemtemplate.h"
 #include <mainscene.h>
 #include <QDebug>
 

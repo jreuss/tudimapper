@@ -32,6 +32,9 @@ public slots:
    void handleToggleAnimationButton(bool);
    void handleToggleSplitButton(bool);
    void handleRemoveSplitParent();
+   void handleExpandSplit(ItemTemplate*);
+   void handleSelectFirstUrl(ItemTemplate *);
+   void handleSplitSceneDoubleClick(ItemTemplate *);
 
    void accept();
 

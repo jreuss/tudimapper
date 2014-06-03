@@ -124,7 +124,7 @@ QVariant ImportTreeModel::headerData(int section, Qt::Orientation orientation, i
 void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
 {
     using namespace std;
-
+    bool first = true;
     foreach(QUrl url, urls)
     {
 
@@ -156,6 +156,10 @@ void ImportTreeModel::addItemsFromUrls(const QList<QUrl> &urls)
         item->setIcon (QIcon(*item->pixmap()));
         //AbstractTreeModel::insertItem(mRoot->mChildren.count());
         this->insertItem(getRoot()->getChildren().count(), getRoot(), item);
+        if(first){
+            emit onSelectFirstUrl(item);
+            first=false;
+        }
     }
 }
 
@@ -197,6 +201,7 @@ void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDu
     //item->setSplitScene(thePair.second);
 
     layoutChanged();
+    emit onExpandSplit(item);
 }
 
 

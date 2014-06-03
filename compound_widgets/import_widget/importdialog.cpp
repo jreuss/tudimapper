@@ -35,7 +35,9 @@ ImportDialog::ImportDialog(QList<QUrl> imgFiles, QWidget *parent) :
     ui->graphics_groupopt->setScene(mScene);
     mModel->addItemsFromUrls (imgFiles);
     toogleToolButtons();
-    ui->stack_pages->setCurrentIndex(0);
+    //this->setWindowState(Qt::WindowMaximized);
+
+    //ui->stack_pages->setCurrentIndex(0);
 }
 
 ImportDialog::ImportDialog(QList<ItemTemplate*> tempsToChange, QWidget *parent) :
@@ -58,7 +60,7 @@ ImportDialog::ImportDialog(QList<ItemTemplate*> tempsToChange, QWidget *parent) 
     }
 
     toogleToolButtons();
-    ui->stack_pages->setCurrentIndex(0);
+   // ui->stack_pages->setCurrentIndex(0);
 }
 
 ImportDialog::~ImportDialog()
@@ -72,6 +74,7 @@ void ImportDialog::handleImportItemSelectionChanged(QModelIndex index)
 {
     if(index != mCurrentIndex)
     {
+
         mCurrentIndex = index;
 
         mCurrentItm = static_cast<ItemTemplate* >(mModel->itemFromIndex (index));
@@ -197,6 +200,25 @@ void ImportDialog::handleRemoveSplitParent()
     mModel->removeItem(itemToRemove);
 }
 
+void ImportDialog::handleExpandSplit(ItemTemplate *item)
+{
+    ui->treeView->expand(mModel->indexFromItem(item));
+}
+
+void ImportDialog::handleSelectFirstUrl(ItemTemplate *item)
+{
+    ui->treeView->selectionModel()->clearSelection();
+    ui->treeView->selectionModel()->setCurrentIndex(mModel->indexFromItem(item), QItemSelectionModel::Select);
+    handleImportItemSelectionChanged(mModel->indexFromItem(item));
+}
+
+void ImportDialog::handleSplitSceneDoubleClick(ItemTemplate *item)
+{
+    ui->treeView->selectionModel()->clearSelection();
+    ui->treeView->selectionModel()->setCurrentIndex(mModel->indexFromItem(item), QItemSelectionModel::Select);
+    handleImportItemSelectionChanged(mModel->indexFromItem(item));
+}
+
 void ImportDialog::handleToggleColliderButton(bool colliderEnabled)
 {
     if(colliderEnabled)
@@ -239,6 +261,17 @@ void ImportDialog::setupConnections()
 
     connect(mModel,SIGNAL(onRemoveSplitParent()),
             this,SLOT(handleRemoveSplitParent()));
+
+    connect(mModel,SIGNAL(onExpandSplit(ItemTemplate*)),
+            this,SLOT(handleExpandSplit(ItemTemplate*)));
+
+    connect(mModel,SIGNAL(onSelectFirstUrl(ItemTemplate*)),
+            this,SLOT(handleSelectFirstUrl(ItemTemplate*)));
+
+    connect(ui->splitwidget,SIGNAL(onDoubleClick(ItemTemplate*)),
+            this,SLOT(handleSplitSceneDoubleClick(ItemTemplate*)));
+
+
 
 }
 
