@@ -211,7 +211,8 @@ void MainWindow::handleChangeScale(double value)
 }
 
 void MainWindow::handleChangeRotation(double value)
-{ if(ui->spinBox_rotation->hasFocus()){
+{
+    if(ui->spinBox_rotation->hasFocus()){
         selectedItems.front()->setRotation(value);
     }
 }
@@ -238,7 +239,6 @@ void MainWindow::handleUpdateImportOptions()
 
 void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection deselected)
 {
-    qDebug() << "iam called";
     QModelIndexList selectedIndexes = ui->treeView_level->selectionModel()->selectedIndexes();
 
     if(selectedLevel){

@@ -121,6 +121,8 @@ LIBS += -L/usr/local/lib \
     -lopencv_photo \
 }
 
+win32:RC_ICONS += tudi_ico.ico
+
 win32 {
 INCLUDEPATH += C:\opencv248\build\install\include
 LIBS += C:\\opencv248\\build\\lib\\libopencv_core248.dll.a \

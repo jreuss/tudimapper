@@ -6,7 +6,7 @@
 
 TemplateModel::TemplateModel(int treeDepth) : AbstractTreeModel(treeDepth)
 {
-    folderIcon = QIcon(QPixmap(":/icons/folder"));
+    folderIcon = QPixmap(":/icons/folder");
 }
 
 Qt::ItemFlags TemplateModel::flags(const QModelIndex &index) const
@@ -43,9 +43,9 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
         if(role == Qt::DecorationRole &&
                 index.column () == 0) {
             if(item->importType() == ItemTemplate::Folder){
-                return folderIcon;
+                return folderIcon.scaled(24,24);
             } else {
-                return QIcon( *item->pixmap());
+                return *item->pixmap();
             }
 
         }
