@@ -43,8 +43,7 @@ QVariant TemplateModel::data(const QModelIndex &index, int role) const
         if(role == Qt::DecorationRole &&
                 index.column () == 0) {
             if(item->importType() == ItemTemplate::Folder){
-
-                return folderIcon.scaled(QSize(24,24));
+                return folderIcon.scaled(24,24);
             } else {
                 return *item->pixmap();
             }

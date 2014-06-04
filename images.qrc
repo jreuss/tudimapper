@@ -8,5 +8,6 @@
         <file alias="action_rotate">icons/actions-rotate-icon.png</file>
         <file alias="actionscale">icons/actions-scale-icon.png</file>
         <file alias="folder">icons/folder-icon.png</file>
+        <file alias="app_ico">icons/tudi_ico.ico</file>
     </qresource>
 </RCC>

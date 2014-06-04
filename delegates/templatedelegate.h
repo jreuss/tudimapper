@@ -2,6 +2,7 @@
 #define SPINBOXDELEGATE_H
 
 #include "stable_pch.h"
+#include <QDebug>
 
 class TemplateDelegate : public QStyledItemDelegate
 {
@@ -22,6 +23,8 @@ public:
 
 public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QPixmap folderIcon;
 };
 
 #endif
