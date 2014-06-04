@@ -23,6 +23,8 @@ public:
     void setRect(const QRectF &rect);
     QRectF rect() const;
 
+    QPolygonF getRectToDraw();
+
     void setNonUniformScale(QPointF pos,QPointF lastPos);
     QPointF rotatePoint(QPointF ptn, float rot);
     void setColliderRotation (QPointF pos, QPointF rotationPoint);

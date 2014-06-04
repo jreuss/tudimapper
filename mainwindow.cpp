@@ -231,6 +231,9 @@ void MainWindow::handleUpdateImportOptions()
 
     delete colDiag;
 
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    ui->graphicsView->viewport()->update();
+
 }
 
 void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection deselected)

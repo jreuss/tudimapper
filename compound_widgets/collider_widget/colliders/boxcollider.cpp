@@ -222,6 +222,14 @@ QRectF BoxCollider::rect() const
     return mRectPoly.boundingRect();;
 }
 
+QPolygonF BoxCollider::getRectToDraw()
+{   QPolygonF polyToDraw;
+    foreach(QPointF p, mRectPoly){
+        polyToDraw.append(p+this->pos());
+    }
+    return polyToDraw;
+}
+
 void BoxCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
