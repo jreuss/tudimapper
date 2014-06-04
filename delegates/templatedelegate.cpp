@@ -38,14 +38,14 @@ void TemplateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         painter->fillRect(option.rect, option.palette.button());
     }
 
-    QIcon pixmap = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+    QPixmap pixmap = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
 
     int dx = (option.rect.width()-64) / 2;
 
     QRect iconRect = QRect(option.rect.x()+dx, option.rect.y()+5, 64, 64 );
 
     //painter->drawPixmap(pixmap);
-    painter->drawPixmap(iconRect, pixmap.pixmap(QSize(64,64)));
+    painter->drawPixmap(iconRect, pixmap.scaled(QSize(64,64), Qt::KeepAspectRatio));
 
     QString text = qvariant_cast<QString>(index.data(Qt::DisplayRole));
 

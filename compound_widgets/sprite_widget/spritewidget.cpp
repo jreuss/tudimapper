@@ -217,9 +217,6 @@ void SpriteWidget::handleSetSpriteProperties()
 
     }
     ui->label_info->setText(out);
-
-
-
 }
 
 void SpriteWidget::handleAnimationSelectionChanged(QModelIndex index)

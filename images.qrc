@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file alias="checkerboard">images/checkerboard</file>
+        <file alias="splash">images/tudi_splash.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="actionmove">icons/actions-move-icon.png</file>

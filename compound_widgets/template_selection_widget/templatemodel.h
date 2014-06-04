@@ -17,7 +17,7 @@ public:
 
     QVariant headerData (int section, Qt::Orientation orientation, int role) const;
 
-    QIcon folderIcon;
+    QPixmap folderIcon;
 
     QStringList mimeTypes() const;
     QMimeData *mimeData(const QModelIndexList &indexes) const;
