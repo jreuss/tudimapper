@@ -66,18 +66,18 @@ void TemplateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         int dy = (option.rect.height()-height) / 2 - 5;
         pixmap = pixmap.scaled(width,height);
 
-        iconRect = QRect(option.rect.x()+dx, dy, pixmap.width(), pixmap.height() );
+        iconRect = QRect(option.rect.x()+dx, option.rect.y() + dy, pixmap.width(), pixmap.height() );
         painter->drawPixmap(iconRect, pixmap);
 
         // draw overlays
         if(itm->importType() == ItemTemplate::Split) {
-            painter->drawPixmap(10, 10, 32, 32, groupOverlay);
+            painter->drawPixmap(option.rect.x()+5, option.rect.y() + 5, 32, 32, groupOverlay);
             qDebug() << "split";
         }
 
         // draw overlays
         if(itm->importType() == ItemTemplate::SpriteSheet) {
-            painter->drawPixmap(10, 10, 32, 32, spriteOverlay);
+            painter->drawPixmap(option.rect.x()+ 5, option.rect.y() + 5, 32, 32, spriteOverlay);
             qDebug() << "split";
         }
     }
