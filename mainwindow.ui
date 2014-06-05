@@ -312,6 +312,18 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="toolbar">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Toolbar</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="MainToolBar" name="mainToolbar"/>
+  </widget>
   <action name="actionImportSpecial">
    <property name="text">
     <string>Import</string>
@@ -329,6 +341,12 @@
    <class>TemplateFolderWidget</class>
    <extends>QWidget</extends>
    <header>compound_widgets/template_selection_widget/templatefolderwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MainToolBar</class>
+   <extends>QWidget</extends>
+   <header>compound_widgets/main_toolbar/maintoolbar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

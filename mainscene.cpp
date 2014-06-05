@@ -15,6 +15,8 @@ MainScene::MainScene()
     bg->setPen (Qt::NoPen);
     setBackgroundBrush(brush);
     mName = "New Level";
+    mShowColliders = true;
+    mRotate = false;
 }
 
 
@@ -82,6 +84,26 @@ QString MainScene::getName() const
 void MainScene::setName(const QString &value)
 {
     mName = value;
+}
+
+bool MainScene::showColliders()
+{
+    return mShowColliders;
+}
+
+void MainScene::setShowColliders(bool set)
+{
+    mShowColliders = set;
+}
+
+bool MainScene::rotate()
+{
+    return mRotate;
+}
+
+void MainScene::setRotate(bool set)
+{
+    mRotate = set;
 }
 
 

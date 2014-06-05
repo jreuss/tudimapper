@@ -46,12 +46,13 @@ protected slots:
     void handleLevelChange(QItemSelection,QItemSelection);
     void handleAddLevel();
     void handleRemoveLevel();
+    void handleShowCollider(bool);
 
 
 private:
     FileManager mFileManager;
     ImportDialog *mImportDialog;
-    MainScene *mainScene;
+    //MainScene *mainScene;
     Ui::MainWindow *ui;
     ItemTemplate* tmp;
     ElementTreeModel *elementModel;

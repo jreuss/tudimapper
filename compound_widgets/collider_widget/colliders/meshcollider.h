@@ -43,6 +43,7 @@ public:
     void setColliderRotation (QPointF pos,  QPointF rotationPoint);
     void setCanBeDeleted(bool can);
     bool canBeDeleted();
+    QPolygonF getPolyToDraw();
 
       QList<MeshNode *> mChildNodes;
 

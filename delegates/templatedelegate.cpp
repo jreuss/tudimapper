@@ -44,13 +44,12 @@ void TemplateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     int dx = (option.rect.width()-64) / 2;
     QRect iconRect = QRect(option.rect.x()+dx, option.rect.y()+5, 64, 64 );
-
-    if(itm->getItemType() == 0) {
-        painter->drawPixmap(iconRect, folderIcon.scaled(QSize(64,64), Qt::KeepAspectRatio));
-    } else {
+   // if(itm->getItemType() == 0) {
+       // painter->drawPixmap(iconRect, folderIcon.scaled(QSize(64,64), Qt::KeepAspectRatio));
+    //} else {
         QPixmap pixmap = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
          painter->drawPixmap(iconRect, pixmap.scaled(QSize(64,64), Qt::KeepAspectRatio));
-    }
+   // }
 
 
 

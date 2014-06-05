@@ -198,6 +198,19 @@ qreal BoxCollider::getHeight()
     return sqrt(pow(mRectPoly.at(2).x()-mRectPoly.at(1).x(),2)+ pow(mRectPoly.at(2).y()-mRectPoly.at(1).y(),2));
 }
 
+QRectF BoxCollider::rect() const
+{
+    return mRectPoly.boundingRect();;
+}
+
+QPolygonF BoxCollider::getRectToDraw()
+{   QPolygonF polyToDraw;
+    foreach(QPointF p, mRectPoly){
+        polyToDraw.append(p+this->pos());
+    }
+    return polyToDraw;
+}
+
 void BoxCollider::setScaleEnabled(bool enable)
 {
     mScaleEnabled = enable;
@@ -215,19 +228,6 @@ void BoxCollider::setRect(const QRectF &rect)
     tmp.append(mRect.bottomLeft());
     mRectPoly = tmp;
 
-}
-
-QRectF BoxCollider::rect() const
-{
-    return mRectPoly.boundingRect();;
-}
-
-QPolygonF BoxCollider::getRectToDraw()
-{   QPolygonF polyToDraw;
-    foreach(QPointF p, mRectPoly){
-        polyToDraw.append(p+this->pos());
-    }
-    return polyToDraw;
 }
 
 void BoxCollider::hoverMoveEvent(QGraphicsSceneHoverEvent *event)

@@ -36,6 +36,9 @@ void MainWindow::createConnections()
     connect(ui->dockWidgetContents, SIGNAL(onSendRequestedTemplates(QPointF,QList<ItemTemplate*>)),
             this,SLOT(handleTemplatesRecieved(QPointF,QList<ItemTemplate*>)));
 
+    connect(ui->mainToolbar, SIGNAL(onColToggled(bool)),
+            this,SLOT(handleShowCollider(bool)));
+
     connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
              this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
 
@@ -232,7 +235,7 @@ void MainWindow::handleUpdateImportOptions()
 
     delete colDiag;
 
-    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+   // ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->graphicsView->viewport()->update();
 
 }
@@ -240,9 +243,10 @@ void MainWindow::handleUpdateImportOptions()
 void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection deselected)
 {
     QModelIndexList selectedIndexes = ui->treeView_level->selectionModel()->selectedIndexes();
-
+    bool showColliders = false;
     if(selectedLevel){
         selectedLevel->clearSelection();
+        showColliders = selectedLevel->showColliders();
         disconnect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                    ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
@@ -260,6 +264,7 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
     if(selectedIndexes.count() > 0){
 
         selectedLevel = static_cast<MainScene*>(levelModel->itemFromIndex(selectedIndexes.front()));
+        selectedLevel->setShowColliders(showColliders);
         elementModel->layoutAboutToBeChanged();
         elementModel->setRoot(selectedLevel->getRoot());
         elementModel->layoutChanged();
@@ -290,6 +295,12 @@ void MainWindow::handleAddLevel()
 void MainWindow::handleRemoveLevel()
 {
 
+}
+
+void MainWindow::handleShowCollider(bool active)
+{
+    selectedLevel->setShowColliders(active);
+    ui->graphicsView->viewport()->update();
 }
 
 

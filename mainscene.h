@@ -21,6 +21,10 @@ public:
 
     QString getName() const;
     void setName(const QString &value);
+    bool showColliders();
+    void setShowColliders(bool set);
+    bool rotate();
+    void setRotate(bool set);
 
 signals:
     void onRequestTemplates(QPointF);
@@ -38,6 +42,8 @@ private:
     AbstractTreePixmapItem *mRoot;
     void keyPressEvent(QKeyEvent *event);
     QString mName;
+    bool mShowColliders;
+    bool mRotate;
 };
 
 #endif // MAINSCENE_H

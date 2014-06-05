@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     items/abstractsceneitem.cpp \
     models/abstracttreescenemodel.cpp \
     leveltreemodel.cpp \
-    compound_widgets/split_widget/splitscene.cpp
+    compound_widgets/split_widget/splitscene.cpp \
+    compound_widgets/main_toolbar/maintoolbar.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -101,7 +102,8 @@ HEADERS  += mainwindow.h \
     items/abstractsceneitem.h \
     models/abstracttreescenemodel.h \
     leveltreemodel.h \
-    compound_widgets/split_widget/splitscene.h
+    compound_widgets/split_widget/splitscene.h \
+    compound_widgets/main_toolbar/maintoolbar.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
@@ -109,7 +111,8 @@ FORMS    += mainwindow.ui \
     compound_widgets/sprite_widget/spritewidget.ui \
     compound_widgets/split_widget/splitwidget.ui \
     compound_widgets/template_selection_widget/templatefolderwidget.ui \
-    compound_widgets/collider_widget/colliderdialog.ui
+    compound_widgets/collider_widget/colliderdialog.ui \
+    compound_widgets/main_toolbar/maintoolbar.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

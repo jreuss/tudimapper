@@ -248,6 +248,11 @@ bool MeshCollider::canBeDeleted()
     return mCanBeDeleted;
 }
 
+QPolygonF MeshCollider::getPolyToDraw()
+{
+    return mPoly;
+}
+
 int MeshCollider::indexOfChild(MeshNode *child)
 {
     return mChildNodes.indexOf (child);

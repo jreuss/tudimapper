@@ -3,7 +3,8 @@
 #include "items/abstracttreepixmapitem.h"
 #include "items/itemtemplate.h"
 #include "items/abstracttreegraphicsitem.h"
-//#include "compound_widgets/collider_widget/colliderwidget.h"
+#include "compound_widgets/collider_widget/colliders/meshcollider.h"
+#include "compound_widgets/collider_widget/colliders/circlecollider.h"
 #include <mainscene.h>
 #include <QDebug>
 
@@ -24,9 +25,14 @@ public:
 
 private:
     QString mName;
-    bool showColliders;
     ItemTemplate* mTemplate;
     QRectF mColliderRect;
+
+    //these variables are used to draw overlays for transformations and colliders
+    //and are also used to make the transformations work
+    bool showColliders;
+    bool mRotateEnabled;
+    bool mItemDragged;
 signals:
 
     // QGraphicsItem interface
@@ -34,12 +40,17 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     // QGraphicsItem interface
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
 
 private:
     void updateColliderRect(QRectF tmp);
+    void setDraggedRotation(QPointF pos, QPointF lastPos);
+    float angleBetweenVectors(QVector2D v1, QVector2D v2);
 };
 
 

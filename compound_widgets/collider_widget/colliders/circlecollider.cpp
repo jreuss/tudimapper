@@ -169,7 +169,7 @@ void CircleCollider::setRadius(float value)
 
 QPointF CircleCollider::getCenter() const
 {
-    return mCenter;
+    return this->pos() + mCenter;
 }
 
 void CircleCollider::setCenter(const QPointF &value)
