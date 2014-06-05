@@ -24,7 +24,7 @@ public:
 public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    QPixmap folderIcon;
+    QPixmap folderIcon, groupOverlay, spriteOverlay;
 };
 
 #endif

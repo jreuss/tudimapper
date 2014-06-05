@@ -9,5 +9,7 @@
         <file alias="actionscale">icons/actions-scale-icon.png</file>
         <file alias="folder">icons/folder-icon.png</file>
         <file alias="app_ico">icons/tudi_ico.ico</file>
+        <file alias="group_overlay">icons/group_overlay.png</file>
+        <file alias="sprite_overlay">icons/sprite_overlay.png</file>
     </qresource>
 </RCC>

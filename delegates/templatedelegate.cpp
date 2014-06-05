@@ -8,6 +8,8 @@ TemplateDelegate::TemplateDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
     folderIcon = QPixmap(":/icons/folder");
+    groupOverlay = QPixmap(":/icons/group_overlay");
+    spriteOverlay = QPixmap(":/icons/sprite_overlay");
 }
 
 QWidget *TemplateDelegate::createEditor(QWidget *parent,
@@ -44,15 +46,41 @@ void TemplateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     int dx = (option.rect.width()-64) / 2;
     QRect iconRect = QRect(option.rect.x()+dx, option.rect.y()+5, 64, 64 );
-   // if(itm->getItemType() == 0) {
-       // painter->drawPixmap(iconRect, folderIcon.scaled(QSize(64,64), Qt::KeepAspectRatio));
-    //} else {
+
+    if(itm->importType() == 5) {
+        painter->drawPixmap(iconRect, folderIcon.scaled(QSize(64,64), Qt::KeepAspectRatio));
+    } else {
         QPixmap pixmap = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
-         painter->drawPixmap(iconRect, pixmap.scaled(QSize(64,64), Qt::KeepAspectRatio));
-   // }
 
+        float width = (float)pixmap.width();
+        float height = (float)pixmap.height();
 
+        if(width > height) {
+            height = 64* (height/width);
+            width = 64;
+        } else {
+            width = 64* (width/height);
+            height = 64;
+        }
+        dx = (option.rect.width()-width) / 2;
+        int dy = (option.rect.height()-height) / 2 - 5;
+        pixmap = pixmap.scaled(width,height);
 
+        iconRect = QRect(option.rect.x()+dx, dy, pixmap.width(), pixmap.height() );
+        painter->drawPixmap(iconRect, pixmap);
+
+        // draw overlays
+        if(itm->importType() == ItemTemplate::Split) {
+            painter->drawPixmap(10, 10, 32, 32, groupOverlay);
+            qDebug() << "split";
+        }
+
+        // draw overlays
+        if(itm->importType() == ItemTemplate::SpriteSheet) {
+            painter->drawPixmap(10, 10, 32, 32, spriteOverlay);
+            qDebug() << "split";
+        }
+    }
 
     //painter->drawPixmap(pixmap);
 
