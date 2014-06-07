@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView_level->setModel(levelModel);
     //ui->graphicsView->setScene(mainScene);
     ui->graphicsView->setAcceptDrops(true);
+    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     createConnections();
 }
 
