@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QDebug>
 #include <QSettings>
+#include <QPushButton>
 
 namespace Ui {
 class LayoutWidget;
@@ -24,6 +25,9 @@ public:
 
 public slots:
     void accept();
+
+private slots:
+    void handleValidateName(QString);
 
 private:
     int layoutsLength;

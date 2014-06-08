@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSettings>
 
+const QString nameTakenMsg = "<font color=\"red\">The specified name is taken or invalid</font>";
+
 LayoutWidget::LayoutWidget(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LayoutWidget)
@@ -18,14 +20,19 @@ LayoutWidget::LayoutWidget(QWidget *parent) :
     ui->spinBox->setRange(0, layoutsLength);
     ui->spinBox->setValue(layoutsLength+1 > MAX_STORED_LAYOUTS?
                               4-1 : layoutsLength+1);
+
+    connect(ui->lineEdit, SIGNAL(textChanged(QString)),
+            this, SLOT(handleValidateName(QString)));
+
+    ui->messageLabel->setText("");
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 }
 
 void LayoutWidget::accept()
 {
     QSettings settings("layouts.ini", QSettings::IniFormat);
 
-    QString name = ui->lineEdit->text().isEmpty()?
-                "unnamed layout" : ui->lineEdit->text();
+    QString name = ui->lineEdit->text();
 
     QByteArray bytes = static_cast<QMainWindow*>(this->parent())->saveState();
 
@@ -62,6 +69,25 @@ void LayoutWidget::accept()
     this->close();
 }
 
+void LayoutWidget::handleValidateName(QString name)
+{
+    bool isValid = false;
+
+    if(!name.isEmpty()) {
+        isValid = true;
+
+        for(int i = 0; i < layoutsLength; ++i) {
+            if(layouts[i].first == name) {
+                isValid = false;
+            }
+        }
+    }
+
+    ui->messageLabel->setText(isValid? "" : nameTakenMsg);
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(isValid);
+}
+
 LayoutWidget::~LayoutWidget()
 {
     delete ui;
@@ -81,8 +107,8 @@ void LayoutWidget::updateLayouts()
                         settings.value("layout_name").toString(),
                         settings.value("layout_array").toByteArray())
                     );
-        qDebug() << "index = " << i
-                 << "cy1 = " << settings.value("layout_name","0").toString();
+//        qDebug() << "index = " << i
+//                 << "cy1 = " << settings.value("layout_name","0").toString();
 
     }
     settings.endArray();
