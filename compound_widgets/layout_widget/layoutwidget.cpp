@@ -61,8 +61,12 @@ void LayoutWidget::accept()
     settings.endArray();
 
 
+    ui->spinBox->setRange(0, layoutsLength);
     ui->spinBox->setValue(layoutsLength+1 > MAX_STORED_LAYOUTS?
                               4 : layoutsLength+1);
+    ui->lineEdit->setText("");
+    ui->messageLabel->setText("");
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     emit (accepted());
 
