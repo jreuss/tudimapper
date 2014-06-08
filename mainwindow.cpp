@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QSettings>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,17 +19,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView_level->setModel(levelModel);
     //ui->graphicsView->setScene(mainScene);
     ui->graphicsView->setAcceptDrops(true);
+    ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+
+    // create the layout widget
+    layoutWidget = new LayoutWidget(this);
+    // restore previous layout
+    this->restoreState(settings.value("CURRENT_LAYOUT").toByteArray(), 0);
+    // load saved layouts to menu
+    loadLayouts();
+
     createConnections();
 }
 
 MainWindow::~MainWindow()
 {
+    // save the current layout
+    settings.setValue("DOCK_LOCATIONS", this->saveState(0));
+
     delete ui;
 }
 
-
 void MainWindow::createConnections()
 {
+    connect(layoutWidget, SIGNAL(accepted()),
+            this, SLOT(handleUpdateLayoutMenu()));
+
+    connect (ui->actionSave_layout, SIGNAL(triggered()),
+             this, SLOT(handleAddNewLayout()));
+
     connect (ui->actionQuit, SIGNAL (triggered()),
              qApp, SLOT (quit()));
     connect (ui->actionImportSpecial, SIGNAL(triggered()),
@@ -65,9 +84,6 @@ void MainWindow::createConnections()
 
     connect(ui->btn_addLevel,SIGNAL(clicked()),
             this, SLOT(handleAddLevel()));
-
-
-
 }
 
 void MainWindow::handleImportSpecial()
@@ -120,6 +136,29 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
             elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),element);
 
             element->setPos(pos);
+        }
+    }
+}
+
+void MainWindow::handleAddNewLayout()
+{
+    layoutWidget->show();
+}
+
+void MainWindow::handleUpdateLayoutMenu()
+{
+    qDebug() << "called";
+    loadLayouts();
+}
+
+void MainWindow::handleRestoreLayout()
+{
+    QString name = static_cast<QAction*>(QObject::sender())->text();
+
+    for(int i=0; i<layouts.count(); ++i) {
+        if(layouts[i].first == name) {
+            this->restoreState(layouts[i].second, 0);
+            return;
         }
     }
 }
@@ -178,8 +217,6 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
         ui->stackedWidget->setCurrentIndex(2);
 
     }
-
-
 }
 
 void MainWindow::handleUpdatePos()
@@ -301,6 +338,22 @@ void MainWindow::handleShowCollider(bool active)
 {
     selectedLevel->setShowColliders(active);
     ui->graphicsView->viewport()->update();
+}
+
+void MainWindow::loadLayouts()
+{
+    foreach(QAction* a, layoutActions) {
+        ui->menuView->removeAction(a);
+    }
+
+    layouts = layoutWidget->getLayouts();
+    layoutActions.clear();
+
+    for(int i=0; i<layouts.count(); ++i){
+        layoutActions.append(ui->menuView->addAction(
+                                 layouts[i].first));
+        connect(layoutActions.last(), SIGNAL(triggered()), this, SLOT(handleRestoreLayout()));
+    }
 }
 
 

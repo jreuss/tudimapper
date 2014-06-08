@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>926</width>
+    <width>976</width>
     <height>524</height>
    </rect>
   </property>
@@ -48,8 +48,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>926</width>
-     <height>21</height>
+     <width>976</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -59,7 +59,28 @@
     <addaction name="actionImportSpecial"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuCreate">
+    <property name="title">
+     <string>Create</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>Layout</string>
+    </property>
+    <addaction name="actionSave_layout"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuCreate"/>
+   <addaction name="menuView"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -70,7 +91,7 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dockWidget_templates">
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -94,6 +115,10 @@
      <width>274</width>
      <height>290</height>
     </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/app_ico</normaloff>:/icons/app_ico</iconset>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
@@ -159,8 +184,8 @@
   <widget class="QDockWidget" name="dockWidget_properties">
    <property name="minimumSize">
     <size>
-     <width>232</width>
-     <height>247</height>
+     <width>282</width>
+     <height>254</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -334,6 +359,11 @@
     <string>Quit</string>
    </property>
   </action>
+  <action name="actionSave_layout">
+   <property name="text">
+    <string>Save layout</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -350,6 +380,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
