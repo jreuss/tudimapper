@@ -13,6 +13,7 @@ class LayoutWidget : public QDialog
 {
     Q_OBJECT
 
+    int MAX_STORED_LAYOUTS;
 public:
     explicit LayoutWidget(QWidget *parent = 0);
     ~LayoutWidget();

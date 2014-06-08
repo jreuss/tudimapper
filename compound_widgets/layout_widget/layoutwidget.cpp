@@ -9,10 +9,15 @@ LayoutWidget::LayoutWidget(QWidget *parent) :
     ui(new Ui::LayoutWidget)
 {
     ui->setupUi(this);
+
     setWindowTitle ("Save current layout");
+    MAX_STORED_LAYOUTS = 4;
 
     // get the current stored layouts
     updateLayouts();
+    ui->spinBox->setRange(0, layoutsLength);
+    ui->spinBox->setValue(layoutsLength+1 > MAX_STORED_LAYOUTS?
+                              4-1 : layoutsLength+1);
 }
 
 void LayoutWidget::accept()
@@ -21,9 +26,19 @@ void LayoutWidget::accept()
 
     QString name = ui->lineEdit->text().isEmpty()?
                 "unnamed layout" : ui->lineEdit->text();
+
     QByteArray bytes = static_cast<QMainWindow*>(this->parent())->saveState();
 
-    layouts.append(QPair<QString, QByteArray>(name, bytes));
+    if(ui->spinBox->value() < layoutsLength) {
+        layouts[ui->spinBox->value()] = QPair<QString, QByteArray>(name, bytes);
+    } else {
+        if(layouts.count() <= MAX_STORED_LAYOUTS) {
+            layouts.append(QPair<QString, QByteArray>(name, bytes));
+        } else {
+            layouts.last() = QPair<QString, QByteArray>(name, bytes);
+        }
+    }
+
     layoutsLength = layouts.count();
 
     settings.beginWriteArray("layouts");
@@ -37,7 +52,13 @@ void LayoutWidget::accept()
                     layouts[i].second);
     }
     settings.endArray();
+
+
+    ui->spinBox->setValue(layoutsLength+1 > MAX_STORED_LAYOUTS?
+                              4 : layoutsLength+1);
+
     emit (accepted());
+
     this->close();
 }
 
