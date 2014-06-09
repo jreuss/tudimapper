@@ -17,9 +17,15 @@ public:
 
 signals:
    void onColToggled(bool);
+   void onTransToggled(bool);
+   void onScaleToggled(bool);
+   void onRotateToggled(bool);
 
 public slots:
     void handleColToggled(bool);
+    void handleTransToggled(bool);
+    void handleScaleToggled(bool);
+    void handleRotateToggled(bool);
 
 private:
     Ui::MainToolBar *ui;

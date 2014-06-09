@@ -25,7 +25,8 @@ public:
     void setShowColliders(bool set);
     bool rotate();
     void setRotate(bool set);
-
+    bool scale();
+    void setScale(bool set);
 signals:
     void onRequestTemplates(QPointF);
     void onItemDeleted(QList<QGraphicsItem*>);
@@ -44,6 +45,7 @@ private:
     QString mName;
     bool mShowColliders;
     bool mRotate;
+    bool mScale;
 };
 
 #endif // MAINSCENE_H

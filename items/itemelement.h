@@ -32,7 +32,31 @@ private:
     //and are also used to make the transformations work
     bool showColliders;
     bool mRotateEnabled;
+
+    //used to draw rotation overlay
+    float mRotationSpanAngle;
+    float mRotationStartAngle;
+    QPointF mRotationCenter;
     bool mItemDragged;
+
+    //used for scale so you can flip the scale
+    bool mScaleEnabled;
+    enum ScaleXDirection { PosXAxis, NegXAxis};
+    enum ScaleYDirection { PosYAxis, NegYAxis};
+    enum ScaleType { x, y};
+    int mScaleXScalar;
+    int mScaleYScalar;
+    ScaleXDirection mScaleXDirection;
+    ScaleYDirection mScaleYDirection;
+    float mScaleFeedbackRectsSize;
+    bool mIsValidScaleOriginPoint;
+    ScaleType mScaleType;
+    qreal lastDwidth;
+    qreal lastDheight;
+    QPointF mScaleOrigin;
+
+
+
 signals:
 
     // QGraphicsItem interface
@@ -43,14 +67,19 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-public:
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+public:
     QRectF boundingRect() const;
 
 private:
     void updateColliderRect(QRectF tmp);
     void setDraggedRotation(QPointF pos, QPointF lastPos);
     float angleBetweenVectors(QVector2D v1, QVector2D v2);
+    void drawScaleOverlay(QPainter *painter, QPen pen, QRectF outlineRect);
+
+    QPointF getScaleOrigin(QVector2D vec, QRectF rect);
+    void setNonUniformScale(QPointF pos, QPointF lastPos);
 };
 
 

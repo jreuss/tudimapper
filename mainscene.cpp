@@ -16,7 +16,8 @@ MainScene::MainScene()
     setBackgroundBrush(brush);
     mName = "New Level";
     mShowColliders = true;
-    mRotate = false;
+    mRotate =false;
+    mScale = false;
 }
 
 
@@ -104,6 +105,16 @@ bool MainScene::rotate()
 void MainScene::setRotate(bool set)
 {
     mRotate = set;
+}
+
+bool MainScene::scale()
+{
+    return mScale;
+}
+
+void MainScene::setScale(bool set)
+{
+    mScale = set;
 }
 
 

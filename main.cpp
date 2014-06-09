@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     a.processEvents();
 
-    QTimer::singleShot(2000, &splash ,SLOT(close()));
+    QTimer::singleShot(4000, &splash ,SLOT(close()));
     QTimer::singleShot(2000, &w ,SLOT(showMaximized()));
 
     return a.exec();

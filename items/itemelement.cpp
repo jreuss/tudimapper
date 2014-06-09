@@ -9,9 +9,12 @@ ItemElement::ItemElement(ItemTemplate* tmp)
     mName = tmp->name();
     setFlags (ItemIsSelectable | ItemIsMovable |ItemSendsGeometryChanges |
               ItemSendsScenePositionChanges | ItemIsFocusable);
-     showColliders =false;
-     mRotateEnabled = false;
-     mColliderRect = this->pixmap().rect();
+    showColliders =false;
+    mRotateEnabled = false;
+    mScaleEnabled =false;
+    mColliderRect = this->pixmap().rect();
+    setAcceptHoverEvents (true);
+    mScaleFeedbackRectsSize = 6;
 }
 
 ItemElement::ItemElement(ItemElement* element)
@@ -23,7 +26,10 @@ ItemElement::ItemElement(ItemElement* element)
               ItemSendsScenePositionChanges | ItemIsFocusable);
     showColliders =false;
     mRotateEnabled = false;
+    mScaleEnabled = false;
     mColliderRect = this->pixmap().rect();
+    setAcceptHoverEvents (true);
+    mScaleFeedbackRectsSize = 6;
 }
 ItemTemplate *ItemElement::getTemplate() const
 {
@@ -49,23 +55,25 @@ void ItemElement::setName(const QString &value)
 QRectF ItemElement::boundingRect() const
 {
 
-    if(showColliders){
+    if(showColliders || mRotateEnabled){
         return QRectF(mColliderRect.topLeft(), mColliderRect.bottomRight());
     } else {
-        return this->pixmap().rect();
+        return AbstractTreePixmapItem::boundingRect();
     }
 }
 
 void ItemElement::updateColliderRect(QRectF tmp)
 {
-  mColliderRect = this->pixmap().rect();
-  mColliderRect = mColliderRect.united(tmp);
+    prepareGeometryChange();
+    update();
+    mColliderRect = this->pixmap().rect();
+    mColliderRect = mColliderRect.united(tmp);
 }
 
 QVariant ItemElement::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
 
-    if (change == ItemPositionChange || change == ItemRotationChange ) {
+    if (change == ItemPositionChange || change == ItemRotationChange || change == ItemTransformChange ) {
         if(qobject_cast<MainScene*>(scene())&& scene()->hasFocus()){
             qobject_cast<MainScene*>(scene())->updatePos();
         }
@@ -79,101 +87,150 @@ QVariant ItemElement::itemChange(QGraphicsItem::GraphicsItemChange change, const
 
 void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-
+    QRectF tmpRect;
     QGraphicsPixmapItem::paint(painter,option,widget);
     if(qobject_cast<MainScene*>(scene())){
         showColliders = qobject_cast<MainScene*>(scene())->showColliders();
         if(this->isSelected()){
-           mRotateEnabled = qobject_cast<MainScene*>(scene())->rotate();
+            mRotateEnabled = qobject_cast<MainScene*>(scene())->rotate();
+            mScaleEnabled = qobject_cast<MainScene*>(scene())->scale();
+        } else {
+            mRotateEnabled = false;
+            mScaleEnabled = false;
         }
     } else {
         mRotateEnabled = false;
-     }
+        mScaleEnabled = false;
+    }
 
     if(qobject_cast<SplitScene*>(scene())){
         showColliders = true;
     }
 
     if(showColliders){
-        QRectF tmpRect;
-       QList<QGraphicsItem*> colliders = mTemplate->getColliderRoot()->childItems();
+
+        QList<QGraphicsItem*> colliders = mTemplate->getColliderRoot()->childItems();
 
 
-       foreach(QGraphicsItem* col, colliders){
-           if(col->type() == QGraphicsItem::UserType+1){
+        foreach(QGraphicsItem* col, colliders){
+            if(col->type() == QGraphicsItem::UserType+1){
 
-               BoxCollider* boxCol = static_cast<BoxCollider*>(col);
-               tmpRect = tmpRect.united(boxCol->getRectToDraw().boundingRect());
+                BoxCollider* boxCol = static_cast<BoxCollider*>(col);
+                tmpRect = tmpRect.united(boxCol->getRectToDraw().boundingRect());
 
-               QPen pen(QColor(Qt::cyan));
-               pen.setWidth (1);
-               painter->setPen (pen);
+                QPen pen(QColor(Qt::cyan));
+                pen.setWidth (0);
+                painter->setPen (pen);
 
-               painter->drawPolygon(boxCol->getRectToDraw());
+                painter->drawPolygon(boxCol->getRectToDraw());
 
-               painter->setBrush (QColor(Qt::green));
-               painter->setOpacity (0.3);
-               painter->drawPolygon(boxCol->getRectToDraw());
-           }
-           if(col->type() == QGraphicsItem::UserType+2){
+                painter->setBrush (QColor(Qt::green));
+                painter->setOpacity (0.3);
+                painter->drawPolygon(boxCol->getRectToDraw());
+            }
+            if(col->type() == QGraphicsItem::UserType+2){
 
-               MeshCollider* meshCol = static_cast<MeshCollider*>(col);
-               tmpRect = tmpRect.united(meshCol->getPolyToDraw().boundingRect());
+                MeshCollider* meshCol = static_cast<MeshCollider*>(col);
+                tmpRect = tmpRect.united(meshCol->getPolyToDraw().boundingRect());
 
-               QPen pen(QColor(Qt::cyan));
-               pen.setWidth (1);
-               painter->setPen (pen);
+                QPen pen(QColor(Qt::cyan));
+                pen.setWidth (0);
+                painter->setPen (pen);
 
-               painter->drawPolygon(meshCol->getPolyToDraw());
+                painter->drawPolygon(meshCol->getPolyToDraw());
 
-               painter->setBrush (QColor(Qt::green));
-               painter->setOpacity (0.3);
-               painter->drawPolygon(meshCol->getPolyToDraw());
-           }
-           if(col->type() == QGraphicsItem::UserType+3){
+                painter->setBrush (QColor(Qt::green));
+                painter->setOpacity (0.3);
+                painter->drawPolygon(meshCol->getPolyToDraw());
+            }
+            if(col->type() == QGraphicsItem::UserType+3){
 
-               CircleCollider* cirCol = static_cast<CircleCollider*>(col);
-               int rad = (int)cirCol->getRadius();
-               QPointF center = cirCol->getCenter();
+                CircleCollider* cirCol = static_cast<CircleCollider*>(col);
+                int rad = (int)cirCol->getRadius();
+                QPointF center = cirCol->getCenter();
 
-               QPointF topLeft = QPointF(center.x() - rad,center.y() - rad);
+                QPointF topLeft = QPointF(center.x() - rad,center.y() - rad);
                 QPointF bottomRight = QPointF((center.x() + rad),(center.y() + rad));
 
-               tmpRect = tmpRect.united(QRectF(topLeft,bottomRight));
+                tmpRect = tmpRect.united(QRectF(topLeft,bottomRight));
 
-               QPen pen(QColor(Qt::cyan));
-               pen.setWidth (1);
-               painter->setPen (pen);
+                QPen pen(QColor(Qt::cyan));
+                pen.setWidth (0);
+                painter->setPen (pen);
 
-               painter->drawEllipse(center,rad,rad);
+                painter->drawEllipse(center,rad,rad);
 
-               painter->setBrush (QColor(Qt::green));
-               painter->setOpacity (0.3);
-               painter->drawEllipse(center,rad,rad);
-           }
-
-
-           updateColliderRect(tmpRect);
-
-       }
-       if(mRotateEnabled){
-          painter->drawEllipse(boundingRect().center(),50,50);
-          if(mItemDragged){
-              painter->setPen(QColor(Qt::darkGreen));
-              painter->setBrush(QColor(Qt::darkGreen));
-             // painter->drawPie(QRectF(boundingRect().center()-QPointF(50,-50),boundingRect().center()+QPointF(50,-50)),mRotationStartAngle*16,mRotationSpanAngle*16);
-          }
-       }
+                painter->setBrush (QColor(Qt::green));
+                painter->setOpacity (0.3);
+                painter->drawEllipse(center,rad,rad);
+            }
+        }
     }
+    QPen pen(QColor(Qt::cyan));
+    if(mRotateEnabled){
+
+        QPointF topLeft = QPointF(pixmap().rect().center().x() - 50,pixmap().rect().center().y() - 50);
+        QPointF bottomRight = QPointF((pixmap().rect().center().x() + 50),(pixmap().rect().center().y() + 50));
+
+        tmpRect = tmpRect.united(QRectF(topLeft/transform().m11(),bottomRight/transform().m11()));
+        QPen pen(QColor(Qt::cyan));
+        pen.setWidth (0);
+        //pen.setCosmetic(false);
+        painter->setPen (pen);
+        painter->setBrush (QColor(Qt::green));
+        painter->setOpacity (0.3);
+        float rad = 50/transform().m11();
+        painter->drawEllipse(pixmap().rect().center(),rad,rad);
+        if(mItemDragged){
+            pen.setColor(QColor(Qt::darkGreen));
+            painter->setPen(pen);
+            painter->setBrush(QColor(Qt::darkGreen));
+            painter->drawPie(QRectF(pixmap().rect().center()-QPointF(rad,-rad),
+                                    pixmap().rect().center()+QPointF(rad,-rad)),
+                             mRotationStartAngle*16,
+                             mRotationSpanAngle*16);
+        }
+    }
+    if(mScaleEnabled){
+        drawScaleOverlay(painter,pen,pixmap().rect());
+    }
+    updateColliderRect(tmpRect);
+}
+
+void ItemElement::drawScaleOverlay(QPainter *painter, QPen pen, QRectF outlineRect)
+{
+    painter->setBrush (Qt::NoBrush);
+    painter->setOpacity (0.9);
+
+
+
+    pen.setStyle (Qt::SolidLine);
+    // draw rect bounds
+    painter->drawRect (outlineRect);
+    painter->setBrush (Qt::NoBrush);
+    float cSize = mScaleFeedbackRectsSize/transform().m11();
+    //Corners
+
+    QVector<QRectF> rects;
+
+    rects  << QRectF( outlineRect.bottomRight ().x()-(outlineRect.width()/2)-(cSize/2), outlineRect.bottomRight ().y()-(cSize/2),cSize,cSize)
+           << QRectF( outlineRect.bottomRight ().x()-(outlineRect.width()/2)-(cSize/2), outlineRect.topRight().y()-(cSize/2),cSize,cSize)
+           << QRectF( outlineRect.bottomLeft ().x()-(cSize/2), outlineRect.bottomRight ().y()-(outlineRect.height()/2)-(cSize/2),cSize,cSize)
+           << QRectF( outlineRect.bottomRight().x()-(cSize/2), outlineRect.bottomRight ().y()-(outlineRect.height()/2)-(cSize/2),cSize,cSize);
+
+    painter->setBrush (QColor(Qt::blue));
+    pen.setStyle (Qt::SolidLine);
+
+    painter->drawRects (rects);
 }
 
 void ItemElement::setDraggedRotation(QPointF pos, QPointF lastPos)
 {
-    QVector2D vec(pos-boundingRect().center());
-    QVector2D lastVec(lastPos-boundingRect().center());
+    QVector2D vec(pos-mRotationCenter);
+    QVector2D lastVec(lastPos-mRotationCenter);
 
     float ang = angleBetweenVectors(vec, lastVec);
-
+    mRotationSpanAngle -= ang;
     setRotation(rotation() + ang);
 }
 
@@ -185,39 +242,187 @@ float ItemElement::angleBetweenVectors(QVector2D v1, QVector2D v2)
     return (-qRadiansToDegrees(atan2(det,dot)));
 }
 
+void ItemElement::setNonUniformScale(QPointF pos, QPointF lastPos)
+{
+    Q_UNUSED(lastPos);
+
+    qreal dx, dy;
+    qreal s;
+    dx = mScaleOrigin.x();
+    dy = mScaleOrigin.y();
+
+
+
+
+    float dwidth = abs(pos.x()-dx);
+    float dheight = abs(pos.y()-dy);
+
+    QPointF posMaped = mapToScene(pos);
+    QPointF xyMaped = mapToScene(QPointF(dx,dy));
+
+    if((mScaleXDirection == PosXAxis &&  posMaped.x() > xyMaped.x()) || (mScaleXDirection == PosXAxis && dwidth == 0)){
+        dwidth =-2;
+        mScaleXDirection = NegXAxis;
+    } else if((mScaleXDirection == NegXAxis && posMaped.x() < xyMaped.x()) || (mScaleXDirection == NegXAxis && dwidth == 0)) {
+        dwidth = -2;
+        mScaleXDirection = PosXAxis;
+    }
+    if((mScaleYDirection == PosYAxis && posMaped.y() >xyMaped.y()) || (mScaleYDirection == PosYAxis && dheight == 0)){
+        dheight =-2;
+        mScaleYDirection = NegYAxis;
+    } else if((mScaleYDirection == NegYAxis && posMaped.y() < xyMaped.y()) || (mScaleYDirection == NegYAxis && dheight == 0)) {
+        dheight = -2;
+        mScaleYDirection = PosYAxis;
+    }
+
+    if(mScaleType == x){
+
+
+
+        s = dwidth/boundingRect().width();
+        qDebug() << s;
+
+
+
+
+    } else if(mScaleType == y){
+
+        s = dheight/boundingRect().height();
+
+    }
+
+
+
+    QTransform trans = transform().translate (dx,dy)
+            .scale(s,s)
+            .translate(-dx,-dy);
+
+
+    setTransform(trans);
+
+
+
+}
+
+QPointF ItemElement::getScaleOrigin(QVector2D vec, QRectF rect)
+{
+    mIsValidScaleOriginPoint = true;
+    if(vec.distanceToPoint (QVector2D(QPointF(rect.bottomRight ().x()-(rect.width()/2),rect.bottomRight ().y()))) < 10) {
+        QPointF dirTop = mapToScene(rect.topLeft ());
+        QPointF dirBottom = mapToScene(rect.bottomRight ());
+        if(dirBottom.y() > dirTop.y()){
+
+            mScaleYDirection = NegYAxis;
+        } else{
+            mScaleYDirection = PosYAxis;
+        }
+        mScaleType = y;
+        setCursor (Qt::SizeVerCursor);
+        return (QPointF(pixmap().rect().topRight ().x()-(pixmap().rect().width()/2),pixmap().rect().topRight ().y()));
+    } else if(vec.distanceToPoint (QVector2D(QPointF(rect.topRight ().x()-(rect.width()/2),rect.topRight ().y()))) < 10) {
+        QPointF dirTop = mapToScene(rect.topLeft ());
+        QPointF dirBottom = mapToScene(rect.bottomRight ());
+        if(dirBottom.y() > dirTop.y()){
+            mScaleYDirection = PosYAxis;
+        } else{
+            mScaleYDirection = NegYAxis;
+        }
+
+        mScaleType = y;
+        setCursor (Qt::SizeVerCursor);
+        return (QPointF(pixmap().rect().bottomRight ().x()-(pixmap().rect().width()/2),pixmap().rect().bottomRight ().y()));
+    } else if(vec.distanceToPoint (QVector2D(QPointF(rect.bottomRight ().x(),rect.bottomRight ().y()-(rect.height()/2)))) < 10) {
+        QPointF dirLeft = mapToScene(rect.bottomLeft ());
+        QPointF dirRight = mapToScene(rect.bottomRight ());
+        if(dirRight.x() > dirLeft.x()){
+             mScaleXDirection = NegXAxis;
+        } else{
+           mScaleXDirection = PosXAxis;
+        }
+        mScaleType = x;
+        setCursor (Qt::SizeHorCursor);
+        return (QPointF(pixmap().rect().bottomLeft ().x(),pixmap().rect().bottomLeft ().y()-(pixmap().rect().height()/2)));
+    } else if(vec.distanceToPoint (QVector2D(QPointF(rect.bottomLeft ().x(),rect.bottomLeft ().y()-(rect.height()/2)))) < 10) {
+        QPointF dirLeft = mapToScene(rect.bottomLeft ());
+        QPointF dirRight = mapToScene(rect.bottomRight ());
+        if(dirRight.x() > dirLeft.x()){
+            mScaleXDirection = PosXAxis;
+        } else{
+            mScaleXDirection = NegXAxis;
+        }
+        mScaleType = x;
+        setCursor (Qt::SizeHorCursor);
+        return (QPointF(pixmap().rect().bottomRight ().x(),pixmap().rect().bottomRight ().y()-(pixmap().rect().height()/2))) ;
+        //return (QPointF(17,12));
+    }
+    mIsValidScaleOriginPoint = false;
+    setCursor (Qt::ArrowCursor);
+    return QPointF();
+}
+
+void ItemElement::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+
+    AbstractTreePixmapItem::hoverMoveEvent(event);
+    setCursor (Qt::ArrowCursor);
+    if(mScaleEnabled){
+        QVector2D vec(QPointF(event->pos().x()*transform().m11(),event->pos().y()*transform().m11()));
+        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+    }
+}
 void ItemElement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-//    if(mScaleEnabled){
 
-//        mScaleOrigin = getScaleOrigin (QVector2D(event->pos ()), rect());
-//        mItemDragged = mIsValidScaleOriginPoint;
-    if(mRotateEnabled){
-        mItemDragged = true;
+    if(qobject_cast<MainScene*>(scene())){
+        mRotateEnabled = qobject_cast<MainScene*>(scene())->rotate();
+        mScaleEnabled = qobject_cast<MainScene*>(scene())->scale();
     } else {
-       AbstractTreePixmapItem::mousePressEvent (event);
+        mRotateEnabled = false;
+        mScaleEnabled = false;
+    }
+    if(mScaleEnabled){
+        scene()->clearSelection();
+        setSelected(true);
+        QVector2D vec(QPointF(event->pos().x()*transform().m11(),event->pos().y()*transform().m11()));
+        mScaleOrigin = getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+
+        mItemDragged = mIsValidScaleOriginPoint;
+    } else  if(mRotateEnabled){
+        scene()->clearSelection();
+        setSelected(true);
+        setTransformOriginPoint(pixmap().rect().center());
+        mRotationCenter = pixmap().rect().center();
+        mItemDragged = true;
+        mRotationStartAngle = angleBetweenVectors(QVector2D(1,0), QVector2D(event->pos()-mRotationCenter));
+        mRotationSpanAngle = 0;
+    } else {
+        QGraphicsItem::mousePressEvent (event);
     }
 }
 
 
 void ItemElement::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-//    if(mItemDragged && mScaleEnabled) {
-//        setNonUniformScale (event->pos(), event->lastPos());
-    if(mItemDragged && mRotateEnabled) {
-        setTransformOriginPoint(pixmap().rect().center());
+    if(mItemDragged && mScaleEnabled) {
+        setNonUniformScale (event->pos(), event->lastPos());
+    } else if(mItemDragged && mRotateEnabled) {
         setDraggedRotation(event->pos(),event->lastPos());
     } else {
-          AbstractTreePixmapItem::mouseMoveEvent (event);
+       qDebug() << "iam in";
+        AbstractTreePixmapItem::mouseMoveEvent (event);
     }
+
+
 }
 
 void ItemElement::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-      AbstractTreePixmapItem::mouseReleaseEvent (event);
-//    if(mScaleEnabled){
-//        QVector2D vec(event->pos());
-//        getScaleOrigin (vec, rect());
-//    }
+    QGraphicsItem::mouseReleaseEvent (event);
+    mItemDragged = false;
+    if(mScaleEnabled){
+        QVector2D vec(event->pos());
+        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+    }
     mItemDragged = false;
 }
 

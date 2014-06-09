@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QSettings>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -18,17 +20,36 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->graphicsView->setScene(mainScene);
     ui->graphicsView->setAcceptDrops(true);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+    //<<<<<<< HEAD
+    //=======
+
+    // create the layout widget
+    layoutWidget = new LayoutWidget(this);
+    // restore previous layout
+    this->restoreState(settings.value("CURRENT_LAYOUT").toByteArray(), 0);
+    // load saved layouts to menu
+    loadLayouts();
+
+    //>>>>>>> fefa3362cebb8d17a41531cf6ec91c73d0694306
     createConnections();
 }
 
 MainWindow::~MainWindow()
 {
+    // save the current layout
+    settings.setValue("DOCK_LOCATIONS", this->saveState(0));
+
     delete ui;
 }
 
-
 void MainWindow::createConnections()
 {
+    connect(layoutWidget, SIGNAL(accepted()),
+            this, SLOT(handleUpdateLayoutMenu()));
+
+    connect (ui->actionSave_layout, SIGNAL(triggered()),
+             this, SLOT(handleAddNewLayout()));
+
     connect (ui->actionQuit, SIGNAL (triggered()),
              qApp, SLOT (quit()));
     connect (ui->actionImportSpecial, SIGNAL(triggered()),
@@ -40,8 +61,14 @@ void MainWindow::createConnections()
     connect(ui->mainToolbar, SIGNAL(onColToggled(bool)),
             this,SLOT(handleShowCollider(bool)));
 
-    connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
-             this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
+    connect(ui->mainToolbar, SIGNAL(onScaleToggled(bool)),
+            this,SLOT(handleScaleToggled(bool)));
+
+    connect(ui->mainToolbar, SIGNAL(onRotateToggled(bool)),
+            this,SLOT(handleRotateToggled(bool)));
+
+            connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
+                     this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
 
     connect (ui->treeView_elements->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
              this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
@@ -66,9 +93,6 @@ void MainWindow::createConnections()
 
     connect(ui->btn_addLevel,SIGNAL(clicked()),
             this, SLOT(handleAddLevel()));
-
-
-
 }
 
 void MainWindow::handleImportSpecial()
@@ -125,6 +149,29 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
     }
 }
 
+void MainWindow::handleAddNewLayout()
+{
+    layoutWidget->show();
+}
+
+void MainWindow::handleUpdateLayoutMenu()
+{
+    qDebug() << "called";
+    loadLayouts();
+}
+
+void MainWindow::handleRestoreLayout()
+{
+    QString name = static_cast<QAction*>(QObject::sender())->text();
+
+    for(int i=0; i<layouts.count(); ++i) {
+        if(layouts[i].first == name) {
+            this->restoreState(layouts[i].second, 0);
+            return;
+        }
+    }
+}
+
 void MainWindow::handleSceneSelectionChanged()
 {   ui->treeView_elements->selectionModel()->clearSelection();
     foreach(QGraphicsItem *it, selectedLevel->selectedItems())
@@ -171,7 +218,7 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
         ui->stackedWidget->setCurrentIndex(1);
 
         ui->spinBox_rotation->setValue(selectedItems.front()->rotation());
-        ui->spinBox_scale->setValue(selectedItems.front()->scale());
+        ui->spinBox_scale->setValue(selectedItems.front()->transform().m11());
         ui->spinBox_xpos->setValue(selectedItems.front()->pos().x());
         ui->spinBox_ypos->setValue(selectedItems.front()->pos().y());
 
@@ -179,15 +226,13 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
         ui->stackedWidget->setCurrentIndex(2);
 
     }
-
-
 }
 
 void MainWindow::handleUpdatePos()
 {
     if(selectedItems.count() == 1){
         ui->spinBox_rotation->setValue(selectedItems.front()->rotation());
-        ui->spinBox_scale->setValue(selectedItems.front()->scale());
+        ui->spinBox_scale->setValue(selectedItems.front()->transform().m11());
         ui->spinBox_xpos->setValue(selectedItems.front()->pos().x());
         ui->spinBox_ypos->setValue(selectedItems.front()->pos().y());
     }
@@ -210,7 +255,9 @@ void MainWindow::handleChangeYPos(int value)
 void MainWindow::handleChangeScale(double value)
 {
     if(ui->spinBox_scale->hasFocus()){
-        selectedItems.front()->setScale(value);
+        QTransform trans;
+        trans.scale(value,value);
+        selectedItems.front()->setTransform(trans);
     }
 }
 
@@ -236,7 +283,7 @@ void MainWindow::handleUpdateImportOptions()
 
     delete colDiag;
 
-   // ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    // ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->graphicsView->viewport()->update();
 
 }
@@ -245,9 +292,13 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
 {
     QModelIndexList selectedIndexes = ui->treeView_level->selectionModel()->selectedIndexes();
     bool showColliders = false;
+    bool rotateEnabled = false;
+    bool scaleEnabled = false;
     if(selectedLevel){
         selectedLevel->clearSelection();
         showColliders = selectedLevel->showColliders();
+        rotateEnabled = selectedLevel->rotate();
+        scaleEnabled = selectedLevel->scale();
         disconnect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                    ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
@@ -266,6 +317,8 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
 
         selectedLevel = static_cast<MainScene*>(levelModel->itemFromIndex(selectedIndexes.front()));
         selectedLevel->setShowColliders(showColliders);
+        selectedLevel->setRotate(rotateEnabled);
+        selectedLevel->setScale(scaleEnabled);
         elementModel->layoutAboutToBeChanged();
         elementModel->setRoot(selectedLevel->getRoot());
         elementModel->layoutChanged();
@@ -300,8 +353,42 @@ void MainWindow::handleRemoveLevel()
 
 void MainWindow::handleShowCollider(bool active)
 {
-    selectedLevel->setShowColliders(active);
-    ui->graphicsView->viewport()->update();
+    if(selectedLevel){
+        selectedLevel->setShowColliders(active);
+        ui->graphicsView->viewport()->update();
+    }
+}
+
+void MainWindow::handleScaleToggled(bool value)
+{
+    if(selectedLevel){
+        selectedLevel->setScale(value);
+        ui->graphicsView->viewport()->update();
+    }
+}
+
+void MainWindow::handleRotateToggled(bool value)
+{
+    if(selectedLevel){
+        selectedLevel->setRotate(value);
+        ui->graphicsView->viewport()->update();
+    }
+}
+
+void MainWindow::loadLayouts()
+{
+    foreach(QAction* a, layoutActions) {
+        ui->menuView->removeAction(a);
+    }
+
+    layouts = layoutWidget->getLayouts();
+    layoutActions.clear();
+
+    for(int i=0; i<layouts.count(); ++i){
+        layoutActions.append(ui->menuView->addAction(
+                                 layouts[i].first));
+        connect(layoutActions.last(), SIGNAL(triggered()), this, SLOT(handleRestoreLayout()));
+    }
 }
 
 

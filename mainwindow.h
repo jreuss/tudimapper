@@ -10,8 +10,7 @@
 #include "elementtreemodel.h"
 #include "compound_widgets/collider_widget/colliderdialog.h"
 #include "leveltreemodel.h"
-
-
+#include "compound_widgets/layout_widget/layoutwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,9 +29,11 @@ public slots:
     void handleImportSpecial();
     void handleImportAccepted(ItemTemplate *item);
     void handleTemplatesRecieved(QPointF, QList<ItemTemplate*>);
-
+    void handleAddNewLayout();
 
 protected slots:
+    void handleUpdateLayoutMenu();
+    void handleRestoreLayout();
     void handleSceneSelectionChanged();
     void handleTreeviewSelectionChanged(QModelIndex pressedOn);
     void handleOnItemsDeleted(QList<QGraphicsItem *>);
@@ -47,9 +48,16 @@ protected slots:
     void handleAddLevel();
     void handleRemoveLevel();
     void handleShowCollider(bool);
+    //void handleTransToggled(bool);
+    void handleRotateToggled(bool);
+    void handleScaleToggled(bool);
+
 
 
 private:
+    void loadLayouts();
+    QList<QAction*> layoutActions;
+    QList<QPair<QString, QByteArray> > layouts;
     FileManager mFileManager;
     ImportDialog *mImportDialog;
     //MainScene *mainScene;
@@ -57,10 +65,10 @@ private:
     ItemTemplate* tmp;
     ElementTreeModel *elementModel;
     LevelTreeModel *levelModel;
-
+    LayoutWidget *layoutWidget;
     MainScene *selectedLevel;
     MainScene *previousSelectedLevel;
-
+    QSettings settings;
     QList<ItemElement*> selectedItems;
 
 };
