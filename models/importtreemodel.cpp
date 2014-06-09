@@ -167,7 +167,7 @@ void ImportTreeModel::handleSplit(ItemTemplate *item, bool removeDuplicates, flo
 {
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
-        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
+        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.999,item->path(),item->contour());
         templates = mImgProc.splitImageAndRemoveDuplicates(item->contour(),item->path(),shapeTresh,colorMaches);
     }else {
         templates = mImgProc.splitImage(item->contour(),item->path());
@@ -183,7 +183,7 @@ void ImportTreeModel::handleSplitAndAddToScene(ItemTemplate *item, bool removeDu
     item->setItemType(ItemTemplate::Split);
     QList<ItemTemplate*> templates;
     if(removeDuplicates){
-        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.9,item->path(),item->contour());
+        QList<QList<unsigned> > colorMaches = mImgProc.get_colorMatches(0.999,item->path(),item->contour());
         templates = mImgProc.splitImageAndRemoveDuplicatesAddToScene(item->contour(),item->path(),shapeTres,colorMaches,item->getSplitScene());
         foreach(ItemTemplate *itm, templates){
             this->insertItem(item->mChildren.count(),item, itm);

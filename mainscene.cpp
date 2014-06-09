@@ -4,7 +4,7 @@
 
 MainScene::MainScene()
 {
-    mRoot = new AbstractTreePixmapItem;
+    mRoot = new AbstractTreePixmapItem();
     mRoot->setZValue(2);
     this->addItem(mRoot);
     // set background brush

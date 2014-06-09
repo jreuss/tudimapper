@@ -12,7 +12,7 @@ ItemElement::ItemElement(ItemTemplate* tmp)
     showColliders =false;
     mRotateEnabled = false;
     mScaleEnabled =false;
-    mColliderRect = this->pixmap().rect();
+    mColliderRect = this->getRect();
     setAcceptHoverEvents (true);
     mScaleFeedbackRectsSize = 6;
 }
@@ -41,6 +41,11 @@ void ItemElement::setTemplate(ItemTemplate *value)
     mTemplate = value;
 }
 
+QRectF ItemElement::getRect()
+{
+    return AbstractTreePixmapItem::boundingRect();
+}
+
 
 QString ItemElement::getName() const
 {
@@ -66,7 +71,7 @@ void ItemElement::updateColliderRect(QRectF tmp)
 {
     prepareGeometryChange();
     update();
-    mColliderRect = this->pixmap().rect();
+    mColliderRect = AbstractTreePixmapItem::boundingRect();
     mColliderRect = mColliderRect.united(tmp);
 }
 
@@ -169,10 +174,7 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QPen pen(QColor(Qt::cyan));
     if(mRotateEnabled){
 
-        QPointF topLeft = QPointF(pixmap().rect().center().x() - 50,pixmap().rect().center().y() - 50);
-        QPointF bottomRight = QPointF((pixmap().rect().center().x() + 50),(pixmap().rect().center().y() + 50));
 
-        tmpRect = tmpRect.united(QRectF(topLeft/transform().m11(),bottomRight/transform().m11()));
         QPen pen(QColor(Qt::cyan));
         pen.setWidth (0);
         //pen.setCosmetic(false);
@@ -180,13 +182,20 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->setBrush (QColor(Qt::green));
         painter->setOpacity (0.3);
         float rad = 50/transform().m11();
-        painter->drawEllipse(pixmap().rect().center(),rad,rad);
+
+        QPointF topLeft = QPointF(getRect().center().x() - rad,getRect().center().y() - rad);
+        QPointF bottomRight = QPointF((getRect().center().x() + rad),(getRect().center().y() + rad));
+
+        tmpRect = tmpRect.united(QRectF(topLeft,bottomRight));
+
+
+        painter->drawEllipse(getRect().center(),rad,rad);
         if(mItemDragged){
             pen.setColor(QColor(Qt::darkGreen));
             painter->setPen(pen);
             painter->setBrush(QColor(Qt::darkGreen));
-            painter->drawPie(QRectF(pixmap().rect().center()-QPointF(rad,-rad),
-                                    pixmap().rect().center()+QPointF(rad,-rad)),
+            painter->drawPie(QRectF(getRect().center()-QPointF(rad,-rad),
+                                    getRect().center()+QPointF(rad,-rad)),
                              mRotationStartAngle*16,
                              mRotationSpanAngle*16);
         }

@@ -23,6 +23,8 @@ public:
     ItemTemplate *getTemplate() const;
     void setTemplate(ItemTemplate *value);
 
+    QRectF getRect();
+
 private:
     QString mName;
     ItemTemplate* mTemplate;
@@ -44,8 +46,6 @@ private:
     enum ScaleXDirection { PosXAxis, NegXAxis};
     enum ScaleYDirection { PosYAxis, NegYAxis};
     enum ScaleType { x, y};
-    int mScaleXScalar;
-    int mScaleYScalar;
     ScaleXDirection mScaleXDirection;
     ScaleYDirection mScaleYDirection;
     float mScaleFeedbackRectsSize;
