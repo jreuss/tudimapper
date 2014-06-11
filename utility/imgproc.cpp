@@ -538,7 +538,7 @@ QList<QList<unsigned> > ImgProc::get_colorMatches(const double &color_tress,
     bool ignore = false;
 
     //Using 30 bins for hue and 32 for saturation
-    int h_bins = 100; //int s_bins = 32;
+    int h_bins = 256; //int s_bins = 32;
     int histSize[] = { h_bins, h_bins,h_bins,h_bins };
     // hue varies from 0 to 256, saturation from 0 to 180
     float h_ranges[] = { 0, 256 };

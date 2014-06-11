@@ -56,7 +56,7 @@ void SplitWidget::onLoadSelectedItem(ItemTemplate *item)
             numberList.at(i)->setFont(numFont);
         }
 
-        mColorMatches = mImproc.get_colorMatches(0.98,mCurrentItem->path(),mCurrentItem->contour());
+        mColorMatches = mImproc.get_colorMatches(0.95,mCurrentItem->path(),mCurrentItem->contour());
         handleMatchTressholdChanged(5);
         connect(mCurrentItem->getSplitScene(),SIGNAL(onDoubleClick(ItemTemplate*)),
                 this, SLOT(handleDoubleClick(ItemTemplate*)));
