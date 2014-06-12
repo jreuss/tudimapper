@@ -2,6 +2,8 @@
 #define MAINTOOLBAR_H
 
 #include <QWidget>
+#include <QDebug>
+#include <QPushButton>
 
 namespace Ui {
 class MainToolBar;
@@ -14,6 +16,7 @@ class MainToolBar : public QWidget
 public:
     explicit MainToolBar(QWidget *parent = 0);
     ~MainToolBar();
+    QPushButton *alignY, *alignX;
 
 signals:
    void onColToggled(bool);
@@ -26,10 +29,10 @@ public slots:
     void handleTransToggled(bool);
     void handleScaleToggled(bool);
     void handleRotateToggled(bool);
+    void handleZoomChanged(double);
 
 private:
     Ui::MainToolBar *ui;
-
 };
 
 #endif // MAINTOOLBAR_H

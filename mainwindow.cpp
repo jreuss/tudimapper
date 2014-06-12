@@ -44,6 +44,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::createConnections()
 {
+    connect(ui->mainToolbar->alignX, SIGNAL(clicked()),
+            this, SLOT(handleAlignItemsX()));
+
+    connect(ui->mainToolbar->alignY, SIGNAL(clicked()),
+            this, SLOT(handleAlignItemsY()));
+
+    connect(ui->graphicsView, SIGNAL(zoomChanged(double)),
+            (ui->mainToolbar), SLOT(handleZoomChanged(double)));
+
     connect(layoutWidget, SIGNAL(accepted()),
             this, SLOT(handleUpdateLayoutMenu()));
 
@@ -67,8 +76,8 @@ void MainWindow::createConnections()
     connect(ui->mainToolbar, SIGNAL(onRotateToggled(bool)),
             this,SLOT(handleRotateToggled(bool)));
 
-            connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
-                     this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
+    connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
+             this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
 
     connect (ui->treeView_elements->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
              this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
@@ -364,6 +373,44 @@ void MainWindow::handleScaleToggled(bool value)
     if(selectedLevel){
         selectedLevel->setScale(value);
         ui->graphicsView->viewport()->update();
+    }
+}
+
+void MainWindow::handleAlignItemsY()
+{
+    if(selectedLevel) {
+        if (selectedItems.count() != 0) {
+
+            int y = 1000000;
+            for (int i=0; i < selectedItems.count(); ++i) {
+                if(selectedItems[i]->pos().y() < y) {
+                    y = selectedItems[i]->pos().y();
+                }
+            }
+
+            for (int i=0; i < selectedItems.count(); ++i) {
+                selectedItems[i]->setPos(selectedItems[i]->pos().x(), y);
+            }
+        }
+    }
+}
+
+void MainWindow::handleAlignItemsX()
+{
+    if(selectedLevel) {
+        if (selectedItems.count() != 0) {
+
+            int x = 1000000;
+            for (int i=0; i < selectedItems.count(); ++i) {
+                if(selectedItems[i]->pos().x() < x) {
+                    x = selectedItems[i]->pos().x();
+                }
+            }
+
+            for (int i=0; i < selectedItems.count(); ++i) {
+                selectedItems[i]->setPos(x, selectedItems[i]->pos().y());
+            }
+        }
     }
 }
 

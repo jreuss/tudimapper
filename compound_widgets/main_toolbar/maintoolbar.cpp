@@ -6,6 +6,10 @@ MainToolBar::MainToolBar(QWidget *parent) :
     ui(new Ui::MainToolBar)
 {
     ui->setupUi(this);
+
+    alignX = ui->alignX;
+    alignY = ui->alignY;
+
     connect(ui->btn_collider,SIGNAL(toggled(bool)),
             SLOT(handleColToggled(bool)));
 
@@ -43,3 +47,11 @@ void MainToolBar::handleRotateToggled(bool active)
 {
     emit onRotateToggled(active);
 }
+
+void MainToolBar::handleZoomChanged(double factor)
+{
+    qDebug() << "factor: " << factor;
+    ui->doubleSpinBox->setValue(factor * 100);
+}
+
+

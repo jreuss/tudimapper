@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>55</height>
+    <width>654</width>
+    <height>79</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,37 +17,22 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Panel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <property name="lineWidth">
       <number>1</number>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>6</number>
         </property>
         <property name="rightMargin">
-         <number>20</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="btn_translate">
@@ -62,6 +47,9 @@
             <width>37</width>
             <height>37</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Move item</string>
           </property>
           <property name="text">
            <string/>
@@ -101,6 +89,9 @@
             <height>37</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Scale item</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -136,6 +127,9 @@
             <height>37</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Rotate item</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -160,6 +154,13 @@
        </layout>
       </item>
       <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btn_collider">
         <property name="minimumSize">
          <size>
@@ -173,11 +174,89 @@
           <height>37</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>View colliders</string>
+        </property>
         <property name="text">
-         <string>Col</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../images.qrc">
+          <normaloff>:/icons/actioncollider</normaloff>:/icons/actioncollider</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="alignX">
+        <property name="minimumSize">
+         <size>
+          <width>37</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>37</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../images.qrc">
+          <normaloff>:/icons/actionsalignx</normaloff>:/icons/actionsalignx</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="alignY">
+        <property name="minimumSize">
+         <size>
+          <width>37</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>37</width>
+          <height>37</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../images.qrc">
+          <normaloff>:/icons/actionsaligny</normaloff>:/icons/actionsaligny</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -188,20 +267,79 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>198</width>
-          <height>14</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../../images.qrc">:/icons/actionzoom</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Zoom</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="specialValueText">
+           <string/>
+          </property>
+          <property name="suffix">
+           <string>%</string>
+          </property>
+          <property name="decimals">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <double>10000.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>25.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
     </widget>
    </item>
   </layout>

@@ -19,7 +19,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView">
+     <widget class="ZoomedGraphicView" name="graphicsView">
       <property name="minimumSize">
        <size>
         <width>400</width>
@@ -184,8 +184,8 @@
   <widget class="QDockWidget" name="dockWidget_properties">
    <property name="minimumSize">
     <size>
-     <width>282</width>
-     <height>254</height>
+     <width>284</width>
+     <height>256</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -217,6 +217,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
         <widget class="QWidget" name="page_no_selection_2">
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0">
@@ -229,90 +232,94 @@
          </layout>
         </widget>
         <widget class="QWidget" name="page_single_selection">
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="4" column="0">
-           <widget class="QPushButton" name="btn_collider">
-            <property name="text">
-             <string>Colliders</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Rotation</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Scale</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>y-pos</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>x-pos</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_ypos">
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="minimum">
-             <number>-999999999</number>
-            </property>
-            <property name="maximum">
-             <number>999999999</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSpinBox" name="spinBox_xpos">
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="minimum">
-             <number>-999999999</number>
-            </property>
-            <property name="maximum">
-             <number>999999999</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QDoubleSpinBox" name="spinBox_scale">
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="minimum">
-             <double>-9999999.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>999999999.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="spinBox_rotation">
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="maximum">
-             <double>999999999.000000000000000</double>
-            </property>
-           </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>x-pos</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>y-pos</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QSpinBox" name="spinBox_xpos">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-999999999</number>
+              </property>
+              <property name="maximum">
+               <number>999999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spinBox_ypos">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <number>-999999999</number>
+              </property>
+              <property name="maximum">
+               <number>999999999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Scale</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Rotation</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QDoubleSpinBox" name="spinBox_scale">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <double>-9999999.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>999999999.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QDoubleSpinBox" name="spinBox_rotation">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="maximum">
+               <double>999999999.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="btn_collider">
+              <property name="text">
+               <string>Colliders</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -378,6 +385,11 @@
    <extends>QWidget</extends>
    <header>compound_widgets/main_toolbar/maintoolbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZoomedGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>utility/zoomedgraphicview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
