@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     compound_widgets/split_widget/splitscene.cpp \
     compound_widgets/main_toolbar/maintoolbar.cpp \
     compound_widgets/layout_widget/layoutwidget.cpp \
-    utility/zoomedgraphicview.cpp
+    utility/zoomedgraphicview.cpp \
+    compound_widgets/element_list_widget/elementlistwidget.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -107,7 +108,8 @@ HEADERS  += mainwindow.h \
     compound_widgets/split_widget/splitscene.h \
     compound_widgets/main_toolbar/maintoolbar.h \
     compound_widgets/layout_widget/layoutwidget.h \
-    utility/zoomedgraphicview.h
+    utility/zoomedgraphicview.h \
+    compound_widgets/element_list_widget/elementlistwidget.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \
@@ -117,7 +119,8 @@ FORMS    += mainwindow.ui \
     compound_widgets/template_selection_widget/templatefolderwidget.ui \
     compound_widgets/collider_widget/colliderdialog.ui \
     compound_widgets/main_toolbar/maintoolbar.ui \
-    compound_widgets/layout_widget/layoutwidget.ui
+    compound_widgets/layout_widget/layoutwidget.ui \
+    compound_widgets/element_list_widget/elementlistwidget.ui
 
 unix {
 INCLUDEPATH += /usr/local/include

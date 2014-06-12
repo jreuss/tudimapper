@@ -15,5 +15,6 @@
         <file alias="actionzoom">icons/actions_zoom_icon.png</file>
         <file alias="actionsalignx">icons/actions-alignment-X-icon.png</file>
         <file alias="actionsaligny">icons/actions-alignment-Y-icon.png</file>
+        <file alias="layer_icon">icons/layer-icon.png</file>
     </qresource>
 </RCC>
