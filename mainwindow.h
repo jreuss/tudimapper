@@ -51,8 +51,8 @@ protected slots:
     //void handleTransToggled(bool);
     void handleRotateToggled(bool);
     void handleScaleToggled(bool);
-
-
+    void handleAlignItemsY();
+    void handleAlignItemsX();
 
 private:
     void loadLayouts();

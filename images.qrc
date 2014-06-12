@@ -11,6 +11,9 @@
         <file alias="app_ico">icons/tudi_ico.ico</file>
         <file alias="group_overlay">icons/group_overlay.png</file>
         <file alias="sprite_overlay">icons/sprite_overlay.png</file>
-        <file alias="layer_icon">icons/layer-icon.png</file>
+        <file alias="actioncollider">icons/actions_collider_icon.png</file>
+        <file alias="actionzoom">icons/actions_zoom_icon.png</file>
+        <file alias="actionsalignx">icons/actions-alignment-X-icon.png</file>
+        <file alias="actionsaligny">icons/actions-alignment-Y-icon.png</file>
     </qresource>
 </RCC>
