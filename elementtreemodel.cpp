@@ -30,6 +30,10 @@ QVariant ElementTreeModel::data(const QModelIndex &index, int role) const
             }
         }
 
+        if(role == Qt::DecorationRole &&
+                index.column () == 0) {
+                return item->icon;
+        }
         if(role == Qt::TextAlignmentRole) {
             return static_cast<int>(Qt::AlignVCenter |
                                     Qt::AlignLeft);

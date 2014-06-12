@@ -11,5 +11,6 @@
         <file alias="app_ico">icons/tudi_ico.ico</file>
         <file alias="group_overlay">icons/group_overlay.png</file>
         <file alias="sprite_overlay">icons/sprite_overlay.png</file>
+        <file alias="layer_icon">icons/layer-icon.png</file>
     </qresource>
 </RCC>

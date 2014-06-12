@@ -622,9 +622,9 @@ QList<QList<unsigned> > ImgProc::get_colorMatches(const double &color_tress,
                     if(test1-test2 < 0.1 && test1-test2 > -0.1){
                         double match = cv::compareHist(*histograms.at(i),
                                                        *histograms.at(j),
-                                                       CV_COMP_CORREL);
+                                                       CV_COMP_BHATTACHARYYA);
 
-                        if(match > color_tress)
+                        if(match < color_tress)
                         {  qDebug() << match;
                             qDebug() << color_tress;
                             list.append(j);

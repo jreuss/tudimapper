@@ -12,8 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     selectedLevel = NULL;
     elementModel = new ElementTreeModel(1);
     //elementModel->setRoot(mainScene->getRoot());
-    ui->treeView_elements->setModel(elementModel);
-    ui->treeView_elements->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    ui->element_tree->elementView->setModel(elementModel);
+    ui->element_tree->elementView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     levelModel = new LevelTreeModel(1);
     ui->treeView_level->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->treeView_level->setModel(levelModel);
@@ -67,10 +68,10 @@ void MainWindow::createConnections()
     connect(ui->mainToolbar, SIGNAL(onRotateToggled(bool)),
             this,SLOT(handleRotateToggled(bool)));
 
-            connect (ui->treeView_elements, SIGNAL(clicked(QModelIndex)),
+            connect (ui->element_tree->elementView, SIGNAL(clicked(QModelIndex)),
                      this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
 
-    connect (ui->treeView_elements->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+    connect (ui->element_tree->elementView->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
              this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
 
     connect(ui->spinBox_xpos,SIGNAL(valueChanged(int)),
@@ -104,7 +105,7 @@ void MainWindow::handleImportSpecial()
         //mImportDialog
         ImportDialog *diag = new ImportDialog(urls, this);
 
-
+        qDebug() << "theres a skede in the net- contact your local ISP!";
         connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
                 this, SLOT(handleImportAccepted(ItemTemplate*)));
 
@@ -125,15 +126,37 @@ void MainWindow::handleImportAccepted(ItemTemplate *item)
     ui->dockWidgetContents->addTemplates(item);
 }
 
+int skede = 12;
+int fisse = 15;
 void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> templates)
 {
+      ItemElement *layer;
+    if(ui->element_tree->elementView->selectionModel()->
+            selectedIndexes().count() > 0){
+            QModelIndex idx = ui->element_tree->elementView->selectionModel()->
+                    selectedIndexes().front();
+            AbstractTreePixmapItem *temp = elementModel->itemFromIndex(idx);
+
+            ItemElement* selected = static_cast<ItemElement*>(temp);
+            if(selected->getType() == ItemElement::LAYER){
+                layer = selected;
+            } else {
+                layer = static_cast<ItemElement*>(selected->getParent());
+            }
+    } else {
+
+        layer = new ItemElement();
+        elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),layer);
+        layer->setParentItem(selectedLevel->getRoot());
+    }
+
     foreach(ItemTemplate* item, templates){
         if(item->importType() == ItemTemplate::Split){
             QList<QGraphicsItem*> elements = item->getSplitScene()->items();
             foreach(QGraphicsItem* currentItem, elements){
                 ItemElement *element = new ItemElement(static_cast<ItemElement*>(currentItem));
-                element->setParentItem(selectedLevel->getRoot());
-                elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),element);
+                element->setParentItem(layer);
+                elementModel->insertItem(layer->getChildren().count(), layer, element);
 
                 element->setPos(currentItem->pos());
                 element->setScale(currentItem->scale());
@@ -141,12 +164,16 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
 
         } else {
             ItemElement *element = new ItemElement(item);
-            element->setParentItem(selectedLevel->getRoot());
-            elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),element);
 
-            element->setPos(pos);
+
+            element->setParentItem(layer);
+            elementModel->insertItem(layer->getChildren().count(), layer, element);
+
+            element->setPos(pos - QPointF(element->getRect().width()/2, element->getRect().height()/2));
         }
     }
+
+    qDebug() << selectedLevel->childCount();
 }
 
 void MainWindow::handleAddNewLayout()
@@ -156,7 +183,6 @@ void MainWindow::handleAddNewLayout()
 
 void MainWindow::handleUpdateLayoutMenu()
 {
-    qDebug() << "called";
     loadLayouts();
 }
 
@@ -173,12 +199,12 @@ void MainWindow::handleRestoreLayout()
 }
 
 void MainWindow::handleSceneSelectionChanged()
-{   ui->treeView_elements->selectionModel()->clearSelection();
+{   ui->element_tree->elementView->selectionModel()->clearSelection();
     foreach(QGraphicsItem *it, selectedLevel->selectedItems())
     {
         AbstractTreePixmapItem *itm = static_cast<AbstractTreePixmapItem *>(it);
         QModelIndex index = elementModel->indexFromItem(itm);
-        ui->treeView_elements->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        ui->element_tree->elementView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 }
 
@@ -186,14 +212,27 @@ void MainWindow::handleTreeviewSelectionChanged(QModelIndex pressedOn)
 {
     Q_UNUSED(pressedOn);
 
-    QModelIndexList idxList = ui->treeView_elements->selectionModel()->selectedIndexes();
+    QModelIndexList idxList = ui->element_tree->elementView->selectionModel()->selectedIndexes();
     foreach(QGraphicsItem *itm, selectedLevel->selectedItems ()){
         itm->setSelected (false);
     }
     foreach (QModelIndex idx , idxList) {
-        elementModel->itemFromIndex(idx)->setSelected(true);
+
+        AbstractTreePixmapItem* temp = elementModel->itemFromIndex(idx);
+        ItemElement* itm = static_cast<ItemElement*>(temp);
+        if(itm->getType() == ItemElement::LAYER){
+            foreach (AbstractTreePixmapItem* c, itm->getChildren()) {
+               QModelIndex tempIdx = elementModel->indexFromItem(c);
+               ui->element_tree->elementView->selectionModel()->select(tempIdx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
+               c->setSelected(true);
+            }
+        } else {
+                itm->setSelected(true);
+            }
+        }
+
     }
-}
+
 
 void MainWindow::handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove)
 {
@@ -207,7 +246,7 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
 {
     //previousSelectedItems = selectedItems;
     selectedItems.clear();
-    QModelIndexList selectedIndexes = ui->treeView_elements->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes = ui->element_tree->elementView->selectionModel()->selectedIndexes();
     foreach(QModelIndex index, selectedIndexes){
         selectedItems.append(static_cast<ItemElement*>(elementModel->itemFromIndex(index)));
     }
@@ -271,7 +310,7 @@ void MainWindow::handleChangeRotation(double value)
 void MainWindow::handleUpdateImportOptions()
 {
     QList<ItemTemplate*> tempsToChange;
-    foreach(QModelIndex index, ui->treeView_elements->selectionModel()->selectedIndexes()){
+    foreach(QModelIndex index, ui->element_tree->elementView->selectionModel()->selectedIndexes()){
         ItemElement* item = static_cast<ItemElement*>(elementModel->itemFromIndex(index));
         tempsToChange.append(item->getTemplate());
     }
@@ -299,23 +338,27 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
         showColliders = selectedLevel->showColliders();
         rotateEnabled = selectedLevel->rotate();
         scaleEnabled = selectedLevel->scale();
+
         disconnect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                    ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
-        disconnect(selectedLevel, SIGNAL(selectionChanged()),
-                   this,SLOT(handleSceneSelectionChanged()));
+//        disconnect(selectedLevel, SIGNAL(selectionChanged()),
+//                   this,SLOT(handleSceneSelectionChanged()));
 
         disconnect(selectedLevel, SIGNAL(onUpdatePos()),
                    this, SLOT(handleUpdatePos()));
 
-        disconnect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
-                    this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+//        disconnect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
+//                    this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+        ui->element_tree->disconnectScene();
 
     }
 
     if(selectedIndexes.count() > 0){
 
         selectedLevel = static_cast<MainScene*>(levelModel->itemFromIndex(selectedIndexes.front()));
+        ui->element_tree->setScene(selectedLevel);
+
         selectedLevel->setShowColliders(showColliders);
         selectedLevel->setRotate(rotateEnabled);
         selectedLevel->setScale(scaleEnabled);
@@ -327,14 +370,16 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
         connect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                 ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
-        connect(selectedLevel, SIGNAL(selectionChanged()),
-                this,SLOT(handleSceneSelectionChanged()));
+//        connect(selectedLevel, SIGNAL(selectionChanged()),
+//                this,SLOT(handleSceneSelectionChanged()));
 
         connect(selectedLevel, SIGNAL(onUpdatePos()),
                 this, SLOT(handleUpdatePos()));
 
-        connect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
-                 this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+//        connect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
+//                 this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+
+        ui->element_tree->connectToScene();
     }
 }
 
@@ -352,11 +397,12 @@ void MainWindow::handleRemoveLevel()
 }
 
 void MainWindow::handleShowCollider(bool active)
-{
+{   qDebug() << "iam in";
     if(selectedLevel){
         selectedLevel->setShowColliders(active);
         ui->graphicsView->viewport()->update();
     }
+    qDebug() << "iam out";
 }
 
 void MainWindow::handleScaleToggled(bool value)

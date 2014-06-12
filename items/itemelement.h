@@ -13,6 +13,8 @@ class ItemElement : public AbstractTreePixmapItem
 {
 
 public:
+    enum ElementType { NORMAL, LAYER};
+    ItemElement();
     ItemElement(ItemTemplate* tmp);
     ItemElement(ItemElement* element);
 
@@ -26,6 +28,7 @@ public:
     QRectF getRect();
 
 private:
+    ElementType mType;
     QString mName;
     ItemTemplate* mTemplate;
     QRectF mColliderRect;
@@ -72,7 +75,12 @@ protected:
 public:
     QRectF boundingRect() const;
 
+    ElementType getType() const;
+    void setType(const ElementType &value);
+    QIcon icon;
 private:
+
+
     void updateColliderRect(QRectF tmp);
     void setDraggedRotation(QPointF pos, QPointF lastPos);
     float angleBetweenVectors(QVector2D v1, QVector2D v2);

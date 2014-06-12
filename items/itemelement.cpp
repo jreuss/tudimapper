@@ -1,11 +1,19 @@
 #include "itemelement.h"
 
-
+ItemElement::ItemElement()
+{
+    mName = "Unamed layer";
+    this->setZValue(3);
+    mType = LAYER;
+    icon.addPixmap(QPixmap(":/icons/layer_icon"));
+}
 
 ItemElement::ItemElement(ItemTemplate* tmp)
 {
+    mType = NORMAL;
     mTemplate = tmp;
     setPixmap(*tmp->pixmap());
+    icon = tmp->icon();
     mName = tmp->name();
     setFlags (ItemIsSelectable | ItemIsMovable |ItemSendsGeometryChanges |
               ItemSendsScenePositionChanges | ItemIsFocusable);
@@ -19,8 +27,10 @@ ItemElement::ItemElement(ItemTemplate* tmp)
 
 ItemElement::ItemElement(ItemElement* element)
 {
+    mType = NORMAL;
     mTemplate = element->mTemplate;
     setPixmap(*mTemplate->pixmap());
+    icon = mTemplate->icon();
     mName = mTemplate->name();
     setFlags (ItemIsSelectable | ItemIsMovable |ItemSendsGeometryChanges |
               ItemSendsScenePositionChanges | ItemIsFocusable);
@@ -46,6 +56,15 @@ QRectF ItemElement::getRect()
     return AbstractTreePixmapItem::boundingRect();
 }
 
+ItemElement::ElementType ItemElement::getType() const
+{
+    return mType;
+}
+
+void ItemElement::setType(const ElementType &value)
+{
+    mType = value;
+}
 
 QString ItemElement::getName() const
 {
@@ -112,7 +131,7 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         showColliders = true;
     }
 
-    if(showColliders){
+    if(showColliders && mType == NORMAL){
 
         QList<QGraphicsItem*> colliders = mTemplate->getColliderRoot()->childItems();
 
