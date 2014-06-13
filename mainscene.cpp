@@ -12,6 +12,7 @@ MainScene::MainScene()
     brush.setTextureImage(QImage(":/images/checkerboard"));
     QGraphicsRectItem *bg = new QGraphicsRectItem();
     bg->setBrush (brush);
+    bg->setFlags(QGraphicsItem::ItemIgnoresTransformations);
     bg->setPen (Qt::NoPen);
     setBackgroundBrush(brush);
     mName = "New Level";
@@ -76,6 +77,30 @@ void MainScene::keyPressEvent(QKeyEvent *event)
 
 
     QGraphicsScene::keyPressEvent(event);
+}
+
+void MainScene::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    QGraphicsView *view =views().front();
+    float scalefact = view->transform().m11();
+   // QPointF trans = QPointF(view->transform().m31(),view->transform().m32);
+    //QRectF theRect = sceneRect();//QRectF(-view->frameSize().width()/2,
+//                              -view->frameSize().height()/2
+//                              ,view->frameSize().width(),
+//                              view->frameSize().height());
+   QBrush brush;
+    brush.setTextureImage(QImage(":/images/checkerboard"));
+
+       QRectF bgrect = rect;
+       //scale the rectangle so that it actually covers the area it's supposed to
+       bgrect.setTopLeft(bgrect.topLeft() * scalefact);
+
+       bgrect.setBottomRight(bgrect.bottomRight() * scalefact);
+
+       painter->scale(1/scalefact, 1/scalefact);
+       painter->fillRect(bgrect, brush);
+       painter->scale(scalefact, scalefact);
+      // painter->translate(trans);
 }
 QString MainScene::getName() const
 {

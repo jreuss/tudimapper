@@ -46,6 +46,10 @@ private:
     bool mShowColliders;
     bool mRotate;
     bool mScale;
+
+    // QGraphicsScene interface
+protected:
+    void drawBackground(QPainter *painter, const QRectF &rect);
 };
 
 #endif // MAINSCENE_H

@@ -111,6 +111,7 @@ QVariant ItemElement::itemChange(QGraphicsItem::GraphicsItemChange change, const
 
 void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    viewScale = scene()->views().front()->transform().m11();
     QRectF tmpRect;
     QGraphicsPixmapItem::paint(painter,option,widget);
     if(qobject_cast<MainScene*>(scene())){
@@ -200,7 +201,7 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->setPen (pen);
         painter->setBrush (QColor(Qt::green));
         painter->setOpacity (0.3);
-        float rad = 50/transform().m11();
+        float rad = 50/(transform().m11()*viewScale);
 
         QPointF topLeft = QPointF(getRect().center().x() - rad,getRect().center().y() - rad);
         QPointF bottomRight = QPointF((getRect().center().x() + rad),(getRect().center().y() + rad));
@@ -236,7 +237,7 @@ void ItemElement::drawScaleOverlay(QPainter *painter, QPen pen, QRectF outlineRe
     // draw rect bounds
     painter->drawRect (outlineRect);
     painter->setBrush (Qt::NoBrush);
-    float cSize = mScaleFeedbackRectsSize/transform().m11();
+    float cSize = mScaleFeedbackRectsSize/(transform().m11()*viewScale);
     //Corners
 
     QVector<QRectF> rects;
@@ -394,8 +395,8 @@ void ItemElement::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     AbstractTreePixmapItem::hoverMoveEvent(event);
     setCursor (Qt::ArrowCursor);
     if(mScaleEnabled){
-        QVector2D vec(QPointF(event->pos().x()*transform().m11(),event->pos().y()*transform().m11()));
-        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+        QVector2D vec(QPointF(event->pos().x()*(transform().m11()*viewScale),event->pos().y()*(transform().m11()*viewScale)));
+        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*(transform().m11()*viewScale),pixmap().rect().bottomRight()*(transform().m11()*viewScale)));
     }
 }
 void ItemElement::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -411,8 +412,8 @@ void ItemElement::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(mScaleEnabled){
         scene()->clearSelection();
         setSelected(true);
-        QVector2D vec(QPointF(event->pos().x()*transform().m11(),event->pos().y()*transform().m11()));
-        mScaleOrigin = getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+        QVector2D vec(QPointF(event->pos().x()*(transform().m11()*viewScale),event->pos().y()*(transform().m11()*viewScale)));
+        mScaleOrigin = getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*(transform().m11()*viewScale),pixmap().rect().bottomRight()*(transform().m11()*viewScale)));
 
         mItemDragged = mIsValidScaleOriginPoint;
     } else  if(mRotateEnabled){
@@ -449,7 +450,7 @@ void ItemElement::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     mItemDragged = false;
     if(mScaleEnabled){
         QVector2D vec(event->pos());
-        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*transform().m11(),pixmap().rect().bottomRight()*transform().m11()));
+        getScaleOrigin (vec, QRectF(pixmap().rect().topLeft()*(transform().m11()*viewScale),pixmap().rect().bottomRight()*(transform().m11()*viewScale)));
     }
     mItemDragged = false;
 }

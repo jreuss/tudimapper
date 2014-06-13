@@ -80,7 +80,7 @@ public:
     QIcon icon;
 private:
 
-
+    float viewScale;
     void updateColliderRect(QRectF tmp);
     void setDraggedRotation(QPointF pos, QPointF lastPos);
     float angleBetweenVectors(QVector2D v1, QVector2D v2);

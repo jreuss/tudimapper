@@ -19,7 +19,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView">
+     <widget class="ZoomedGraphicView" name="graphicsView">
       <property name="minimumSize">
        <size>
         <width>400</width>
@@ -117,7 +117,7 @@
     </size>
    </property>
    <property name="windowIcon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/icons/app_ico</normaloff>:/icons/app_ico</iconset>
    </property>
    <property name="features">
@@ -380,9 +380,12 @@
    <header>compound_widgets/element_list_widget/elementlistwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ZoomedGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>utility/zoomedgraphicview.h</header>
+  </customwidget>
  </customwidgets>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
