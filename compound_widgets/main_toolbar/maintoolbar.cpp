@@ -7,9 +7,16 @@ MainToolBar::MainToolBar(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->spinBox_x_grid->setEnabled(false);
+    ui->spinBox_y_grid->setEnabled(false);
+    ui->btn_snap_grid->setEnabled(false);
+
     alignX = ui->alignX;
     alignY = ui->alignY;
-
+    showGrid = ui->btn_show_grid;
+    snapToGrid = ui->btn_snap_grid;
+    stepX = ui->spinBox_x_grid;
+    stepY = ui->spinBox_y_grid;
     connect(ui->btn_collider,SIGNAL(toggled(bool)),
             SLOT(handleColToggled(bool)));
 
@@ -21,6 +28,8 @@ MainToolBar::MainToolBar(QWidget *parent) :
 
     connect(ui->btn_rotate,SIGNAL(toggled(bool)),
             SLOT(handleRotateToggled(bool)));
+    connect(ui->btn_show_grid,SIGNAL(toggled(bool)),
+            SLOT(handleGridToggled(bool)));
 }
 
 MainToolBar::~MainToolBar()
@@ -50,8 +59,14 @@ void MainToolBar::handleRotateToggled(bool active)
 
 void MainToolBar::handleZoomChanged(double factor)
 {
-    qDebug() << "factor: " << factor;
     ui->doubleSpinBox->setValue(factor * 100);
+}
+
+void MainToolBar::handleGridToggled(bool value)
+{
+    ui->spinBox_x_grid->setEnabled(value);
+    ui->spinBox_y_grid->setEnabled(value);
+    ui->btn_snap_grid->setEnabled(value);
 }
 
 

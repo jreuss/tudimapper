@@ -21,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->graphicsView->setScene(mainScene);
     ui->graphicsView->setAcceptDrops(true);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-    //<<<<<<< HEAD
-    //=======
 
     // create the layout widget
     layoutWidget = new LayoutWidget(this);
@@ -31,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // load saved layouts to menu
     loadLayouts();
 
-    //>>>>>>> fefa3362cebb8d17a41531cf6ec91c73d0694306
     createConnections();
 }
 
@@ -104,6 +101,15 @@ void MainWindow::createConnections()
 
     connect(ui->btn_addLevel,SIGNAL(clicked()),
             this, SLOT(handleAddLevel()));
+
+    connect(ui->mainToolbar->showGrid,SIGNAL(toggled(bool)),
+            ui->graphicsView,SLOT(handleShowGrid(bool)));
+
+    connect(ui->mainToolbar->stepX,SIGNAL(valueChanged(int)),
+            ui->graphicsView,SLOT(handleSetGridOffsetX(int)));
+
+    connect(ui->mainToolbar->stepY,SIGNAL(valueChanged(int)),
+            ui->graphicsView,SLOT(handleSetGridOffsetY(int)));
 }
 
 void MainWindow::handleImportSpecial()
@@ -115,7 +121,6 @@ void MainWindow::handleImportSpecial()
         //mImportDialog
         ImportDialog *diag = new ImportDialog(urls, this);
 
-        qDebug() << "theres a skede in the net- contact your local ISP!";
         connect(diag, SIGNAL(onImportAccept(ItemTemplate*)),
                 this, SLOT(handleImportAccepted(ItemTemplate*)));
 
@@ -183,7 +188,6 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
         }
     }
 
-    qDebug() << selectedLevel->childCount();
 }
 
 void MainWindow::handleAddNewLayout()
@@ -209,7 +213,8 @@ void MainWindow::handleRestoreLayout()
 }
 
 void MainWindow::handleSceneSelectionChanged()
-{   ui->element_tree->elementView->selectionModel()->clearSelection();
+{
+    ui->element_tree->elementView->selectionModel()->clearSelection();
     foreach(QGraphicsItem *it, selectedLevel->selectedItems())
     {
         AbstractTreePixmapItem *itm = static_cast<AbstractTreePixmapItem *>(it);
@@ -376,6 +381,8 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
         elementModel->setRoot(selectedLevel->getRoot());
         elementModel->layoutChanged();
         ui->graphicsView->setScene(selectedLevel);
+        ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        ui->graphicsView->initGrid();
 
         connect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                 ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
@@ -399,6 +406,7 @@ void MainWindow::handleAddLevel()
     levelModel->insertItem(QModelIndex(), newLevel);
     ui->treeView_level->selectionModel()->clearSelection();
     ui->treeView_level->selectionModel()->setCurrentIndex(levelModel->indexFromItem(newLevel), QItemSelectionModel::Select);
+
 }
 
 void MainWindow::handleRemoveLevel()
@@ -407,12 +415,12 @@ void MainWindow::handleRemoveLevel()
 }
 
 void MainWindow::handleShowCollider(bool active)
-{   qDebug() << "iam in";
+{
     if(selectedLevel){
         selectedLevel->setShowColliders(active);
         ui->graphicsView->viewport()->update();
     }
-    qDebug() << "iam out";
+
 }
 
 void MainWindow::handleScaleToggled(bool value)
@@ -468,6 +476,8 @@ void MainWindow::handleAlignItemsX()
         }
     }
 }
+
+
 
 
 void MainWindow::loadLayouts()

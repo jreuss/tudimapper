@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneDragDropEvent>
 #include <QMimeData>
+#include <QRubberBand>
 
 #include "compound_widgets/template_selection_widget/thumbnailgridview.h"
 #include "items/itemelement.h"
@@ -32,8 +33,8 @@ signals:
     void onItemDeleted(QList<QGraphicsItem*>);
     void onUpdatePos();
 public slots:
-    //void handleTemplatesRecieved(QPointF, QList<ItemTemplate*>);
-    // QGraphicsScene interface
+    void handleSelectionChanged();
+
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
@@ -46,10 +47,18 @@ private:
     bool mShowColliders;
     bool mRotate;
     bool mScale;
+    bool mDrag;
 
     // QGraphicsScene interface
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
+
+
+    // QGraphicsScene interface
+protected:
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // MAINSCENE_H

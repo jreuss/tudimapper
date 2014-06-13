@@ -309,9 +309,6 @@ void ItemElement::setNonUniformScale(QPointF pos, QPointF lastPos)
 
 
         s = dwidth/boundingRect().width();
-        qDebug() << s;
-
-
 
 
     } else if(mScaleType == y){
@@ -437,7 +434,7 @@ void ItemElement::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     } else if(mItemDragged && mRotateEnabled) {
         setDraggedRotation(event->pos(),event->lastPos());
     } else {
-       qDebug() << "iam in";
+
         AbstractTreePixmapItem::mouseMoveEvent (event);
     }
 

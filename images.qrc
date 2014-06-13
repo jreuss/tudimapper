@@ -16,5 +16,7 @@
         <file alias="actionsalignx">icons/actions-alignment-X-icon.png</file>
         <file alias="actionsaligny">icons/actions-alignment-Y-icon.png</file>
         <file alias="layer_icon">icons/layer-icon.png</file>
+        <file alias="snap_icon">icons/snap_to_grid.png</file>
+        <file alias="show_grid">icons/show_grid.png</file>
     </qresource>
 </RCC>

@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     compound_widgets/main_toolbar/maintoolbar.cpp \
     compound_widgets/layout_widget/layoutwidget.cpp \
     utility/zoomedgraphicview.cpp \
-    compound_widgets/element_list_widget/elementlistwidget.cpp
+    compound_widgets/element_list_widget/elementlistwidget.cpp \
+    utility/grid.cpp
 
 HEADERS  += mainwindow.h \
     compound_widgets/collider_widget/colliderscene.h \
@@ -109,7 +110,8 @@ HEADERS  += mainwindow.h \
     compound_widgets/main_toolbar/maintoolbar.h \
     compound_widgets/layout_widget/layoutwidget.h \
     utility/zoomedgraphicview.h \
-    compound_widgets/element_list_widget/elementlistwidget.h
+    compound_widgets/element_list_widget/elementlistwidget.h \
+    utility/grid.h
 
 FORMS    += mainwindow.ui \
     compound_widgets/import_widget/importdialog.ui \

@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QDebug>
-#include <QPushButton>
+#include <qspinbox.h>
+#include "stable_pch.h"
 
 namespace Ui {
 class MainToolBar;
@@ -16,7 +17,8 @@ class MainToolBar : public QWidget
 public:
     explicit MainToolBar(QWidget *parent = 0);
     ~MainToolBar();
-    QPushButton *alignY, *alignX;
+    QPushButton *alignY, *alignX, *showGrid,*snapToGrid;
+    QSpinBox *stepX,*stepY;
 
 signals:
    void onColToggled(bool);
@@ -30,6 +32,7 @@ public slots:
     void handleScaleToggled(bool);
     void handleRotateToggled(bool);
     void handleZoomChanged(double);
+    void handleGridToggled(bool);
 
 private:
     Ui::MainToolBar *ui;
