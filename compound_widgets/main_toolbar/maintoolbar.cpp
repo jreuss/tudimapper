@@ -67,6 +67,9 @@ void MainToolBar::handleGridToggled(bool value)
     ui->spinBox_x_grid->setEnabled(value);
     ui->spinBox_y_grid->setEnabled(value);
     ui->btn_snap_grid->setEnabled(value);
+    if(value == false){
+       ui->btn_snap_grid->setChecked(false);
+    }
 }
 
 

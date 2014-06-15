@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     elementModel = new ElementTreeModel(1);
     //elementModel->setRoot(mainScene->getRoot());
 
-    ui->element_tree->elementView->setModel(elementModel);
+    ui->element_tree->setModel(elementModel);
     ui->element_tree->elementView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     levelModel = new LevelTreeModel(1);
     ui->treeView_level->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -42,6 +42,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::createConnections()
 {
+    connect(ui->mainToolbar->snapToGrid, SIGNAL(toggled(bool)),
+            ui->graphicsView, SLOT(handleSnapToGrid(bool)));
+
     connect(ui->mainToolbar->alignX, SIGNAL(clicked()),
                 this, SLOT(handleAlignItemsX()));
 
@@ -141,8 +144,6 @@ void MainWindow::handleImportAccepted(ItemTemplate *item)
     ui->dockWidgetContents->addTemplates(item);
 }
 
-int skede = 12;
-int fisse = 15;
 void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> templates)
 {
       ItemElement *layer;
@@ -236,11 +237,15 @@ void MainWindow::handleTreeviewSelectionChanged(QModelIndex pressedOn)
         AbstractTreePixmapItem* temp = elementModel->itemFromIndex(idx);
         ItemElement* itm = static_cast<ItemElement*>(temp);
         if(itm->getType() == ItemElement::LAYER){
+
             foreach (AbstractTreePixmapItem* c, itm->getChildren()) {
                QModelIndex tempIdx = elementModel->indexFromItem(c);
                ui->element_tree->elementView->selectionModel()->select(tempIdx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
                c->setSelected(true);
             }
+            QModelIndex layerIdx = elementModel->indexFromItem(itm);
+            ui->element_tree->elementView->selectionModel()->select(layerIdx
+                        ,QItemSelectionModel::Select | QItemSelectionModel::Rows);
         } else {
                 itm->setSelected(true);
             }
@@ -382,19 +387,12 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
         elementModel->layoutChanged();
         ui->graphicsView->setScene(selectedLevel);
         ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-        ui->graphicsView->initGrid();
 
         connect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                 ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
-//        connect(selectedLevel, SIGNAL(selectionChanged()),
-//                this,SLOT(handleSceneSelectionChanged()));
-
         connect(selectedLevel, SIGNAL(onUpdatePos()),
                 this, SLOT(handleUpdatePos()));
-
-//        connect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
-//                 this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
 
         ui->element_tree->connectToScene();
     }
@@ -427,6 +425,7 @@ void MainWindow::handleScaleToggled(bool value)
 {
     if(selectedLevel){
         selectedLevel->setScale(value);
+        selectedLevel->update();
         ui->graphicsView->viewport()->update();
     }
 }
@@ -435,12 +434,14 @@ void MainWindow::handleRotateToggled(bool value)
 {
     if(selectedLevel){
         selectedLevel->setRotate(value);
+        selectedLevel->update();
         ui->graphicsView->viewport()->update();
     }
 }
 
 void MainWindow::handleAlignItemsY()
 {
+
     if(selectedLevel) {
         if (selectedItems.count() != 0) {
 
@@ -455,7 +456,10 @@ void MainWindow::handleAlignItemsY()
                 selectedItems[i]->setPos(selectedItems[i]->pos().x(), y);
             }
         }
+
+        selectedLevel->calcOverLayBounds();
     }
+
 }
 
 void MainWindow::handleAlignItemsX()
@@ -474,6 +478,8 @@ void MainWindow::handleAlignItemsX()
                 selectedItems[i]->setPos(x, selectedItems[i]->pos().y());
             }
         }
+
+        selectedLevel->calcOverLayBounds();
     }
 }
 

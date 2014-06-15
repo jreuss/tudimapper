@@ -223,7 +223,7 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     if(mScaleEnabled){
         drawScaleOverlay(painter,pen,pixmap().rect());
     }
-    updateColliderRect(tmpRect);
+   updateColliderRect(tmpRect);
 }
 
 void ItemElement::drawScaleOverlay(QPainter *painter, QPen pen, QRectF outlineRect)

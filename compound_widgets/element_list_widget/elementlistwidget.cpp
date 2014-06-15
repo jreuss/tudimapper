@@ -22,6 +22,7 @@ void ElementListWidget::setScene(MainScene *scene)
 
 void ElementListWidget::setModel(ElementTreeModel *model)
 {
+    this->model = model;
     this->elementView->setModel(model);
 }
 
@@ -34,6 +35,13 @@ void ElementListWidget::connectToScene()
 
     connect (scene, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
              this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+
+    connect(ui->btn_addlayer, SIGNAL(clicked()),
+            this, SLOT(handleAddLayer()));
+
+    connect(ui->btn_removelayer, SIGNAL(clicked()),
+            this, SLOT(handleRemoveLayer()));
+
 }
 
 void ElementListWidget::disconnectScene()
@@ -76,6 +84,34 @@ void ElementListWidget::handleSceneSelectionChanged()
         QModelIndex index = static_cast<ElementTreeModel*>(elementView->model())->indexFromItem(itm);
         elementView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
+}
+
+void ElementListWidget::handleAddLayer()
+{
+    if(scene){
+        ItemElement *newLayer = new ItemElement();
+        model->insertItem(QModelIndex(), newLayer);
+        newLayer->setParentItem(scene->getRoot());
+    }
+}
+
+void ElementListWidget::handleRemoveLayer()
+{
+    if(scene){
+        foreach(QModelIndex i,elementView->selectionModel()->selectedIndexes()){
+            model->removeItem(i);
+        }
+    }
+}
+
+void ElementListWidget::handleMoveLayerUp()
+{
+
+}
+
+void ElementListWidget::handleMoveLayerDown()
+{
+
 }
 
 

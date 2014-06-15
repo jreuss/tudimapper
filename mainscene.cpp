@@ -1,7 +1,6 @@
 #include "mainscene.h"
 #include <QDebug>
 
-
 MainScene::MainScene()
 {
     mRoot = new AbstractTreePixmapItem();
@@ -17,13 +16,17 @@ MainScene::MainScene()
     setBackgroundBrush(brush);
     mName = "New Level";
     mShowColliders = true;
-    mRotate =false;
-    mScale = false;
+    mRotate = false;
+    mScale  = false;
+    overlay = new QGraphicsRectItem(QRect());
+    addItem(overlay);
+    overlay->hide();
 
-//    connect(this, SIGNAL(selectionChanged()),
-//            this, SLOT(handleSelectionChanged()));
+    gridX = gridY = 0;
+
+    connect(this, SIGNAL(selectionChanged()),
+            this, SLOT(handleSelectionChanged()));
 }
-
 
 void MainScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
@@ -83,7 +86,7 @@ void MainScene::keyPressEvent(QKeyEvent *event)
 
 void MainScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    QGraphicsView *view =views().front();
+    QGraphicsView *view = views().front();
     float scalefact = view->transform().m11();
     QBrush brush;
     brush.setTextureImage(QImage(":/images/checkerboard"));
@@ -138,48 +141,30 @@ void MainScene::setScale(bool set)
     mScale = set;
 }
 
-void MainScene::handleSelectionChanged()
-{
-
-}
-
 void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
+    ZoomedGraphicView *view = static_cast<ZoomedGraphicView*>(views().front());
+
+    if(view->snapToGrid) {
+        gridX = view->stepX;
+        gridY = view->stepY;
+    } else {
+        gridX = gridY = 1;
+    }
+
     if(selectedItems().count() == 1 && mDrag){
         QGraphicsItem *i = selectedItems().front();
-        i->setPos(int(event->scenePos().x()/50)*50,int(event->scenePos().y()/50)*50);
+        i->setPos(int(event->scenePos().x()/gridX)*gridX,int(event->scenePos().y()/gridY)*gridY);
+
     } else if(selectedItems().count() > 1 && mDrag){
 
-        int minX =100000;
-        int minY =100000;
-        int maxX = -100000;
-        int maxY = -100000;
+        int x = (int((event->scenePos().x()-mousePressPoint.x())/gridX)*gridX)  - overlay->x();
+        int y = (int((event->scenePos().y()- mousePressPoint.y())/gridY)*gridY)  - overlay->y();
 
-        if(selectedItems().count() > 1) {
-            foreach(QGraphicsItem* i, selectedItems()){
-                if(i->x() < minX){
-                    minX = i->pos().x();
-                }
+        overlay->setPos(overlay->x()+x, overlay->y()+y);
 
-                if(i->pos().y() < minY){
-                    minY = i->pos().y();
-                }
-
-                if(i->pos().x() > maxX){
-                    maxX = i->pos().x();
-                }
-
-                if(i->pos().y() > maxY){
-                    maxY = i->pos().y();
-                }
-            }
-        }
-
-        int x = (int(event->scenePos().x()/50)*50) - minX;
-        int y = (int(event->scenePos().y()/50)*50) - minY;
-
-        foreach(QGraphicsItem* i, selectedItems()){
+        foreach(QGraphicsItem* i, selectedItems()) {
             i->setPos(i->pos().x()+x,i->pos().y()+y);
         }
 
@@ -192,7 +177,8 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void MainScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mousePressEvent(event);
-    if(selectedItems().count() > 0){
+    if(selectedItems().count() > 0 && !mScale && !mRotate){
+        mousePressPoint = event->scenePos() - overlay->pos();
         mDrag =true;
     }
 }
@@ -201,4 +187,43 @@ void MainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseReleaseEvent(event);
     mDrag =false;
+}
+
+void MainScene::calcOverLayBounds()
+{
+    if(selectedItems().count() > 1) {
+        int minX = 100000;
+        int minY = 100000;
+        int maxX = -100000;
+        int maxY = -100000;
+
+        foreach(QGraphicsItem* i, selectedItems()) {
+            if(i->x() < minX){
+                minX = i->pos().x();
+            }
+
+            if(i->pos().y() < minY){
+                minY = i->pos().y();
+            }
+
+            if(i->pos().x()+i->boundingRect().width() > maxX){
+                maxX = i->pos().x()+i->boundingRect().width();
+            }
+
+            if(i->pos().y()+i->boundingRect().height() > maxY){
+                maxY = i->pos().y()+i->boundingRect().height();
+            }
+        }
+
+        overlay->setRect(QRect(0,0, maxX-minX, maxY-minY));
+        overlay->setPos(minX, minY);
+        overlay->show();
+
+    } else {
+        overlay->hide();
+    }
+}
+
+void MainScene::handleSelectionChanged() {
+    calcOverLayBounds();
 }

@@ -7,6 +7,7 @@
 #include "mainscene.h"
 #include "elementtreemodel.h"
 #include "stable_pch.h"
+#include "elementtreemodel.h"
 
 namespace Ui {
 class ElementListWidget;
@@ -31,9 +32,14 @@ public:
 private slots:
     void handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove);
     void handleSceneSelectionChanged();
+    void handleAddLayer();
+    void handleRemoveLayer();
+    void handleMoveLayerUp();
+    void handleMoveLayerDown();
 private:
     Ui::ElementListWidget *ui;
     MainScene *scene;
+    ElementTreeModel *model;
 
 };
 

@@ -5,21 +5,16 @@ ZoomedGraphicView::ZoomedGraphicView(QWidget *parent) :
 {
     setDragMode(ScrollHandDrag);
 
-   // grid = new Grid();
-
     stepX = 50;
     stepY = 50;
     pX=0;
     pY=0;
     showGrid = false;
-
-    //this->FullViewportUpdate();
-    //setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    snapToGrid = false;
 }
 
 void ZoomedGraphicView::wheelEvent(QWheelEvent *event)
 {
-
     double degrees = -event->delta() / 8;
     double steps = degrees / 15;
     zoomFactor = std::pow(1.125, steps);
@@ -40,17 +35,9 @@ void ZoomedGraphicView::setZoomFactor(double value)
     zoomFactor = value;
 }
 
-void ZoomedGraphicView::initGrid()
-{
-    //grid->setDimensions(this->viewport()->rect());
-    //this->scene()->addItem(grid);
-}
-
 void ZoomedGraphicView::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-
-//    grid->setDimensions(this->viewport()->rect());
     viewport()->update();
 }
 
@@ -61,21 +48,23 @@ void ZoomedGraphicView::drawForeground(QPainter *painter, const QRectF &rect)
     if(!showGrid){
         return;
     }
+
     QPen pen(QColor(Qt::gray));
     pen.setWidth(0);
-    painter->setPen(pen);
 
+    painter->setPen(pen);
+    painter->setOpacity(0.75);
     // draw horizontal grid
     int y = (rect.top()+pY)/stepY;
     qreal start = y*stepY;
 
     if (start > rect.top()) {
-       start -= stepY;
+        start -= stepY;
     }
 
     for (qreal y = start - stepY; y < rect.bottom(); ) {
-       y += stepY;
-       painter->drawLine(rect.left(), y, rect.right(), y);
+        y += stepY;
+        painter->drawLine(rect.left(), y, rect.right(), y);
     }
 
     // now draw vertical grid
@@ -83,12 +72,12 @@ void ZoomedGraphicView::drawForeground(QPainter *painter, const QRectF &rect)
     start = x*stepX;
 
     if (start > rect.left()) {
-       start -= stepX;
+        start -= stepX;
     }
 
     for (qreal x = start - stepX; x < rect.right(); ) {
-       x += stepX;
-       painter->drawLine(x, rect.top(), x, rect.bottom());
+        x += stepX;
+        painter->drawLine(x, rect.top(), x, rect.bottom());
     }
 }
 
@@ -103,6 +92,10 @@ void ZoomedGraphicView::scrollContentsBy(int dx, int dy)
 void ZoomedGraphicView::handleShowGrid(bool value)
 {
     showGrid = value;
+    if(!value) {
+        snapToGrid = false;
+    }
+
     viewport()->update();
 }
 
@@ -116,4 +109,13 @@ void ZoomedGraphicView::handleSetGridOffsetY(int value)
 {
     stepY = value;
     viewport()->update();
+}
+
+void ZoomedGraphicView::handleSnapToGrid(bool value)
+{
+    if(showGrid) {
+        snapToGrid = value;
+    } else {
+        snapToGrid = false;
+    }
 }

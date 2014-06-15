@@ -3,7 +3,6 @@
 
 #include <QGraphicsView>
 #include "stable_pch.h"
-#include "utility/grid.h"
 #include <QWheelEvent>
 
 class ZoomedGraphicView : public QGraphicsView
@@ -17,6 +16,7 @@ public:
     void initGrid();
     int stepX,stepY;
     bool showGrid;
+    bool snapToGrid;
 
 signals:
     void zoomChanged(double);
@@ -25,11 +25,11 @@ public slots:
     void handleShowGrid(bool);
     void handleSetGridOffsetX(int);
     void handleSetGridOffsetY(int);
+    void handleSnapToGrid(bool);
     // QWidget interface
 protected:
     void wheelEvent(QWheelEvent *);
     double zoomFactor;
-    Grid *grid;
 
     // QWidget interface
 protected:

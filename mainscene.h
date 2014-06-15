@@ -9,6 +9,7 @@
 #include "compound_widgets/template_selection_widget/thumbnailgridview.h"
 #include "items/itemelement.h"
 #include "items/abstractsceneitem.h"
+#include "utility/zoomedgraphicview.h"
 
 class MainScene : public AbstractSceneItem
 {
@@ -28,11 +29,12 @@ public:
     void setRotate(bool set);
     bool scale();
     void setScale(bool set);
+    void calcOverLayBounds();
 signals:
     void onRequestTemplates(QPointF);
     void onItemDeleted(QList<QGraphicsItem*>);
     void onUpdatePos();
-public slots:
+private slots:
     void handleSelectionChanged();
 
 protected:
@@ -48,11 +50,14 @@ private:
     bool mRotate;
     bool mScale;
     bool mDrag;
+    int gridX, gridY;
+    QPointF mousePressPoint;
+
+    QGraphicsRectItem *overlay;
 
     // QGraphicsScene interface
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
-
 
     // QGraphicsScene interface
 protected:
