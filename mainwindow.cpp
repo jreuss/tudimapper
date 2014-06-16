@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     selectedLevel = NULL;
-    elementModel = new ElementTreeModel(1);
+    elementModel = new ElementTreeModel(2);
     //elementModel->setRoot(mainScene->getRoot());
 
     ui->element_tree->elementView->setModel(elementModel);

@@ -104,6 +104,17 @@ QVariant ItemElement::itemChange(QGraphicsItem::GraphicsItemChange change, const
         }
     }
 
+    if (change == ItemPositionHasChanged){
+
+        if(pos().x() < 0){
+            setPos(0,pos().y());
+        }
+        if(pos().y()<0){
+            setPos(pos().x(),0);
+        }
+
+    }
+
 
 
     return QGraphicsPixmapItem::itemChange(change, value);

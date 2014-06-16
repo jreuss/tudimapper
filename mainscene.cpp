@@ -6,7 +6,7 @@ MainScene::MainScene()
     mRoot = new AbstractTreePixmapItem();
     mRoot->setZValue(2);
     this->addItem(mRoot);
-    model = new ElementTreeModel(1);
+    model = new ElementTreeModel(2);
     model->setRoot(mRoot);
     // set background brush
     QBrush brush;
@@ -158,12 +158,10 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 newTmp->setPos(toCopy->pos());
                 toCopy->setSelected(false);
                 newTmp->setSelected(true);
-
-
-
             }
         }
     }
+
     copy = false;
 
     ZoomedGraphicView *view = static_cast<ZoomedGraphicView*>(views().front());
@@ -171,15 +169,15 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(view->snapToGrid) {
         gridX = view->stepX;
         gridY = view->stepY;
-    } else {
-        gridX = gridY = 1;
     }
 
-    if(selectedItems().count() == 1 && mDrag){
+    if(selectedItems().count() == 1 && mDrag && view->snapToGrid){
         QGraphicsItem *i = selectedItems().front();
-        i->setPos(int(event->scenePos().x()/gridX)*gridX,int(event->scenePos().y()/gridY)*gridY);
+        int x = (int((event->scenePos().x()-mousePressPoint.x())/gridX)*gridX)  - i->pos().x();
+        int y = (int((event->scenePos().y()- mousePressPoint.y())/gridY)*gridY)  - i->pos().y();
+        i->setPos(i->pos().x()+x,i->pos().y()+y);
 
-    } else if(selectedItems().count() > 1 && mDrag){
+    } else if(selectedItems().count() > 1 && mDrag && view->snapToGrid){
 
         int x = (int((event->scenePos().x()-mousePressPoint.x())/gridX)*gridX)  - overlay->x();
         int y = (int((event->scenePos().y()- mousePressPoint.y())/gridY)*gridY)  - overlay->y();
@@ -203,8 +201,11 @@ void MainScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 
     QGraphicsScene::mousePressEvent(event);
-    if(selectedItems().count() > 0 && !mScale && !mRotate){
+    if(selectedItems().count() > 1 && !mScale && !mRotate){
         mousePressPoint = event->scenePos() - overlay->pos();
+        mDrag =true;
+    }else if(selectedItems().count() == 1 && !mScale && !mRotate){
+        mousePressPoint = event->scenePos() - selectedItems().front()->pos();
         mDrag =true;
     }
 }
