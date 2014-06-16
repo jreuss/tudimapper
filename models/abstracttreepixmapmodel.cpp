@@ -95,7 +95,6 @@ void AbstractTreePixmapModel::insertItem(int i, AbstractTreePixmapItem *parentIt
     item->mParent = parentItem;
     childCount++;
     endInsertRows();
-
 }
 
 void AbstractTreePixmapModel::insertItem(QModelIndex parentIndex, AbstractTreePixmapItem *item)
@@ -128,6 +127,25 @@ void AbstractTreePixmapModel::removeItem(AbstractTreePixmapItem *item)
     childCount--;
     endRemoveRows();
 
+}
+
+AbstractTreePixmapItem *AbstractTreePixmapModel::takeItem(AbstractTreePixmapItem *item)
+{
+    AbstractTreePixmapItem *parentItem = item->mParent;
+    const QModelIndex parentIndex = indexFromItem(parentItem);
+
+    int i = rowForItem(item);
+    int firstRow = i;
+    int lastRow = i;
+
+    AbstractTreePixmapItem *taken;
+
+    beginRemoveRows(parentIndex, firstRow, lastRow);
+    taken = parentItem->mChildren.takeAt(i);
+    childCount--;
+    endRemoveRows();
+
+    return taken;
 }
 
 void AbstractTreePixmapModel::removeItem(const QModelIndex &index)

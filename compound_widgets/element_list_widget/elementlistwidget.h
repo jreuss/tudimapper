@@ -25,11 +25,14 @@ public:
     QTreeView *elementView;
     void setScene(MainScene *scene);
     void setModel(ElementTreeModel *model);
+
+    void setLayerZIndexes();
 //    void connectToScene();
 //    void disconnectScene();
     ElementTreeModel *model;
 
     QToolButton *addLayer;
+
 
     QTreeView *getElementView() const;
     void setElementView(QTreeView *value);

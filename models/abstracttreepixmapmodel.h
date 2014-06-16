@@ -31,6 +31,7 @@ public:
     void removeItem(AbstractTreePixmapItem *item);
     void removeItem(const QModelIndex &index);
     void removeAllItems();
+    AbstractTreePixmapItem *takeItem(AbstractTreePixmapItem *item);
     int childCount;
 
 

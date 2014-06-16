@@ -193,7 +193,7 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
             element->setPos(pos - QPointF(element->getRect().width()/2, element->getRect().height()/2));
         }
     }
-
+ ui->element_tree->setLayerZIndexes();
 }
 
 void MainWindow::handleAddNewLayout()
@@ -241,19 +241,19 @@ void MainWindow::handleTreeviewSelectionChanged(QModelIndex pressedOn)
 
         AbstractTreePixmapItem* temp = selectedLevel->model->itemFromIndex(idx);
         ItemElement* itm = static_cast<ItemElement*>(temp);
-        if(itm->getType() == ItemElement::LAYER){
+//        if(itm->getType() == ItemElement::LAYER){
 
-            foreach (AbstractTreePixmapItem* c, itm->getChildren()) {
-               QModelIndex tempIdx = selectedLevel->model->indexFromItem(c);
-               ui->element_tree->elementView->selectionModel()->select(tempIdx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
-               c->setSelected(true);
-            }
-            QModelIndex layerIdx = selectedLevel->model->indexFromItem(itm);
-            ui->element_tree->elementView->selectionModel()->select(layerIdx
-                        ,QItemSelectionModel::Select | QItemSelectionModel::Rows);
-        } else {
+//            foreach (AbstractTreePixmapItem* c, itm->getChildren()) {
+//               QModelIndex tempIdx = selectedLevel->model->indexFromItem(c);
+//               ui->element_tree->elementView->selectionModel()->select(tempIdx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
+//               c->setSelected(true);
+//            }
+//            QModelIndex layerIdx = selectedLevel->model->indexFromItem(itm);
+//            ui->element_tree->elementView->selectionModel()->select(layerIdx
+//                        ,QItemSelectionModel::Select | QItemSelectionModel::Rows);
+//        } else {
                 itm->setSelected(true);
-            }
+            //}
         }
 
     }
