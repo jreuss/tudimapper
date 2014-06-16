@@ -3,6 +3,8 @@
 #include <qtreeview.h>
 
 #include <QWidget>
+#include <QPushButton>
+#include <QToolButton>
 
 #include "mainscene.h"
 #include "elementtreemodel.h"
@@ -23,15 +25,18 @@ public:
     QTreeView *elementView;
     void setScene(MainScene *scene);
     void setModel(ElementTreeModel *model);
-    void connectToScene();
-    void disconnectScene();
+//    void connectToScene();
+//    void disconnectScene();
+    ElementTreeModel *model;
+
+    QToolButton *addLayer;
 
     QTreeView *getElementView() const;
     void setElementView(QTreeView *value);
 
 private slots:
-    void handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove);
-    void handleSceneSelectionChanged();
+//    void handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove);
+//    void handleSceneSelectionChanged();
     void handleAddLayer();
     void handleRemoveLayer();
     void handleMoveLayerUp();
@@ -39,7 +44,7 @@ private slots:
 private:
     Ui::ElementListWidget *ui;
     MainScene *scene;
-    ElementTreeModel *model;
+
 
 };
 

@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     elementModel = new ElementTreeModel(1);
     //elementModel->setRoot(mainScene->getRoot());
 
-    ui->element_tree->setModel(elementModel);
+    ui->element_tree->elementView->setModel(elementModel);
     ui->element_tree->elementView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     levelModel = new LevelTreeModel(1);
     ui->treeView_level->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -42,6 +42,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::createConnections()
 {
+//    connect(ui->element_tree->addLayer, SIGNAL(clicked()),
+//            this, SLOT(handleAddLayer()));
+
     connect(ui->mainToolbar->snapToGrid, SIGNAL(toggled(bool)),
             ui->graphicsView, SLOT(handleSnapToGrid(bool)));
 
@@ -75,14 +78,17 @@ void MainWindow::createConnections()
     connect(ui->mainToolbar, SIGNAL(onScaleToggled(bool)),
             this,SLOT(handleScaleToggled(bool)));
 
+    connect (ui->treeView_level->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+             this, SLOT(handleLevelChange(QItemSelection,QItemSelection)));
+
+
     connect(ui->mainToolbar, SIGNAL(onRotateToggled(bool)),
             this,SLOT(handleRotateToggled(bool)));
 
             connect (ui->element_tree->elementView, SIGNAL(clicked(QModelIndex)),
                      this, SLOT(handleTreeviewSelectionChanged(QModelIndex)));
 
-    connect (ui->element_tree->elementView->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-             this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
+
 
     connect(ui->spinBox_xpos,SIGNAL(valueChanged(int)),
             this,SLOT(handleChangeXPos(int)));
@@ -99,8 +105,7 @@ void MainWindow::createConnections()
     connect(ui->btn_collider,SIGNAL(clicked()),
             this,SLOT(handleUpdateImportOptions()));
 
-    connect (ui->treeView_level->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-             this, SLOT(handleLevelChange(QItemSelection,QItemSelection)));
+
 
     connect(ui->btn_addLevel,SIGNAL(clicked()),
             this, SLOT(handleAddLevel()));
@@ -151,7 +156,7 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
             selectedIndexes().count() > 0){
             QModelIndex idx = ui->element_tree->elementView->selectionModel()->
                     selectedIndexes().front();
-            AbstractTreePixmapItem *temp = elementModel->itemFromIndex(idx);
+            AbstractTreePixmapItem *temp = selectedLevel->model->itemFromIndex(idx);
 
             ItemElement* selected = static_cast<ItemElement*>(temp);
             if(selected->getType() == ItemElement::LAYER){
@@ -162,7 +167,7 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
     } else {
 
         layer = new ItemElement();
-        elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),layer);
+        selectedLevel->model->insertItem(selectedLevel->model->getRoot()->getChildren().count(),selectedLevel->model->getRoot(),layer);
         layer->setParentItem(selectedLevel->getRoot());
     }
 
@@ -172,7 +177,7 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
             foreach(QGraphicsItem* currentItem, elements){
                 ItemElement *element = new ItemElement(static_cast<ItemElement*>(currentItem));
                 element->setParentItem(layer);
-                elementModel->insertItem(layer->getChildren().count(), layer, element);
+                selectedLevel->model->insertItem(layer->getChildren().count(), layer, element);
 
                 element->setPos(currentItem->pos());
                 element->setScale(currentItem->scale());
@@ -183,7 +188,7 @@ void MainWindow::handleTemplatesRecieved(QPointF pos, QList<ItemTemplate *> temp
 
 
             element->setParentItem(layer);
-            elementModel->insertItem(layer->getChildren().count(), layer, element);
+            selectedLevel->model->insertItem(layer->getChildren().count(), layer, element);
 
             element->setPos(pos - QPointF(element->getRect().width()/2, element->getRect().height()/2));
         }
@@ -219,7 +224,7 @@ void MainWindow::handleSceneSelectionChanged()
     foreach(QGraphicsItem *it, selectedLevel->selectedItems())
     {
         AbstractTreePixmapItem *itm = static_cast<AbstractTreePixmapItem *>(it);
-        QModelIndex index = elementModel->indexFromItem(itm);
+        QModelIndex index = selectedLevel->model->indexFromItem(itm);
         ui->element_tree->elementView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 }
@@ -234,16 +239,16 @@ void MainWindow::handleTreeviewSelectionChanged(QModelIndex pressedOn)
     }
     foreach (QModelIndex idx , idxList) {
 
-        AbstractTreePixmapItem* temp = elementModel->itemFromIndex(idx);
+        AbstractTreePixmapItem* temp = selectedLevel->model->itemFromIndex(idx);
         ItemElement* itm = static_cast<ItemElement*>(temp);
         if(itm->getType() == ItemElement::LAYER){
 
             foreach (AbstractTreePixmapItem* c, itm->getChildren()) {
-               QModelIndex tempIdx = elementModel->indexFromItem(c);
+               QModelIndex tempIdx = selectedLevel->model->indexFromItem(c);
                ui->element_tree->elementView->selectionModel()->select(tempIdx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
                c->setSelected(true);
             }
-            QModelIndex layerIdx = elementModel->indexFromItem(itm);
+            QModelIndex layerIdx = selectedLevel->model->indexFromItem(itm);
             ui->element_tree->elementView->selectionModel()->select(layerIdx
                         ,QItemSelectionModel::Select | QItemSelectionModel::Rows);
         } else {
@@ -258,7 +263,7 @@ void MainWindow::handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove)
 {
     foreach(QGraphicsItem *item, itemToRemove){
         AbstractTreePixmapItem* i = static_cast<AbstractTreePixmapItem*>(item);
-        elementModel->removeItem(i);
+        selectedLevel->model->removeItem(i);
     }
 }
 
@@ -268,7 +273,7 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
     selectedItems.clear();
     QModelIndexList selectedIndexes = ui->element_tree->elementView->selectionModel()->selectedIndexes();
     foreach(QModelIndex index, selectedIndexes){
-        selectedItems.append(static_cast<ItemElement*>(elementModel->itemFromIndex(index)));
+        selectedItems.append(static_cast<ItemElement*>(selectedLevel->model->itemFromIndex(index)));
     }
 
     if(selectedIndexes.count() == 0){
@@ -331,7 +336,7 @@ void MainWindow::handleUpdateImportOptions()
 {
     QList<ItemTemplate*> tempsToChange;
     foreach(QModelIndex index, ui->element_tree->elementView->selectionModel()->selectedIndexes()){
-        ItemElement* item = static_cast<ItemElement*>(elementModel->itemFromIndex(index));
+        ItemElement* item = static_cast<ItemElement*>(selectedLevel->model->itemFromIndex(index));
         tempsToChange.append(item->getTemplate());
     }
 
@@ -355,22 +360,30 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
     bool scaleEnabled = false;
     if(selectedLevel){
         selectedLevel->clearSelection();
+        handleSceneSelectionChanged();
+
+
         showColliders = selectedLevel->showColliders();
         rotateEnabled = selectedLevel->rotate();
         scaleEnabled = selectedLevel->scale();
 
+
+
+        disconnect (ui->element_tree->elementView->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                 this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
+
         disconnect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                    ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
-//        disconnect(selectedLevel, SIGNAL(selectionChanged()),
-//                   this,SLOT(handleSceneSelectionChanged()));
+        disconnect(selectedLevel, SIGNAL(selectionChanged()),
+                   this,SLOT(handleSceneSelectionChanged()));
 
         disconnect(selectedLevel, SIGNAL(onUpdatePos()),
                    this, SLOT(handleUpdatePos()));
 
-//        disconnect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
-//                    this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
-        ui->element_tree->disconnectScene();
+        disconnect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
+                    this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+       // ui->element_tree->disconnectScene();
 
     }
 
@@ -379,22 +392,39 @@ void MainWindow::handleLevelChange(QItemSelection seleceted, QItemSelection dese
         selectedLevel = static_cast<MainScene*>(levelModel->itemFromIndex(selectedIndexes.front()));
         ui->element_tree->setScene(selectedLevel);
 
+
         selectedLevel->setShowColliders(showColliders);
         selectedLevel->setRotate(rotateEnabled);
         selectedLevel->setScale(scaleEnabled);
-        elementModel->layoutAboutToBeChanged();
+
+         ui->element_tree->elementView->setModel(selectedLevel->model);
+        /*  elementModel->layoutAboutToBeChanged();
         elementModel->setRoot(selectedLevel->getRoot());
-        elementModel->layoutChanged();
+        //ui->element_tree->model->setRoot(selectedLevel->getRoot());
+        elementModel->layoutChanged();*/
+
         ui->graphicsView->setScene(selectedLevel);
         ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+
+
+        connect (ui->element_tree->elementView->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                 this, SLOT(handleUpdatePropeties(QItemSelection,QItemSelection)));
 
         connect(selectedLevel, SIGNAL(onRequestTemplates(QPointF)),
                 ui->dockWidgetContents,SLOT(handleRequestedTemplates(QPointF)));
 
+        connect(selectedLevel, SIGNAL(selectionChanged()),
+                   this,SLOT(handleSceneSelectionChanged()));
+
         connect(selectedLevel, SIGNAL(onUpdatePos()),
                 this, SLOT(handleUpdatePos()));
 
-        ui->element_tree->connectToScene();
+        connect (selectedLevel, SIGNAL(onItemDeleted(QList<QGraphicsItem*>)),
+                    this, SLOT(handleOnItemsDeleted(QList<QGraphicsItem*>)));
+
+
+        //ui->element_tree->connectToScene();
     }
 }
 
@@ -482,6 +512,13 @@ void MainWindow::handleAlignItemsX()
         selectedLevel->calcOverLayBounds();
     }
 }
+
+//void MainWindow::handleAddLayer()
+//{
+//    ItemElement *layer = new ItemElement();
+//    elementModel->insertItem(elementModel->getRoot()->getChildren().count(),elementModel->getRoot(),layer);
+//    layer->setParentItem(selectedLevel->getRoot());
+//}
 
 
 

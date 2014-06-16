@@ -5,6 +5,7 @@ ItemElement::ItemElement()
     mName = "Unamed layer";
     this->setZValue(3);
     mType = LAYER;
+    mTemplate = NULL;
     icon.addPixmap(QPixmap(":/icons/layer_icon"));
 }
 
@@ -88,8 +89,8 @@ QRectF ItemElement::boundingRect() const
 
 void ItemElement::updateColliderRect(QRectF tmp)
 {
-    prepareGeometryChange();
-    update();
+    //prepareGeometryChange();
+    //update();
     mColliderRect = AbstractTreePixmapItem::boundingRect();
     mColliderRect = mColliderRect.united(tmp);
 }
@@ -114,6 +115,9 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     viewScale = scene()->views().front()->transform().m11();
     QRectF tmpRect;
     QGraphicsPixmapItem::paint(painter,option,widget);
+    if(mType == LAYER){
+        return;
+    }
     if(qobject_cast<MainScene*>(scene())){
         showColliders = qobject_cast<MainScene*>(scene())->showColliders();
         if(this->isSelected()){
@@ -132,7 +136,7 @@ void ItemElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         showColliders = true;
     }
 
-    if(showColliders && mType == NORMAL){
+    if(showColliders){
 
         QList<QGraphicsItem*> colliders = mTemplate->getColliderRoot()->childItems();
 

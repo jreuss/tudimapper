@@ -6,17 +6,21 @@
 #include <QMimeData>
 #include <QRubberBand>
 
+#include "elementtreemodel.h"
 #include "compound_widgets/template_selection_widget/thumbnailgridview.h"
 #include "items/itemelement.h"
+
 #include "items/abstractsceneitem.h"
 #include "utility/zoomedgraphicview.h"
 
+class ElementTreeModel;
 class MainScene : public AbstractSceneItem
 {
      Q_OBJECT
 public:
     MainScene();
 
+    ElementTreeModel *model;
     AbstractTreePixmapItem *getRoot() const;
     void setRoot(AbstractTreePixmapItem *value);
     void updatePos();
@@ -52,6 +56,7 @@ private:
     bool mDrag;
     int gridX, gridY;
     QPointF mousePressPoint;
+    bool copy;
 
     QGraphicsRectItem *overlay;
 

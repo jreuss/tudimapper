@@ -6,6 +6,8 @@ MainScene::MainScene()
     mRoot = new AbstractTreePixmapItem();
     mRoot->setZValue(2);
     this->addItem(mRoot);
+    model = new ElementTreeModel(1);
+    model->setRoot(mRoot);
     // set background brush
     QBrush brush;
     brush.setTextureImage(QImage(":/images/checkerboard"));
@@ -144,6 +146,26 @@ void MainScene::setScale(bool set)
 void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
+    if(copy){
+        foreach(QGraphicsItem* i, selectedItems()){
+            ItemElement *toCopy = static_cast<ItemElement*>(i);
+            if(toCopy->getType() == ItemElement::NORMAL){
+                qDebug() << "iamIn";
+                ItemElement *newTmp = new ItemElement(toCopy);
+                ItemElement *parent =static_cast<ItemElement*>(toCopy->parentItem());
+                newTmp->setParentItem(parent);
+                model->insertItem(parent->getChildren().count(), parent, newTmp);
+                newTmp->setPos(toCopy->pos());
+                toCopy->setSelected(false);
+                newTmp->setSelected(true);
+
+
+
+            }
+        }
+    }
+    copy = false;
+
     ZoomedGraphicView *view = static_cast<ZoomedGraphicView*>(views().front());
 
     if(view->snapToGrid) {
@@ -176,6 +198,10 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void MainScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if ( event->modifiers() == Qt::CTRL ){
+       copy=true;
+    }
+
     QGraphicsScene::mousePressEvent(event);
     if(selectedItems().count() > 0 && !mScale && !mRotate){
         mousePressPoint = event->scenePos() - overlay->pos();
@@ -183,10 +209,12 @@ void MainScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+
 void MainScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseReleaseEvent(event);
     mDrag =false;
+    copy=false;
 }
 
 void MainScene::calcOverLayBounds()
@@ -223,6 +251,8 @@ void MainScene::calcOverLayBounds()
         overlay->hide();
     }
 }
+
+
 
 void MainScene::handleSelectionChanged() {
     calcOverLayBounds();

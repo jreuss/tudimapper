@@ -54,6 +54,8 @@ protected slots:
     void handleAlignItemsY();
     void handleAlignItemsX();
 
+//    void handleAddLayer();
+
 private:
     void loadLayouts();
     QList<QAction*> layoutActions;
