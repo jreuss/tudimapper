@@ -23,6 +23,7 @@ MainScene::MainScene()
     overlay = new QGraphicsRectItem(QRect());
     addItem(overlay);
     overlay->hide();
+    copy = false;
 
     gridX = gridY = 0;
 
@@ -147,10 +148,11 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
     if(copy){
+
         foreach(QGraphicsItem* i, selectedItems()){
             ItemElement *toCopy = static_cast<ItemElement*>(i);
             if(toCopy->getType() == ItemElement::NORMAL){
-                qDebug() << "iamIn";
+
                 ItemElement *newTmp = new ItemElement(toCopy);
                 ItemElement *parent =static_cast<ItemElement*>(toCopy->parentItem());
                 newTmp->setParentItem(parent);
@@ -169,15 +171,18 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(view->snapToGrid) {
         gridX = view->stepX;
         gridY = view->stepY;
+    } else {
+        gridX = 1;
+        gridY = 1;
     }
 
-    if(selectedItems().count() == 1 && mDrag && view->snapToGrid){
+    if(selectedItems().count() == 1 && mDrag){
         QGraphicsItem *i = selectedItems().front();
         int x = (int((event->scenePos().x()-mousePressPoint.x())/gridX)*gridX)  - i->pos().x();
         int y = (int((event->scenePos().y()- mousePressPoint.y())/gridY)*gridY)  - i->pos().y();
         i->setPos(i->pos().x()+x,i->pos().y()+y);
 
-    } else if(selectedItems().count() > 1 && mDrag && view->snapToGrid){
+    } else if(selectedItems().count() > 1 && mDrag){
 
         int x = (int((event->scenePos().x()-mousePressPoint.x())/gridX)*gridX)  - overlay->x();
         int y = (int((event->scenePos().y()- mousePressPoint.y())/gridY)*gridY)  - overlay->y();
@@ -195,7 +200,7 @@ void MainScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 void MainScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
+{   qDebug () << selectedItems().count();
     if ( event->modifiers() == Qt::CTRL ){
        copy=true;
     }

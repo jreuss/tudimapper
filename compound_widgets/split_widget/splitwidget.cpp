@@ -22,7 +22,7 @@ void SplitWidget::toogleUI(bool enable)
 {
     ui->btn_split->setEnabled(enable);
     //FOR THE TEST
-    ui->btn_split->setHidden(true);
+    //ui->btn_split->setHidden(true);
     ui->btn_splitAndAdd->setEnabled(enable);
     ui->gBox_rm_duplicates->setEnabled(enable);
 

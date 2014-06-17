@@ -119,10 +119,10 @@ void ElementListWidget::handleAddLayer()
 void ElementListWidget::handleRemoveLayer()
 {
     if(scene){
-        foreach(QModelIndex i,elementView->selectionModel()->selectedIndexes()){
+        foreach(QModelIndex i,elementView->selectionModel()->selectedRows()){
             static_cast<ElementTreeModel*>(elementView->model())->removeItem(i);
         }
-        setLayerZIndexes();
+        // setLayerZIndexes();
     }
 }
 
@@ -130,7 +130,7 @@ void ElementListWidget::handleMoveLayerUp()
 {
     int count = elementView->selectionModel()->selectedIndexes().count();
 
-    if(count == 1) {
+    if(count == 2) {
 
         QModelIndex index = elementView->selectionModel()->selectedIndexes().front();
         ItemElement *el = static_cast<ItemElement*>(scene->model->itemFromIndex(index));
@@ -153,7 +153,7 @@ void ElementListWidget::handleMoveLayerDown()
 {
     int count = elementView->selectionModel()->selectedIndexes().count();
 
-    if(count == 1) {
+    if(count == 2) {
         QModelIndex index = elementView->selectionModel()->selectedIndexes().front();
         ItemElement *el = static_cast<ItemElement*>(scene->model->itemFromIndex(index));
 

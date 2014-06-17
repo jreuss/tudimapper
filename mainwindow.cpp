@@ -234,7 +234,7 @@ void MainWindow::handleTreeviewSelectionChanged(QModelIndex pressedOn)
     Q_UNUSED(pressedOn);
 
     QModelIndexList idxList = ui->element_tree->elementView->selectionModel()->selectedIndexes();
-    foreach(QGraphicsItem *itm, selectedLevel->selectedItems ()){
+    foreach(QGraphicsItem *itm, selectedLevel->selectedItems()){
         itm->setSelected (false);
     }
     foreach (QModelIndex idx , idxList) {
@@ -269,22 +269,22 @@ void MainWindow::handleOnItemsDeleted(QList<QGraphicsItem *> itemToRemove)
 
 void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection deselected)
 {
-    //previousSelectedItems = selectedItems;
-    selectedItems.clear();
-    QModelIndexList selectedIndexes = ui->element_tree->elementView->selectionModel()->selectedIndexes();
-    foreach(QModelIndex index, selectedIndexes){
-        selectedItems.append(static_cast<ItemElement*>(selectedLevel->model->itemFromIndex(index)));
-    }
-
-    if(selectedIndexes.count() == 0){
+//    //previousSelectedItems = selectedItems;
+//    selectedItems.clear();
+//    QModelIndexList selectedIndexes = ui->element_tree->elementView->selectionModel()->selectedIndexes();
+//    foreach(QModelIndex index, selectedIndexes){
+//        selectedItems.append(static_cast<ItemElement*>(selectedLevel->model->itemFromIndex(index)));
+//    }
+    qDebug() << selectedLevel->selectedItems().count();
+    if(selectedLevel->selectedItems().count() == 0){
         ui->stackedWidget->setCurrentIndex(0);
-    } else if(selectedItems.count() == 1){
+    } else if(selectedLevel->selectedItems().count() == 1){
         ui->stackedWidget->setCurrentIndex(1);
 
-        ui->spinBox_rotation->setValue(selectedItems.front()->rotation());
-        ui->spinBox_scale->setValue(selectedItems.front()->transform().m11());
-        ui->spinBox_xpos->setValue(selectedItems.front()->pos().x());
-        ui->spinBox_ypos->setValue(selectedItems.front()->pos().y());
+        ui->spinBox_rotation->setValue(selectedLevel->selectedItems().front()->rotation());
+        ui->spinBox_scale->setValue(selectedLevel->selectedItems().front()->transform().m11());
+        ui->spinBox_xpos->setValue(selectedLevel->selectedItems().front()->pos().x());
+        ui->spinBox_ypos->setValue(selectedLevel->selectedItems().front()->pos().y());
 
     } else{
         ui->stackedWidget->setCurrentIndex(2);
@@ -294,25 +294,25 @@ void MainWindow::handleUpdatePropeties(QItemSelection seleceted, QItemSelection 
 
 void MainWindow::handleUpdatePos()
 {
-    if(selectedItems.count() == 1){
-        ui->spinBox_rotation->setValue(selectedItems.front()->rotation());
-        ui->spinBox_scale->setValue(selectedItems.front()->transform().m11());
-        ui->spinBox_xpos->setValue(selectedItems.front()->pos().x());
-        ui->spinBox_ypos->setValue(selectedItems.front()->pos().y());
+    if(selectedLevel->selectedItems().count() == 1){
+        ui->spinBox_rotation->setValue(selectedLevel->selectedItems().front()->rotation());
+        ui->spinBox_scale->setValue(selectedLevel->selectedItems().front()->transform().m11());
+        ui->spinBox_xpos->setValue(selectedLevel->selectedItems().front()->pos().x());
+        ui->spinBox_ypos->setValue(selectedLevel->selectedItems().front()->pos().y());
     }
 }
 
 void MainWindow::handleChangeXPos(int value)
 {
     if(ui->spinBox_xpos->hasFocus()){
-        selectedItems.front()->setPos(value,selectedItems.front()->pos().y());
+        selectedLevel->selectedItems().front()->setPos(value,selectedLevel->selectedItems().front()->pos().y());
     }
 }
 
 void MainWindow::handleChangeYPos(int value)
 {
     if(ui->spinBox_ypos->hasFocus()){
-        selectedItems.front()->setPos(selectedItems.front()->pos().x(),value);
+        selectedLevel->selectedItems().front()->setPos(selectedLevel->selectedItems().front()->pos().x(),value);
     }
 }
 
@@ -321,14 +321,14 @@ void MainWindow::handleChangeScale(double value)
     if(ui->spinBox_scale->hasFocus()){
         QTransform trans;
         trans.scale(value,value);
-        selectedItems.front()->setTransform(trans);
+        selectedLevel->selectedItems().front()->setTransform(trans);
     }
 }
 
 void MainWindow::handleChangeRotation(double value)
 {
     if(ui->spinBox_rotation->hasFocus()){
-        selectedItems.front()->setRotation(value);
+        selectedLevel->selectedItems().front()->setRotation(value);
     }
 }
 
@@ -473,17 +473,17 @@ void MainWindow::handleAlignItemsY()
 {
 
     if(selectedLevel) {
-        if (selectedItems.count() != 0) {
+        if (selectedLevel->selectedItems().count() != 0) {
 
             int y = 1000000;
-            for (int i=0; i < selectedItems.count(); ++i) {
-                if(selectedItems[i]->pos().y() < y) {
-                    y = selectedItems[i]->pos().y();
+            for (int i=0; i < selectedLevel->selectedItems().count(); ++i) {
+                if(selectedLevel->selectedItems()[i]->pos().y() < y) {
+                    y = selectedLevel->selectedItems()[i]->pos().y();
                 }
             }
 
-            for (int i=0; i < selectedItems.count(); ++i) {
-                selectedItems[i]->setPos(selectedItems[i]->pos().x(), y);
+            for (int i=0; i < selectedLevel->selectedItems().count(); ++i) {
+                selectedLevel->selectedItems()[i]->setPos(selectedLevel->selectedItems()[i]->pos().x(), y);
             }
         }
 
@@ -495,17 +495,17 @@ void MainWindow::handleAlignItemsY()
 void MainWindow::handleAlignItemsX()
 {
     if(selectedLevel) {
-        if (selectedItems.count() != 0) {
+        if (selectedLevel->selectedItems().count() != 0) {
 
             int x = 1000000;
-            for (int i=0; i < selectedItems.count(); ++i) {
-                if(selectedItems[i]->pos().x() < x) {
-                    x = selectedItems[i]->pos().x();
+            for (int i=0; i < selectedLevel->selectedItems().count(); ++i) {
+                if(selectedLevel->selectedItems()[i]->pos().x() < x) {
+                    x = selectedLevel->selectedItems()[i]->pos().x();
                 }
             }
 
-            for (int i=0; i < selectedItems.count(); ++i) {
-                selectedItems[i]->setPos(x, selectedItems[i]->pos().y());
+            for (int i=0; i < selectedLevel->selectedItems().count(); ++i) {
+                selectedLevel->selectedItems()[i]->setPos(x, selectedLevel->selectedItems()[i]->pos().y());
             }
         }
 
